@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		97B41B652E534C6700276AA8 /* logic-assembly in Frameworks */ = {isa = PBXBuildFile; productRef = 97B41B642E534C6700276AA8 /* logic-assembly */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		97B41B2E2E533EF500276AA8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -29,6 +33,18 @@
 		97B41B372E533EF500276AA8 /* eudi-openid4vci-ios-appUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "eudi-openid4vci-ios-appUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		97B41B532E5345C400276AA8 /* Exceptions for "modules" folder in "eudi-openid4vci-ios-app" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"logic-assembly",
+				"logic-business",
+				"logic-ui",
+			);
+			target = 97B41B1C2E533EF300276AA8 /* eudi-openid4vci-ios-app */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		97B41B1F2E533EF300276AA8 /* eudi-openid4vci-ios-app */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
@@ -37,6 +53,9 @@
 		};
 		97B41B4A2E53405600276AA8 /* modules */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				97B41B532E5345C400276AA8 /* Exceptions for "modules" folder in "eudi-openid4vci-ios-app" target */,
+			);
 			path = modules;
 			sourceTree = "<group>";
 		};
@@ -47,6 +66,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				97B41B652E534C6700276AA8 /* logic-assembly in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,6 +92,7 @@
 			children = (
 				97B41B4A2E53405600276AA8 /* modules */,
 				97B41B1F2E533EF300276AA8 /* eudi-openid4vci-ios-app */,
+				97B41B632E534C6700276AA8 /* Frameworks */,
 				97B41B1E2E533EF300276AA8 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -84,6 +105,13 @@
 				97B41B372E533EF500276AA8 /* eudi-openid4vci-ios-appUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		97B41B632E534C6700276AA8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -107,6 +135,7 @@
 			);
 			name = "eudi-openid4vci-ios-app";
 			packageProductDependencies = (
+				97B41B642E534C6700276AA8 /* logic-assembly */,
 			);
 			productName = "eudi-openid4vci-ios-app";
 			productReference = 97B41B1D2E533EF300276AA8 /* eudi-openid4vci-ios-app.app */;
@@ -392,6 +421,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -400,7 +430,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.theodoridisnikolaos.eudi-openid4vci-ios-app";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -420,6 +450,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -428,7 +459,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.theodoridisnikolaos.eudi-openid4vci-ios-app";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -541,6 +572,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		97B41B642E534C6700276AA8 /* logic-assembly */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = "logic-assembly";
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 97B41B152E533EF300276AA8 /* Project object */;
 }
