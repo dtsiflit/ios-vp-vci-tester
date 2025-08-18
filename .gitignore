@@ -1,0 +1,78 @@
+# ========================
+# Xcode
+# ========================
+
+# Build products
+build/
+DerivedData/
+*.xcresult
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# User settings
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata/
+
+# Workspace
+*.xcworkspace
+!default.xcworkspace
+
+# Scheme
+xcshareddata/
+*.xcscheme
+!default.xcscheme
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Packages/
+# Keep resolved version
+!Package.resolved
+
+# CocoaPods
+Pods/
+# Generated workspace files
+*.xcconfig
+
+# Carthage
+Carthage/Build/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output/
+fastlane/readme.md
+
+# Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+# Archives
+*.xcarchive
+
+# Testing / Coverage
+*.xccovreport
+*.xccovarchive
+*.xctestrun
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Temporary / swap / lock files
+*.swp
+*.lock
+*.orig
