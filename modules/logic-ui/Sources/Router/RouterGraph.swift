@@ -1,0 +1,92 @@
+//
+//  eudi-openid4vci-ios-app
+//
+import SwiftUI
+import logic_business
+
+public protocol RouterGraphType: ObservableObject, Sendable {
+  var path: NavigationPath { get set }
+
+  @MainActor func navigateTo(_ appRoute: Route)
+  @MainActor func pop()
+  @MainActor func navigateToRoot()
+  @MainActor func view(for route: Route) -> AnyView
+  @MainActor func nextView(for state: OpenID4VCIUi.State) throws -> UIViewController
+  @MainActor func clear()
+}
+
+public final class RouterGraph: RouterGraphType, @unchecked Sendable {
+  @Published public var path: NavigationPath = NavigationPath()
+
+  public init() {}
+
+  public func view(for route: Route) -> AnyView {
+    switch route {
+    case .offerScanView:
+      OfferScanView(
+        with: .init(
+          router: self,
+          interactor: DIGraph.resolver.force(
+            OfferScanInteractorType.self
+          )
+        )
+      )
+      .eraseToAnyView()
+    case .issuanceProgressView:
+      IssuanceProgressView()
+        .eraseToAnyView()
+    case .issuanceResultView:
+      IssuanceResultView()
+        .eraseToAnyView()
+    }
+  }
+
+  public func nextView(for state: OpenID4VCIUi.State) throws -> UIViewController {
+    guard state != .none else {
+      throw OpenID4VCIError.invalidState(state.id)
+    }
+
+    return ContainerViewController(
+      rootView: ContainerView(
+        router: self
+      ) { _ in
+        switch state {
+        case .none:
+          EmptyView()
+        case .offerScanView:
+          OfferScanView(
+            with: .init(
+              router: self,
+              interactor: DIGraph.resolver.force(
+                OfferScanInteractorType.self
+              )
+            )
+          )
+          .eraseToAnyView()
+        case .issuanceProgressView:
+          IssuanceProgressView()
+        case .issuanceResultView:
+          IssuanceResultView()
+        }
+      }
+    )
+  }
+
+  public func navigateTo(_ appRoute: Route) {
+    path.append(appRoute)
+  }
+
+  public func pop() {
+    path.removeLast()
+  }
+
+  public func navigateToRoot() {
+    path.removeLast(path.count)
+  }
+
+  public func clear() {
+    if !path.isEmpty {
+      path = NavigationPath()
+    }
+  }
+}

@@ -19,6 +19,10 @@ let package = Package(
     .package(
       url: "https://github.com/eu-digital-identity-wallet/eudi-lib-ios-openid4vci-swift.git",
       from: "0.15.4"
+    ),
+    .package(
+      url: "https://github.com/eu-digital-identity-wallet/SwiftCopyableMacro.git",
+      from: "0.0.4"
     )
   ],
   targets: [
@@ -29,6 +33,10 @@ let package = Package(
         .product(
           name: "OpenID4VCI",
           package: "eudi-lib-ios-openid4vci-swift"
+        ),
+        .product(
+          name: "Copyable",
+          package: "SwiftCopyableMacro"
         )
       ]
     ),

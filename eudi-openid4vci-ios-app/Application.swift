@@ -7,13 +7,17 @@ import logic_assembly
 @main
 struct Application: App {
 
+  @StateObject private var router = RouterGraph()
+
   init() {
     DIGraph.assembleDependenciesGraph()
   }
 
   var body: some Scene {
     WindowGroup {
-      EmptyView()
+      ContainerView(router: router) {
+        $0.view(for: .offerScanView)
+      }
     }
   }
 }
