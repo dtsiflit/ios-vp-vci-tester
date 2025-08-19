@@ -5,6 +5,7 @@ import SwiftUI
 
 struct OfferScanView<Router: RouterGraphType>: View {
 
+  @Environment(\.localizationController) var localization
   @ObservedObject var viewModel: OfferScanViewModel<Router>
 
   init(
@@ -15,7 +16,7 @@ struct OfferScanView<Router: RouterGraphType>: View {
 
   var body: some View {
     ContentScreenView {
-      Button("Next View") {
+      Button(localization.get(with: .next)) {
         viewModel.navigateToIssuanceProgressView()
       }
     }
