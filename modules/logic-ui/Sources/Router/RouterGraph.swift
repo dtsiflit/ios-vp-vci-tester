@@ -22,12 +22,12 @@ public final class RouterGraph: RouterGraphType, @unchecked Sendable {
 
   public func view(for route: Route) -> AnyView {
     switch route {
-    case .offerScanView:
-      OfferScanView(
+    case .credentialOffer:
+      CredentialOfferView(
         with: .init(
           router: self,
           interactor: DIGraph.resolver.force(
-            OfferScanInteractorType.self
+            CredentialOfferInteractorType.self
           )
         )
       )
@@ -53,12 +53,12 @@ public final class RouterGraph: RouterGraphType, @unchecked Sendable {
         switch state {
         case .none:
           EmptyView()
-        case .offerScanView:
-          OfferScanView(
+        case .credentialOffer:
+          CredentialOfferView(
             with: .init(
               router: self,
               interactor: DIGraph.resolver.force(
-                OfferScanInteractorType.self
+                CredentialOfferInteractorType.self
               )
             )
           )

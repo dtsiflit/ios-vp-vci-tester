@@ -5,14 +5,14 @@ import Foundation
 
 public enum Route: Hashable, Identifiable, Equatable {
 
-  case offerScanView
+  case credentialOffer
   case issuanceProgressView
   case issuanceResultView
 
   public var id: String {
     switch self {
-    case .offerScanView:
-      return "offerScanView"
+    case .credentialOffer:
+      return "credentialOffer"
     case .issuanceProgressView:
       return "issuanceProgressView"
     case .issuanceResultView:
@@ -26,8 +26,8 @@ public enum Route: Hashable, Identifiable, Equatable {
 
   public func hash(into hasher: inout Hasher) {
     switch self {
-    case .offerScanView:
-      hasher.combine("offerScanView")
+    case .credentialOffer:
+      hasher.combine("credentialOffer")
     case .issuanceProgressView:
       hasher.combine("issuanceProgressView")
     case .issuanceResultView:

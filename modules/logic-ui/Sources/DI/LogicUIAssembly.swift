@@ -1,8 +1,9 @@
 //
 //  eudi-openid4vci-ios-app
 //
-import Foundation
 import Swinject
+import Foundation
+import logic_business
 
 public final class LogicUIAssembly: Assembly {
 
@@ -10,8 +11,10 @@ public final class LogicUIAssembly: Assembly {
 
   public func assemble(container: Container) {
 
-    container.register(OfferScanInteractorType.self) { _ in
-      OfferScanInteractor()
+    container.register(CredentialOfferInteractorType.self) { r in
+      CredentialOfferInteractor(
+        controller: r.force(CredentialIssuanceControllerType.self)
+      )
     }
     .inObjectScope(.container)
 

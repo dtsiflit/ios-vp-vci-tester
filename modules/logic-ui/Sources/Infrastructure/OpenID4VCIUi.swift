@@ -9,7 +9,7 @@ public extension OpenID4VCIUi {
   enum State: Equatable, Sendable {
 
     case none
-    case offerScanView
+    case credentialOffer
     case issuanceProgressView
     case issuanceResultView
 
@@ -17,8 +17,8 @@ public extension OpenID4VCIUi {
       return switch self {
       case .none:
         "none"
-      case .offerScanView:
-        "offerScanView"
+      case .credentialOffer:
+        "credentialOffer"
       case .issuanceProgressView:
         "issuanceProgressView"
       case .issuanceResultView:

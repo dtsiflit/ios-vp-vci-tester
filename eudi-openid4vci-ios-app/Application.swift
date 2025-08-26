@@ -16,7 +16,7 @@ struct Application: App {
   var body: some Scene {
     WindowGroup {
       ContainerView(router: router) {
-        $0.view(for: .offerScanView)
+        $0.view(for: .credentialOffer)
       }
     }
   }
