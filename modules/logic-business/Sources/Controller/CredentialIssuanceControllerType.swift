@@ -6,39 +6,39 @@ import AuthenticationServices
 import OpenID4VCI
 
 public protocol CredentialIssuanceControllerType: Sendable {
-  
+
   var bindingKeys: [BindingKey] { get }
   var clientConfig: OpenId4VCIConfig { get }
-  
+
   func resolveCredentialIssuerMetadata(
     _ resolver: CredentialIssuerMetadataResolver,
     _ id: CredentialIssuerId,
     _ policy: IssuerMetadataPolicy
   ) async throws -> Result<CredentialIssuerMetadata, Error>
-  
+
   func resolveAuthorizationServerMetadata(
     _ resolver: AuthorizationServerMetadataResolver,
     _ credentialIssuerMetadata: CredentialIssuerMetadata
   ) async throws -> Result<IdentityAndAccessManagementMetadata, Error>
-  
+
   func getCredentialOffer(
     _ identifier: String,
     _ credentialIssuerIdentifier: CredentialIssuerId,
     _ credentialIssuerMetadata: CredentialIssuerMetadata,
     _ authorizationServerMetadata: IdentityAndAccessManagementMetadata
   ) async throws -> CredentialOffer
-  
+
   func getIssuer(
     _ credentialOffer: CredentialOffer,
     _ dPoPConstructor: DPoPConstructorType?,
     _ config: OpenId4VCIConfig
   ) async throws -> Issuer
-  
+
   func authorizeRequestWithAuthCodeUseCase(
     issuer: IssuerType,
     offer: CredentialOffer
   ) async throws -> AuthorizedRequest
-  
+
   func issueCredential(
     _ issuer: Issuer,
     _ authorized: AuthorizedRequest,
@@ -58,7 +58,7 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
     self.bindingKeys = bindingKeys
     self.clientConfig = clientConfig
   }
-  
+
   func resolveCredentialIssuerMetadata(
     _ resolver: CredentialIssuerMetadataResolver,
     _ id: CredentialIssuerId,
@@ -76,31 +76,31 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
       return .failure(error)
     }
   }
-  
+
   func resolveAuthorizationServerMetadata(
     _ resolver: AuthorizationServerMetadataResolver,
     _ credentialIssuerMetadata: CredentialIssuerMetadata
   ) async throws -> Result<IdentityAndAccessManagementMetadata, Error> {
-    
+
     guard let authorizationServer = credentialIssuerMetadata.authorizationServers?.first else {
       return .failure(ValidationError.error(reason: "Missing authorization server metadata"))
     }
-    
+
     let authServerMetadata = await resolver.resolve(url: authorizationServer)
     return authServerMetadata
   }
-  
+
   func getCredentialOffer(
     _ identifier: String,
     _ credentialIssuerIdentifier: CredentialIssuerId,
     _ credentialIssuerMetadata: CredentialIssuerMetadata,
     _ authorizationServerMetadata: IdentityAndAccessManagementMetadata
   ) async throws -> CredentialOffer {
-    
+
     guard let authorizationServer = credentialIssuerMetadata.authorizationServers?.first else {
       throw ValidationError.error(reason: "Missing authorization server metadata")
     }
-    
+
     let offer = try CredentialOffer(
       credentialIssuerIdentifier: credentialIssuerIdentifier,
       credentialIssuerMetadata: credentialIssuerMetadata,
@@ -116,7 +116,7 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
     )
     return offer
   }
-  
+
   func getIssuer(
     _ credentialOffer: CredentialOffer,
     _ dPoPConstructor: DPoPConstructorType?,
@@ -129,7 +129,7 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
       dpopConstructor: dPoPConstructor
     )
   }
-  
+
   func authorizeRequestWithAuthCodeUseCase(
     issuer: IssuerType,
     offer: CredentialOffer
@@ -137,28 +137,37 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
     let parPlaced = try await issuer.prepareAuthorizationRequest(
       credentialOffer: offer
     )
-    
+
     if case let .success(request) = parPlaced,
        case let .prepared(parRequested) = request {
-      
-      var unAuthorized: Result<AuthorizationRequestPrepared, Error>
-      var authorizationCode: String
-      
+
+      let unAuthorized: Result<AuthorizationRequestPrepared, Error>
+      let authorizationCode: String
+
       let scheme = "test_scheme"
-      
+
       // Initialize the session.
       let callbackURL = try await awaitWebAuthCallback(
         url: parRequested.authorizationCodeURL.url,
         callbackURLScheme: scheme
       )
-      
-      authorizationCode = callbackURL.absoluteString
+
+      if let urlComponents = URLComponents(url: callbackURL, resolvingAgainstBaseURL: false),
+         let queryItems = urlComponents.queryItems,
+         let codeItem = queryItems.first(where: { $0.name == "code" }),
+         let code = codeItem.value {
+
+        authorizationCode = code
+      } else {
+        throw ValidationError.error(reason: "Authorization code not found in callback URL")
+      }
+
       let issuanceAuthorization: IssuanceAuthorization = .authorizationCode(authorizationCode: authorizationCode)
       unAuthorized = await issuer.handleAuthorizationCode(
         request: request,
         authorizationCode: issuanceAuthorization
       )
-      
+
       switch unAuthorized {
       case .success(let request):
         let authorizedRequest = await issuer.authorizeWithAuthorizationCode(
@@ -170,18 +179,18 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
             issued: authorized.timeStamp,
             at: Date().timeIntervalSinceReferenceDate
           )
-          
+
           return authorized
         }
-        
+
       case .failure(let error):
         throw  ValidationError.error(reason: error.localizedDescription)
       }
-      
+
     }
     throw ValidationError.error(reason: "Failed to get push authorization code request")
   }
-  
+
   func issueCredential(
     _ issuer: Issuer,
     _ authorized: AuthorizedRequest,
@@ -190,11 +199,11 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
     guard let credentialConfigurationIdentifier else {
       throw ValidationError.error(reason: "Credential configuration identifier not found")
     }
-    
+
     let payload: IssuanceRequestPayload = .configurationBased(
       credentialConfigurationIdentifier: credentialConfigurationIdentifier
     )
-    
+
     let requestOutcome = try await issuer.requestCredential(
       request: authorized,
       bindingKeys: bindingKeys,
@@ -202,14 +211,14 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
     ) {
       Issuer.createResponseEncryptionSpec($0)
     }
-    
+
     switch requestOutcome {
     case .success(let request):
       switch request {
       case .success(let response):
         if let result = response.credentialResponses.first {
           switch result {
-          case .deferred(let transactionId):
+          case .deferred:
             throw ValidationError.todo(reason: "Deferred Issuance case")
           case .issued(_, let credential, _, _):
             return credential
@@ -225,7 +234,7 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
     case .failure(let error): throw ValidationError.error(reason: error.localizedDescription)
     }
   }
-  
+
   @MainActor
   func awaitWebAuthCallback(
     url: URL,
@@ -248,10 +257,10 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
           ))
         }
       }
-      
+
       session.prefersEphemeralWebBrowserSession = true
       session.presentationContextProvider = AutoPresentationProvider()
-      
+
       // Start on the main actor (UI requirement)
       let started = session.start()
       if !started {
@@ -272,16 +281,15 @@ private final class AutoPresentationProvider: NSObject, ASWebAuthenticationPrese
     if let window = UIApplication.shared.connectedScenes
       .compactMap({ $0 as? UIWindowScene })
       .flatMap({ $0.windows })
-      .first(where: { $0.isKeyWindow })
-    {
+      .first(where: { $0.isKeyWindow }) {
       return window
     }
-    
+
     // Fallback: a visible window if any
     if let window = UIApplication.shared.windows.first(where: { $0.isHidden == false }) {
       return window
     }
-    
+
     // As a last resort, create a temporary window (not ideal, but prevents start() from failing)
     let temp = UIWindow(frame: UIScreen.main.bounds)
     temp.isHidden = false

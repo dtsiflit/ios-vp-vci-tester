@@ -6,7 +6,7 @@ import OpenID4VCI
 import SwiftyJSON
 
 public final class MockCredentialOfferInteractor: CredentialOfferInteractorType {
-  
+
   public init() {}
 
   public func issueCredential(offerUri: String, scope: String) async -> Result<Credential, Error> {
@@ -25,7 +25,7 @@ public final class MockCredentialOfferInteractor: CredentialOfferInteractorType 
     let mockCredential = Credential.json(jsonCredential)
     return .success(mockCredential)
   }
-  
+
   func resolveCredentialIssuerMetadata(
     _ resolver: CredentialIssuerMetadataResolver,
     _ id: CredentialIssuerId,
@@ -33,14 +33,14 @@ public final class MockCredentialOfferInteractor: CredentialOfferInteractorType 
   ) async throws -> Result<CredentialIssuerMetadata, any Error> {
     throw ValidationError.todo(reason: "Implement soon")
   }
-  
+
   func resolveAuthorizationServerMetadata(
     _ resolver: AuthorizationServerMetadataResolver,
     _ credentialIssuerMetadata: CredentialIssuerMetadata
   ) async throws -> Result<IdentityAndAccessManagementMetadata, any Error> {
     throw ValidationError.todo(reason: "Implement soon")
   }
-  
+
   func getCredentialOffer(
     _ identifier: String,
     _ credentialIssuerIdentifier: CredentialIssuerId,
@@ -49,7 +49,7 @@ public final class MockCredentialOfferInteractor: CredentialOfferInteractorType 
   ) async throws -> CredentialOffer {
     throw ValidationError.todo(reason: "Implement soon")
   }
-  
+
   func getIssuer(
     _ credentialOffer: CredentialOffer,
     _ dPoPConstructor: (any DPoPConstructorType)?,
@@ -57,14 +57,14 @@ public final class MockCredentialOfferInteractor: CredentialOfferInteractorType 
   ) async throws -> Issuer {
     throw ValidationError.todo(reason: "Implement soon")
   }
-  
+
   func authorizeRequestWithAuthCodeUseCase(
     issuer: any IssuerType,
     offer: CredentialOffer
   ) async throws -> AuthorizedRequest {
     throw ValidationError.todo(reason: "Implement soon")
   }
-  
+
   func issueCredential(
     _ issuer: Issuer,
     _ authorized: AuthorizedRequest,

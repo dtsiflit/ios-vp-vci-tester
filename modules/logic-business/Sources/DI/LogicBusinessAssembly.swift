@@ -21,7 +21,7 @@ public final class LogicBusinessAssembly: Assembly {
     }
     .inObjectScope(.container)
 
-    container.register(CredentialIssuanceControllerType.self) { r in
+    container.register(CredentialIssuanceControllerType.self) { _ in
       CredentialIssuanceController(
         bindingKeys: [],
         clientConfig: .init(
