@@ -9,7 +9,15 @@ public protocol CredentialIssuanceControllerType: Sendable {
 
   var bindingKeys: [BindingKey] { get }
   var clientConfig: OpenId4VCIConfig { get }
-
+  
+  func setProvider(autoPresentationProvider: AutoPresentationProvider?)
+  
+  func retrieveCredentialOffer(
+    _ offerUri: String,
+    _ scope: String,
+    _ config: OpenId4VCIConfig
+  ) async throws -> CredentialOffer
+  
   func resolveCredentialIssuerMetadata(
     _ resolver: CredentialIssuerMetadataResolver,
     _ id: CredentialIssuerId,
@@ -50,7 +58,8 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
 
   internal let bindingKeys: [BindingKey]
   internal let clientConfig: OpenId4VCIConfig
-
+  nonisolated(unsafe) var autoPresentationProvider: AutoPresentationProvider?
+  
   init(
     bindingKeys: [BindingKey],
     clientConfig: OpenId4VCIConfig
@@ -59,6 +68,25 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
     self.clientConfig = clientConfig
   }
 
+  func setProvider(autoPresentationProvider: AutoPresentationProvider?) {
+    self.autoPresentationProvider = autoPresentationProvider
+  }
+  
+  func retrieveCredentialOffer(
+    _ offerUri: String,
+    _ scope: String,
+    _ config: OpenId4VCIConfig
+  ) async throws -> CredentialOffer {
+    let result = await CredentialOfferRequestResolver()
+      .resolve(
+        source: try .init(
+          urlString: offerUri
+        ),
+        policy: config.issuerMetadataPolicy
+      )
+    return try result.get()
+  }
+  
   func resolveCredentialIssuerMetadata(
     _ resolver: CredentialIssuerMetadataResolver,
     _ id: CredentialIssuerId,
@@ -144,9 +172,10 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
       let unAuthorized: Result<AuthorizationRequestPrepared, Error>
       let authorizationCode: String
 
-      let scheme = "test_scheme"
+      let scheme = "eudi-openid4ci"
 
       // Initialize the session.
+      await setProvider(autoPresentationProvider: .init())
       let callbackURL = try await awaitWebAuthCallback(
         url: parRequested.authorizationCodeURL.url,
         callbackURLScheme: scheme
@@ -259,7 +288,7 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
       }
 
       session.prefersEphemeralWebBrowserSession = true
-      session.presentationContextProvider = AutoPresentationProvider()
+      session.presentationContextProvider = autoPresentationProvider
 
       // Start on the main actor (UI requirement)
       let started = session.start()
@@ -275,8 +304,8 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
 }
 
 @MainActor
-private final class AutoPresentationProvider: NSObject, ASWebAuthenticationPresentationContextProviding {
-  func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
+public final class AutoPresentationProvider: NSObject, ASWebAuthenticationPresentationContextProviding, Sendable {
+  public func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
     // Try the active key window from any connected scene
     if let window = UIApplication.shared.connectedScenes
       .compactMap({ $0 as? UIWindowScene })

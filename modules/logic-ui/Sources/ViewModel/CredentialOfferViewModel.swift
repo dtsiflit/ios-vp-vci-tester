@@ -32,8 +32,8 @@ class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router, Crede
   func scanAndIssueCredential(
     offerUri: String,
     scope: String
-  ) async {
-    let result = await interactor.issueCredential(offerUri: offerUri, scope: scope)
+  ) async throws {
+    let result = try await interactor.issueCredential(offerUri: offerUri, scope: scope)
     switch result {
     case .success(let credential):
       setState { newState in

@@ -18,8 +18,8 @@ struct CredentialOfferView<Router: RouterGraphType>: View {
     ContentScreenView {
       Button("Scan QR & Issue Credential") {
         Task {
-          await viewModel.scanAndIssueCredential(
-            offerUri: "https://issuer.example/offer/123",
+          try await viewModel.scanAndIssueCredential(
+            offerUri: "openid-credential-offer://credential_offer?credential_offer=%7B%22credential_issuer%22:%20%22https://dev.issuer.eudiw.dev%22%2C%20%22credential_configuration_ids%22:%20%5B%22eu.europa.ec.eudi.pid_mdoc%22%5D%2C%20%22grants%22:%20%7B%22urn:ietf:params:oauth:grant-type:pre-authorized_code%22:%20%7B%22pre-authorized_code%22:%20%22d366d6a4-aa2a-485a-9fcd-922d9834a9c5%22%2C%20%22tx_code%22:%20%7B%22length%22:%205%2C%20%22input_mode%22:%20%22numeric%22%2C%20%22description%22:%20%22Please%20provide%20the%20one-time%20code.%22%7D%7D%7D%7D",
             scope: "myScope"
           )
         }

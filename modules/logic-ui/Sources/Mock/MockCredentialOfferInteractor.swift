@@ -26,6 +26,14 @@ public final class MockCredentialOfferInteractor: CredentialOfferInteractorType 
     return .success(mockCredential)
   }
 
+  func retrieveCredentialOffer(
+    _ offerUri: String,
+    _ scope: String,
+    _ config: OpenId4VCIConfig
+  ) async throws -> CredentialOffer {
+    throw ValidationError.todo(reason: "Implement soon")
+  }
+  
   func resolveCredentialIssuerMetadata(
     _ resolver: CredentialIssuerMetadataResolver,
     _ id: CredentialIssuerId,

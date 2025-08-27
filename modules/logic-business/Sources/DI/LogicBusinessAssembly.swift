@@ -3,6 +3,8 @@
 //
 import Swinject
 import Foundation
+import OpenID4VCI
+import JOSESwift
 
 public final class LogicBusinessAssembly: Assembly {
 
@@ -21,12 +23,30 @@ public final class LogicBusinessAssembly: Assembly {
     }
     .inObjectScope(.container)
 
+    let privateKey = try! KeyController.generateECDHPrivateKey()
+    let publicKey = try! KeyController.generateECDHPublicKey(from: privateKey)
+    
+    let alg = JWSAlgorithm(.ES256)
+    let publicKeyJWK = try! ECPublicKey(
+      publicKey: publicKey,
+      additionalParameters: [
+        "alg": alg.name,
+        "use": "sig",
+        "kid": UUID().uuidString
+      ])
+    
+    let bindingKey: BindingKey = .jwk(
+      algorithm: alg,
+      jwk: publicKeyJWK,
+      privateKey: .secKey(privateKey)
+    )
+    
     container.register(CredentialIssuanceControllerType.self) { _ in
       CredentialIssuanceController(
-        bindingKeys: [],
+        bindingKeys: [bindingKey],
         clientConfig: .init(
           client: .public(id: "wallet-dev"),
-          authFlowRedirectionURI: URL(string: "urn:ietf:wg:oauth:2.0:oob")!,
+          authFlowRedirectionURI: URL(string: "eudi-openid4ci://authorize")!,
           authorizeIssuanceConfig: .favorScopes
         )
       )
