@@ -33,7 +33,7 @@ public final class MockCredentialOfferInteractor: CredentialOfferInteractorType 
   ) async throws -> CredentialOffer {
     throw ValidationError.todo(reason: "Implement soon")
   }
-  
+
   func resolveCredentialIssuerMetadata(
     _ resolver: CredentialIssuerMetadataResolver,
     _ id: CredentialIssuerId,

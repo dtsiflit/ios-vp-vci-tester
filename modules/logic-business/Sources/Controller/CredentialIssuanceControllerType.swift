@@ -9,15 +9,15 @@ public protocol CredentialIssuanceControllerType: Sendable {
 
   var bindingKeys: [BindingKey] { get }
   var clientConfig: OpenId4VCIConfig { get }
-  
+
   func setProvider(autoPresentationProvider: AutoPresentationProvider?)
-  
+
   func retrieveCredentialOffer(
     _ offerUri: String,
     _ scope: String,
     _ config: OpenId4VCIConfig
   ) async throws -> CredentialOffer
-  
+
   func resolveCredentialIssuerMetadata(
     _ resolver: CredentialIssuerMetadataResolver,
     _ id: CredentialIssuerId,
@@ -58,35 +58,37 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
 
   internal let bindingKeys: [BindingKey]
   internal let clientConfig: OpenId4VCIConfig
+  internal let credentialOfferRequestResolver: CredentialOfferRequestResolver
   nonisolated(unsafe) var autoPresentationProvider: AutoPresentationProvider?
-  
+
   init(
     bindingKeys: [BindingKey],
-    clientConfig: OpenId4VCIConfig
+    clientConfig: OpenId4VCIConfig,
+    credentialOfferRequestResolver: CredentialOfferRequestResolver
   ) {
     self.bindingKeys = bindingKeys
     self.clientConfig = clientConfig
+    self.credentialOfferRequestResolver = credentialOfferRequestResolver
   }
 
   func setProvider(autoPresentationProvider: AutoPresentationProvider?) {
     self.autoPresentationProvider = autoPresentationProvider
   }
-  
+
   func retrieveCredentialOffer(
     _ offerUri: String,
     _ scope: String,
     _ config: OpenId4VCIConfig
   ) async throws -> CredentialOffer {
-    let result = await CredentialOfferRequestResolver()
-      .resolve(
-        source: try .init(
-          urlString: offerUri
-        ),
-        policy: config.issuerMetadataPolicy
-      )
+    let result = await credentialOfferRequestResolver.resolve(
+      source: try .init(
+        urlString: offerUri
+      ),
+      policy: config.issuerMetadataPolicy
+    )
     return try result.get()
   }
-  
+
   func resolveCredentialIssuerMetadata(
     _ resolver: CredentialIssuerMetadataResolver,
     _ id: CredentialIssuerId,
@@ -111,7 +113,7 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
   ) async throws -> Result<IdentityAndAccessManagementMetadata, Error> {
 
     guard let authorizationServer = credentialIssuerMetadata.authorizationServers?.first else {
-      return .failure(ValidationError.error(reason: "Missing authorization server metadata"))
+      throw CredentialIssuanceError.missingAuthorizationServerMetadata
     }
 
     let authServerMetadata = await resolver.resolve(url: authorizationServer)
@@ -126,7 +128,7 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
   ) async throws -> CredentialOffer {
 
     guard let authorizationServer = credentialIssuerMetadata.authorizationServers?.first else {
-      throw ValidationError.error(reason: "Missing authorization server metadata")
+      throw CredentialIssuanceError.missingAuthorizationServerMetadata
     }
 
     let offer = try CredentialOffer(
@@ -170,26 +172,15 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
        case let .prepared(parRequested) = request {
 
       let unAuthorized: Result<AuthorizationRequestPrepared, Error>
-      let authorizationCode: String
-
-      let scheme = "eudi-openid4ci"
 
       // Initialize the session.
       await setProvider(autoPresentationProvider: .init())
       let callbackURL = try await awaitWebAuthCallback(
         url: parRequested.authorizationCodeURL.url,
-        callbackURLScheme: scheme
+        callbackURLScheme: WalletConfiguration.scheme
       )
 
-      if let urlComponents = URLComponents(url: callbackURL, resolvingAgainstBaseURL: false),
-         let queryItems = urlComponents.queryItems,
-         let codeItem = queryItems.first(where: { $0.name == "code" }),
-         let code = codeItem.value {
-
-        authorizationCode = code
-      } else {
-        throw ValidationError.error(reason: "Authorization code not found in callback URL")
-      }
+      let authorizationCode = try callbackURL.authorizationCode()
 
       let issuanceAuthorization: IssuanceAuthorization = .authorizationCode(authorizationCode: authorizationCode)
       unAuthorized = await issuer.handleAuthorizationCode(
@@ -213,11 +204,11 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
         }
 
       case .failure(let error):
-        throw  ValidationError.error(reason: error.localizedDescription)
+        throw CredentialIssuanceError.unknown(reason: error.localizedDescription)
       }
 
     }
-    throw ValidationError.error(reason: "Failed to get push authorization code request")
+    throw CredentialIssuanceError.unknown(reason: "Failed to get push authorization code request")
   }
 
   func issueCredential(
@@ -226,7 +217,7 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
     _ credentialConfigurationIdentifier: CredentialConfigurationIdentifier?
   ) async throws -> Credential {
     guard let credentialConfigurationIdentifier else {
-      throw ValidationError.error(reason: "Credential configuration identifier not found")
+      throw CredentialIssuanceError.missingCredentialConfigurationIdentifier
     }
 
     let payload: IssuanceRequestPayload = .configurationBased(
@@ -248,19 +239,19 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
         if let result = response.credentialResponses.first {
           switch result {
           case .deferred:
-            throw ValidationError.todo(reason: "Deferred Issuance case")
+            throw CredentialIssuanceError.deferredIssuance
           case .issued(_, let credential, _, _):
             return credential
           }
         } else {
-          throw ValidationError.error(reason: "No credential response results available")
+          throw CredentialIssuanceError.failedCredentialRequest(reason: "No credential response results available")
         }
       case .invalidProof:
-        throw ValidationError.error(reason: "Although providing a proof with c_nonce the proof is still invalid")
+        throw CredentialIssuanceError.failedCredentialRequest(reason: "Although providing a proof with c_nonce the proof is still invalid")
       case .failed(let error):
-        throw ValidationError.error(reason: error.localizedDescription)
+        throw CredentialIssuanceError.unknown(reason: error.localizedDescription)
       }
-    case .failure(let error): throw ValidationError.error(reason: error.localizedDescription)
+    case .failure(let error): throw CredentialIssuanceError.unknown(reason: error.localizedDescription)
     }
   }
 
@@ -304,7 +295,7 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
 }
 
 @MainActor
-public final class AutoPresentationProvider: NSObject, ASWebAuthenticationPresentationContextProviding, Sendable {
+public final class AutoPresentationProvider: NSObject, ASWebAuthenticationPresentationContextProviding {
   public func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
     // Try the active key window from any connected scene
     if let window = UIApplication.shared.connectedScenes

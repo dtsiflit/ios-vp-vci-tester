@@ -15,13 +15,21 @@ let package = Package(
     .package(
       name: "logic-business",
       path: "./logic-business"
+    ),
+    .package(
+      url: "https://github.com/twostraws/CodeScanner",
+      from: "2.4.1"
     )
   ],
   targets: [
     .target(
       name: "logic-ui",
       dependencies: [
-        "logic-business"
+        "logic-business",
+        .product(
+          name: "CodeScanner",
+          package: "CodeScanner"
+        )
       ]
     ),
     .testTarget(

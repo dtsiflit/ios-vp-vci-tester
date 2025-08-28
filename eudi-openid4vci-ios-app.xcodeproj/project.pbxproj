@@ -424,6 +424,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"eudi-openid4vci-ios-app/Preview Content\"";
+				DEVELOPMENT_TEAM = AZXQE7588Y;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "eudi-openid4vci-ios-app/Info.plist";
@@ -454,6 +455,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"eudi-openid4vci-ios-app/Preview Content\"";
+				DEVELOPMENT_TEAM = AZXQE7588Y;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "eudi-openid4vci-ios-app/Info.plist";

@@ -1,6 +1,7 @@
 //
 //  eudi-openid4vci-ios-app
 //
+import Foundation
 import Copyable
 import OpenID4VCI
 import SwiftyJSON
@@ -32,21 +33,47 @@ class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router, Crede
   func scanAndIssueCredential(
     offerUri: String,
     scope: String
-  ) async throws {
-    let result = try await interactor.issueCredential(offerUri: offerUri, scope: scope)
-    switch result {
-    case .success(let credential):
-      setState { newState in
-        newState.copy(credential: credential)
+  ) async {
+    do {
+      let result = try await interactor.issueCredential(offerUri: offerUri, scope: scope)
+      switch result {
+      case .success(let credential):
+        setState {
+          $0.copy(
+            credential: credential
+          )
+        }
+
+        navigateToIssuanceResultView()
+      case .failure(let errorMessage):
+        setState {
+          $0.copy(
+            errorMessage: errorMessage.localizedDescription
+          )
+        }
       }
-    case .failure(let errorMessage):
-      setState { newState in
-        newState.copy(errorMessage: errorMessage.localizedDescription)
+    } catch {
+      setState {
+        $0.copy(
+          errorMessage: error.localizedDescription
+        )
       }
     }
   }
 
-  func navigateToIssuanceProgressView() {
-    router.navigateTo(.issuanceProgressView)
+  func navigateToIssuanceResultView() {
+      let result: CredentialOfferResultType
+
+      if let credential = viewState.credential {
+          result = .success(credential)
+      } else if let errorMessage = viewState.errorMessage, !errorMessage.isEmpty {
+          let error = NSError(domain: "CredentialOffer", code: 0, userInfo: [NSLocalizedDescriptionKey: errorMessage])
+          result = .failure(error)
+      } else {
+          let error = NSError(domain: "CredentialOffer", code: 0, userInfo: [NSLocalizedDescriptionKey: "Unknown error"])
+          result = .failure(error)
+      }
+
+    router.navigateTo(.credentialOfferResultView(config: result))
   }
 }

@@ -2,6 +2,7 @@
 //  eudi-openid4vci-ios-app
 //
 import Foundation
+import OpenID4VCI
 
 public final actor OpenID4VCIUi { }
 
@@ -10,8 +11,7 @@ public extension OpenID4VCIUi {
 
     case none
     case credentialOffer
-    case issuanceProgressView
-    case issuanceResultView
+    case credentialOfferResultView(credential: CredentialOfferResultType)
 
     var id: String {
       return switch self {
@@ -19,10 +19,8 @@ public extension OpenID4VCIUi {
         "none"
       case .credentialOffer:
         "credentialOffer"
-      case .issuanceProgressView:
-        "issuanceProgressView"
-      case .issuanceResultView:
-        "issuanceResultView"
+      case .credentialOfferResultView:
+        "credentialOfferResultView"
       }
     }
 
