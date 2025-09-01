@@ -76,3 +76,6 @@ playground.xcworkspace
 *.swp
 *.lock
 *.orig
+
+# Ignore all xcuserdatad folders
+*.xcuserdatad/
