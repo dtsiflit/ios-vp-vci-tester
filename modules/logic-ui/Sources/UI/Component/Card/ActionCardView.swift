@@ -58,6 +58,7 @@ public struct ActionCardView: View {
         .padding(.top, 10)
       }
     }
+    .frame(maxWidth: .infinity, alignment: .topLeading)
     .padding()
     .background {
       RoundedRectangle(cornerRadius: 26)

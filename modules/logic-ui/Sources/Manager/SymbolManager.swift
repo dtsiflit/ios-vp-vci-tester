@@ -4,7 +4,7 @@
 import Foundation
 
 enum SymbolManager: String {
-  case qrcode = "qrcode.viewfinder"
+  case issuance = "checkmark.seal.text.page.fill"
   case close = "xmark"
   case success = "checkmark.seal.fill"
   case failure = "xmark.octagon.fill"

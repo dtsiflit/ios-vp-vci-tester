@@ -8,12 +8,13 @@ struct CredentialOfferResultView: View {
 
   @Environment(\.dismiss) var dismiss
   @Environment(\.colorScheme) var colorScheme
+  @Environment(\.localizationController) var localization
 
   private let config: CredentialOfferResultConfiguration
 
-      init(for result: CredentialOfferResultType) {
-          self.config = result.configuration
-      }
+  init(for result: CredentialOfferResultType) {
+    self.config = result.configuration
+  }
 
   var body: some View {
     NavigationView {
@@ -21,7 +22,7 @@ struct CredentialOfferResultView: View {
         VStack {
           VStack(spacing: 20) {
             Image(systemName: config.symbolName)
-              .foregroundStyle(.green)
+              .foregroundStyle(config.symbolColor)
               .symbolRenderingMode(.hierarchical)
               .font(.system(size: 120))
 
@@ -37,8 +38,8 @@ struct CredentialOfferResultView: View {
           }
           .frame(maxHeight: .infinity)
 
-          Text("Close")
-            .foregroundStyle(.green)
+          Text(localization.get(with: .close))
+            .foregroundStyle(config.symbolColor)
             .frame(maxWidth: .infinity)
             .padding()
             .background {
@@ -56,5 +57,7 @@ struct CredentialOfferResultView: View {
 }
 
 #Preview {
-  CredentialOfferResultView(for: .success(.string("")))
+  CredentialOfferResultView(
+    for: .success(.string(""))
+  )
 }

@@ -11,6 +11,8 @@ struct CredentialOfferView<Router: RouterGraphType>: View {
 
   @State private var isGalleryPresented = false
   @State private var isScannerPresented = false
+  @State private var lastOfferUri: String = ""
+  @State private var transactionCodeInput: String = ""
 
   init(with viewModel: CredentialOfferViewModel<Router>) {
     self.viewModel = viewModel
@@ -21,7 +23,7 @@ struct CredentialOfferView<Router: RouterGraphType>: View {
       ContentScreenView {
         ActionCardView(
           isScannerPresented: .constant(true),
-          icon: SymbolManager.value(for: .qrcode),
+          icon: SymbolManager.value(for: .issuance),
           label: localization.get(with: .credentialIssuanceCardLabel),
           description: localization.get(with: .credentialIssuanceCardDescription),
           buttonLabel: localization.get(with: .credentialIssuanceCardButtonLabel)) {
@@ -41,9 +43,11 @@ struct CredentialOfferView<Router: RouterGraphType>: View {
             case .success(let scanResult):
               Task {
                 isScannerPresented = false
+                lastOfferUri = scanResult.string
                 await viewModel.scanAndIssueCredential(
                   offerUri: scanResult.string,
-                  scope: "myScope"
+                  scope: "myScope",
+                  transactionCode: ""
                 )
               }
             case .failure(let error):
@@ -68,8 +72,52 @@ struct CredentialOfferView<Router: RouterGraphType>: View {
             }
         }
       }
-    }
+      .sheet(isPresented: Binding(
+        get: { viewModel.viewState.needsTransactionCode },
+        set: { _ in })
+      ) {
+        VStack(spacing: 0) {
+          List {
+            Section(header: Text("Issuance Request")) {
+              HStack(spacing: 15) {
+                Text("Transaction Code")
+                TextField("5-digit code", text: $transactionCodeInput)
+                  .textFieldStyle(.plain)
+              }
+            }
+          }
+          .listStyle(.insetGrouped)
+          .scrollDisabled(true)
+          .scrollContentBackground(.hidden)
+          .padding(.top)
 
+          Text("Submit")
+            .frame(maxWidth: .infinity)
+            .disabled(transactionCodeInput.isEmpty)
+            .foregroundStyle(.white)
+            .padding(15)
+            .background {
+              RoundedRectangle(cornerRadius: 12)
+                .foregroundStyle(transactionCodeInput.isEmpty ? .gray.opacity(0.28) : .blue)
+            }
+            .animation(.easeInOut, value: transactionCodeInput)
+            .frame(maxWidth: .infinity)
+            .onTapGesture {
+              Task {
+                await viewModel.continueWithTransactionCode(
+                  offerUri: lastOfferUri,
+                  scope: "myScope",
+                  transactionCode: transactionCodeInput
+                )
+              }
+            }
+            .padding(.horizontal)
+            .padding()
+        }
+        .presentationDetents([.height(190)])
+        .keyboardType(.numberPad)
+      }
+    }
   }
 }
 

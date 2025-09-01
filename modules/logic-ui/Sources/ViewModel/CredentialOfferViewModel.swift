@@ -10,10 +10,11 @@ import SwiftyJSON
 struct CredentialOfferState: ViewState {
   let credential: Credential?
   let errorMessage: String?
+  let isPreAuthorized: Bool
+  let needsTransactionCode: Bool
 }
 
 class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router, CredentialOfferState> {
-
   private let interactor: CredentialOfferInteractorType
 
   init(
@@ -25,32 +26,39 @@ class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router, Crede
       router: router,
       initialState: .init(
         credential: .none,
-        errorMessage: ""
+        errorMessage: "",
+        isPreAuthorized: false,
+        needsTransactionCode: false
       )
     )
   }
 
   func scanAndIssueCredential(
     offerUri: String,
-    scope: String
+    scope: String,
+    transactionCode: String
   ) async {
     do {
-      let result = try await interactor.issueCredential(offerUri: offerUri, scope: scope)
-      switch result {
-      case .success(let credential):
-        setState {
-          $0.copy(
-            credential: credential
-          )
-        }
+      let isPreAuth = try await interactor.isPreAuthorizedGrant(
+        offerUri: offerUri,
+        scope: scope
+      )
 
-        navigateToIssuanceResultView()
-      case .failure(let errorMessage):
+      if isPreAuth {
         setState {
           $0.copy(
-            errorMessage: errorMessage.localizedDescription
+            isPreAuthorized: true,
+            needsTransactionCode: true
           )
         }
+        return
+      } else {
+        let result = try await interactor.issueCredential(
+          offerUri: offerUri,
+          scope: scope,
+          transactionCode: nil
+        )
+        handleCredentialResult(result)
       }
     } catch {
       setState {
@@ -61,19 +69,56 @@ class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router, Crede
     }
   }
 
-  func navigateToIssuanceResultView() {
-      let result: CredentialOfferResultType
-
-      if let credential = viewState.credential {
-          result = .success(credential)
-      } else if let errorMessage = viewState.errorMessage, !errorMessage.isEmpty {
-          let error = NSError(domain: "CredentialOffer", code: 0, userInfo: [NSLocalizedDescriptionKey: errorMessage])
-          result = .failure(error)
-      } else {
-          let error = NSError(domain: "CredentialOffer", code: 0, userInfo: [NSLocalizedDescriptionKey: "Unknown error"])
-          result = .failure(error)
+  func continueWithTransactionCode(
+    offerUri: String,
+    scope: String,
+    transactionCode: String
+  ) async {
+    do {
+      let result = try await interactor.issueCredential(
+        offerUri: offerUri,
+        scope: scope,
+        transactionCode: transactionCode
+      )
+      handleCredentialResult(result)
+    } catch {
+      setState {
+        $0.copy(
+          errorMessage: error.localizedDescription
+        )
       }
+      navigateToIssuanceResultView()
+    }
+  }
+
+  private func navigateToIssuanceResultView() {
+    let result: CredentialOfferResultType
+
+    if let credential = viewState.credential {
+      result = .success(credential)
+    } else {
+      let error = NSError(
+        domain: "CredentialOffer",
+        code: 0,
+        userInfo: [NSLocalizedDescriptionKey: viewState.errorMessage ?? "Unknown error"]
+      )
+      result = .failure(error)
+    }
 
     router.navigateTo(.credentialOfferResultView(config: result))
+  }
+
+  private func handleCredentialResult(_ result: Result<Credential, Error>) {
+    switch result {
+    case .success(let credential):
+      setState {
+        $0.copy(credential: credential)
+      }
+    case .failure(let error):
+      setState {
+        $0.copy(errorMessage: error.localizedDescription)
+      }
+    }
+    navigateToIssuanceResultView()
   }
 }

@@ -9,7 +9,11 @@ public final class MockCredentialOfferInteractor: CredentialOfferInteractorType 
 
   public init() {}
 
-  public func issueCredential(offerUri: String, scope: String) async -> Result<Credential, Error> {
+  func isPreAuthorizedGrant(offerUri: String, scope: String) async throws -> Bool {
+    return false
+  }
+
+  public func issueCredential(offerUri: String, scope: String, transactionCode: String?) async -> Result<Credential, Error> {
     try? await Task.sleep(nanoseconds: 100_000_000)
 
     let jsonCredential: JSON = [

@@ -6,6 +6,7 @@ public enum LocalizableKey: Sendable, Equatable, Hashable {
 
   case custom(String)
   case actions
+  case close
   case credentialIssuanceCardLabel
   case credentialIssuanceCardDescription
   case credentialIssuanceCardButtonLabel
@@ -20,9 +21,11 @@ public enum LocalizableKey: Sendable, Equatable, Hashable {
     case .actions:
       "Actions"
     case .credentialIssuanceCardLabel:
-      "Credential Offer"
+      "Issue Credential"
     case .credentialIssuanceCardDescription:
-      "Tap to open the scanner and scan a QR code."
+      "Tap to open the QR code scanner to issue your credential."
+    case .close:
+      "Close"
     case .credentialIssuanceCardButtonLabel:
       "Open Scanner"
     case .successIssuanceResultTitle:
