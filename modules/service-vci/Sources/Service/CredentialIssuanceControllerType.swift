@@ -174,7 +174,7 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
 
       // Initialize the session.
       await setProvider(autoPresentationProvider: .init())
-      let callbackURL = try await awaitWebAuthCallback(
+      let callbackURL = try await webAuthenticate(
         url: parRequested.authorizationCodeURL.url,
         callbackURLScheme: WalletConfiguration.scheme
       )
@@ -255,7 +255,7 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
   }
 
   @MainActor
-  func awaitWebAuthCallback(
+  func webAuthenticate(
     url: URL,
     callbackURLScheme: String
   ) async throws -> URL {
@@ -263,31 +263,39 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
       let session = ASWebAuthenticationSession(
         url: url,
         callbackURLScheme: callbackURLScheme
-      ) { callbackURL, error in
+      ) {
+        callbackURL,
+        error in
         // The completion is not async; resume the continuation exactly once.
         if let callbackURL {
-          continuation.resume(returning: callbackURL)
+          continuation
+            .resume(
+              returning: callbackURL
+            )
         } else {
-          // Prefer the original AS error if present; otherwise make a generic one.
-          continuation.resume(throwing: error ?? NSError(
-            domain: "ASWebAuthenticationSession",
-            code: -1,
-            userInfo: [NSLocalizedDescriptionKey: "Web auth session finished without a callback URL."]
-          ))
+          continuation
+            .resume(
+              throwing: error ?? ValidationError
+                .error(
+                  reason: "Web auth session finished without a callback URL."
+                )
+            )
         }
       }
-
+      
       session.prefersEphemeralWebBrowserSession = true
       session.presentationContextProvider = autoPresentationProvider
-
+      
       // Start on the main actor (UI requirement)
       let started = session.start()
       if !started {
-        continuation.resume(throwing: NSError(
-          domain: "ASWebAuthenticationSession",
-          code: -2,
-          userInfo: [NSLocalizedDescriptionKey: "Failed to start ASWebAuthenticationSession."]
-        ))
+        continuation
+          .resume(
+            throwing: ValidationError
+              .error(
+              reason: "Failed to start ASWebAuthenticationSession."
+            )
+          )
       }
     }
   }
@@ -295,23 +303,10 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
 
 @MainActor
 public final class AutoPresentationProvider: NSObject, ASWebAuthenticationPresentationContextProviding {
-  public func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
-    // Try the active key window from any connected scene
-    if let window = UIApplication.shared.connectedScenes
-      .compactMap({ $0 as? UIWindowScene })
-      .flatMap({ $0.windows })
-      .first(where: { $0.isKeyWindow }) {
-      return window
-    }
-
-    // Fallback: a visible window if any
-    if let window = UIApplication.shared.windows.first(where: { $0.isHidden == false }) {
-      return window
-    }
-
-    // As a last resort, create a temporary window (not ideal, but prevents start() from failing)
-    let temp = UIWindow(frame: UIScreen.main.bounds)
-    temp.isHidden = false
-    return temp
+  public func presentationAnchor(
+    for session: ASWebAuthenticationSession
+  ) -> ASPresentationAnchor {
+    let window = UIApplication.shared.windows.first { $0.isKeyWindow }
+    return window ?? ASPresentationAnchor()
   }
 }
