@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		97B41B652E534C6700276AA8 /* logic-assembly in Frameworks */ = {isa = PBXBuildFile; productRef = 97B41B642E534C6700276AA8 /* logic-assembly */; };
+		97AEA8F42E65A7380062F996 /* assembly in Frameworks */ = {isa = PBXBuildFile; productRef = 97AEA8F32E65A7380062F996 /* assembly */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,15 +34,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		97B41B532E5345C400276AA8 /* Exceptions for "modules" folder in "eudi-openid4vci-ios-app" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"logic-assembly",
-				"logic-business",
-				"logic-ui",
-			);
-			target = 97B41B1C2E533EF300276AA8 /* eudi-openid4vci-ios-app */;
-		};
 		F143F09A2E5F09E800ADA6F5 /* Exceptions for "eudi-openid4vci-ios-app" folder in "eudi-openid4vci-ios-app" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -63,9 +54,6 @@
 		};
 		97B41B4A2E53405600276AA8 /* modules */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				97B41B532E5345C400276AA8 /* Exceptions for "modules" folder in "eudi-openid4vci-ios-app" target */,
-			);
 			path = modules;
 			sourceTree = "<group>";
 		};
@@ -76,7 +64,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				97B41B652E534C6700276AA8 /* logic-assembly in Frameworks */,
+				97AEA8F42E65A7380062F996 /* assembly in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -145,7 +133,7 @@
 			);
 			name = "eudi-openid4vci-ios-app";
 			packageProductDependencies = (
-				97B41B642E534C6700276AA8 /* logic-assembly */,
+				97AEA8F32E65A7380062F996 /* assembly */,
 			);
 			productName = "eudi-openid4vci-ios-app";
 			productReference = 97B41B1D2E533EF300276AA8 /* eudi-openid4vci-ios-app.app */;
@@ -588,9 +576,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		97B41B642E534C6700276AA8 /* logic-assembly */ = {
+		97AEA8F32E65A7380062F996 /* assembly */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = "logic-assembly";
+			productName = assembly;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
