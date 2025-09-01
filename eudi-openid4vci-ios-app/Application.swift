@@ -2,7 +2,7 @@
 //  eudi-openid4vci-ios-app
 //
 import SwiftUI
-import logic_assembly
+import assembly
 
 @main
 struct Application: App {
