@@ -22,28 +22,25 @@ public final class RouterGraph: RouterGraphType, @unchecked Sendable {
 
   public func view(for route: Route) -> AnyView {
     switch route {
-    case .offerScanView:
-      OfferScanView(
+    case .credentialOffer:
+      CredentialOfferView(
         with: .init(
           router: self,
           interactor: DIGraph.resolver.force(
-            OfferScanInteractorType.self
+            CredentialOfferInteractorType.self
           )
         )
       )
       .eraseToAnyView()
-    case .issuanceProgressView:
-      IssuanceProgressView()
-        .eraseToAnyView()
-    case .issuanceResultView:
-      IssuanceResultView()
+    case .credentialOfferResultView(let config):
+      CredentialOfferResultView(for: config)
         .eraseToAnyView()
     }
   }
 
   public func nextView(for state: OpenID4VCIUi.State) throws -> UIViewController {
     guard state != .none else {
-      throw OpenID4VCIError.invalidState(state.id)
+      throw CredentialIssuanceError.unknown(reason: state.id)
     }
 
     return ContainerViewController(
@@ -53,20 +50,19 @@ public final class RouterGraph: RouterGraphType, @unchecked Sendable {
         switch state {
         case .none:
           EmptyView()
-        case .offerScanView:
-          OfferScanView(
+        case .credentialOffer:
+          CredentialOfferView(
             with: .init(
               router: self,
               interactor: DIGraph.resolver.force(
-                OfferScanInteractorType.self
+                CredentialOfferInteractorType.self
               )
             )
           )
           .eraseToAnyView()
-        case .issuanceProgressView:
-          IssuanceProgressView()
-        case .issuanceResultView:
-          IssuanceResultView()
+        case .credentialOfferResultView(let config):
+          CredentialOfferResultView(for: config)
+            .eraseToAnyView()
         }
       }
     )

@@ -43,11 +43,21 @@
 			);
 			target = 97B41B1C2E533EF300276AA8 /* eudi-openid4vci-ios-app */;
 		};
+		F143F09A2E5F09E800ADA6F5 /* Exceptions for "eudi-openid4vci-ios-app" folder in "eudi-openid4vci-ios-app" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 97B41B1C2E533EF300276AA8 /* eudi-openid4vci-ios-app */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		97B41B1F2E533EF300276AA8 /* eudi-openid4vci-ios-app */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				F143F09A2E5F09E800ADA6F5 /* Exceptions for "eudi-openid4vci-ios-app" folder in "eudi-openid4vci-ios-app" target */,
+			);
 			path = "eudi-openid4vci-ios-app";
 			sourceTree = "<group>";
 		};
@@ -414,8 +424,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"eudi-openid4vci-ios-app/Preview Content\"";
+				DEVELOPMENT_TEAM = AZXQE7588Y;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "eudi-openid4vci-ios-app/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -443,8 +455,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"eudi-openid4vci-ios-app/Preview Content\"";
+				DEVELOPMENT_TEAM = AZXQE7588Y;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "eudi-openid4vci-ios-app/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
