@@ -109,12 +109,7 @@ class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router, Crede
     if let credential = viewState.credential {
       result = .success(credential)
     } else {
-      let error = NSError(
-        domain: "CredentialOffer",
-        code: 0,
-        userInfo: [NSLocalizedDescriptionKey: viewState.errorMessage ?? "Unknown error"]
-      )
-      result = .failure(error)
+      result = .failure(viewState.errorMessage ?? "Unknown error")
     }
 
     router.navigateTo(.credentialOfferResultView(config: result))
