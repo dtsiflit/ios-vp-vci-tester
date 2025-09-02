@@ -28,18 +28,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		97B41B1D2E533EF300276AA8 /* eudi-openid4vci-ios-app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "eudi-openid4vci-ios-app.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		97B41B2D2E533EF500276AA8 /* eudi-openid4vci-ios-appTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "eudi-openid4vci-ios-appTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		97B41B372E533EF500276AA8 /* eudi-openid4vci-ios-appUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "eudi-openid4vci-ios-appUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		97B41B1D2E533EF300276AA8 /* eudi-app-ios-vp-vci-tester.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "eudi-app-ios-vp-vci-tester.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		97B41B2D2E533EF500276AA8 /* eudi-app-ios-vp-vci-testerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "eudi-app-ios-vp-vci-testerTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		97B41B372E533EF500276AA8 /* eudi-app-ios-vp-vci-testerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "eudi-app-ios-vp-vci-testerUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		F143F09A2E5F09E800ADA6F5 /* Exceptions for "eudi-openid4vci-ios-app" folder in "eudi-openid4vci-ios-app" target */ = {
+		F143F09A2E5F09E800ADA6F5 /* Exceptions for "eudi-openid4vci-ios-app" folder in "eudi-app-ios-vp-vci-tester" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 97B41B1C2E533EF300276AA8 /* eudi-openid4vci-ios-app */;
+			target = 97B41B1C2E533EF300276AA8 /* eudi-app-ios-vp-vci-tester */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -47,7 +47,7 @@
 		97B41B1F2E533EF300276AA8 /* eudi-openid4vci-ios-app */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				F143F09A2E5F09E800ADA6F5 /* Exceptions for "eudi-openid4vci-ios-app" folder in "eudi-openid4vci-ios-app" target */,
+				F143F09A2E5F09E800ADA6F5 /* Exceptions for "eudi-openid4vci-ios-app" folder in "eudi-app-ios-vp-vci-tester" target */,
 			);
 			path = "eudi-openid4vci-ios-app";
 			sourceTree = "<group>";
@@ -98,9 +98,9 @@
 		97B41B1E2E533EF300276AA8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				97B41B1D2E533EF300276AA8 /* eudi-openid4vci-ios-app.app */,
-				97B41B2D2E533EF500276AA8 /* eudi-openid4vci-ios-appTests.xctest */,
-				97B41B372E533EF500276AA8 /* eudi-openid4vci-ios-appUITests.xctest */,
+				97B41B1D2E533EF300276AA8 /* eudi-app-ios-vp-vci-tester.app */,
+				97B41B2D2E533EF500276AA8 /* eudi-app-ios-vp-vci-testerTests.xctest */,
+				97B41B372E533EF500276AA8 /* eudi-app-ios-vp-vci-testerUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -115,9 +115,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		97B41B1C2E533EF300276AA8 /* eudi-openid4vci-ios-app */ = {
+		97B41B1C2E533EF300276AA8 /* eudi-app-ios-vp-vci-tester */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 97B41B412E533EF500276AA8 /* Build configuration list for PBXNativeTarget "eudi-openid4vci-ios-app" */;
+			buildConfigurationList = 97B41B412E533EF500276AA8 /* Build configuration list for PBXNativeTarget "eudi-app-ios-vp-vci-tester" */;
 			buildPhases = (
 				97B41B192E533EF300276AA8 /* Sources */,
 				97B41B1A2E533EF300276AA8 /* Frameworks */,
@@ -131,17 +131,17 @@
 				97B41B1F2E533EF300276AA8 /* eudi-openid4vci-ios-app */,
 				97B41B4A2E53405600276AA8 /* modules */,
 			);
-			name = "eudi-openid4vci-ios-app";
+			name = "eudi-app-ios-vp-vci-tester";
 			packageProductDependencies = (
 				97AEA8F32E65A7380062F996 /* assembly */,
 			);
 			productName = "eudi-openid4vci-ios-app";
-			productReference = 97B41B1D2E533EF300276AA8 /* eudi-openid4vci-ios-app.app */;
+			productReference = 97B41B1D2E533EF300276AA8 /* eudi-app-ios-vp-vci-tester.app */;
 			productType = "com.apple.product-type.application";
 		};
-		97B41B2C2E533EF500276AA8 /* eudi-openid4vci-ios-appTests */ = {
+		97B41B2C2E533EF500276AA8 /* eudi-app-ios-vp-vci-testerTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 97B41B442E533EF500276AA8 /* Build configuration list for PBXNativeTarget "eudi-openid4vci-ios-appTests" */;
+			buildConfigurationList = 97B41B442E533EF500276AA8 /* Build configuration list for PBXNativeTarget "eudi-app-ios-vp-vci-testerTests" */;
 			buildPhases = (
 				97B41B292E533EF500276AA8 /* Sources */,
 				97B41B2A2E533EF500276AA8 /* Frameworks */,
@@ -152,16 +152,16 @@
 			dependencies = (
 				97B41B2F2E533EF500276AA8 /* PBXTargetDependency */,
 			);
-			name = "eudi-openid4vci-ios-appTests";
+			name = "eudi-app-ios-vp-vci-testerTests";
 			packageProductDependencies = (
 			);
 			productName = "eudi-openid4vci-ios-appTests";
-			productReference = 97B41B2D2E533EF500276AA8 /* eudi-openid4vci-ios-appTests.xctest */;
+			productReference = 97B41B2D2E533EF500276AA8 /* eudi-app-ios-vp-vci-testerTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		97B41B362E533EF500276AA8 /* eudi-openid4vci-ios-appUITests */ = {
+		97B41B362E533EF500276AA8 /* eudi-app-ios-vp-vci-testerUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 97B41B472E533EF500276AA8 /* Build configuration list for PBXNativeTarget "eudi-openid4vci-ios-appUITests" */;
+			buildConfigurationList = 97B41B472E533EF500276AA8 /* Build configuration list for PBXNativeTarget "eudi-app-ios-vp-vci-testerUITests" */;
 			buildPhases = (
 				97B41B332E533EF500276AA8 /* Sources */,
 				97B41B342E533EF500276AA8 /* Frameworks */,
@@ -172,11 +172,11 @@
 			dependencies = (
 				97B41B392E533EF500276AA8 /* PBXTargetDependency */,
 			);
-			name = "eudi-openid4vci-ios-appUITests";
+			name = "eudi-app-ios-vp-vci-testerUITests";
 			packageProductDependencies = (
 			);
 			productName = "eudi-openid4vci-ios-appUITests";
-			productReference = 97B41B372E533EF500276AA8 /* eudi-openid4vci-ios-appUITests.xctest */;
+			productReference = 97B41B372E533EF500276AA8 /* eudi-app-ios-vp-vci-testerUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -202,7 +202,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 97B41B182E533EF300276AA8 /* Build configuration list for PBXProject "eudi-openid4vci-ios-app" */;
+			buildConfigurationList = 97B41B182E533EF300276AA8 /* Build configuration list for PBXProject "eudi-app-ios-vp-vci-tester" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -216,9 +216,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				97B41B1C2E533EF300276AA8 /* eudi-openid4vci-ios-app */,
-				97B41B2C2E533EF500276AA8 /* eudi-openid4vci-ios-appTests */,
-				97B41B362E533EF500276AA8 /* eudi-openid4vci-ios-appUITests */,
+				97B41B1C2E533EF300276AA8 /* eudi-app-ios-vp-vci-tester */,
+				97B41B2C2E533EF500276AA8 /* eudi-app-ios-vp-vci-testerTests */,
+				97B41B362E533EF500276AA8 /* eudi-app-ios-vp-vci-testerUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -274,12 +274,12 @@
 /* Begin PBXTargetDependency section */
 		97B41B2F2E533EF500276AA8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 97B41B1C2E533EF300276AA8 /* eudi-openid4vci-ios-app */;
+			target = 97B41B1C2E533EF300276AA8 /* eudi-app-ios-vp-vci-tester */;
 			targetProxy = 97B41B2E2E533EF500276AA8 /* PBXContainerItemProxy */;
 		};
 		97B41B392E533EF500276AA8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 97B41B1C2E533EF300276AA8 /* eudi-openid4vci-ios-app */;
+			target = 97B41B1C2E533EF300276AA8 /* eudi-app-ios-vp-vci-tester */;
 			targetProxy = 97B41B382E533EF500276AA8 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -480,7 +480,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/eudi-openid4vci-ios-app.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/eudi-openid4vci-ios-app";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/eudi-app-ios-vp-vci-tester.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/eudi-app-ios-vp-vci-tester";
 			};
 			name = Debug;
 		};
@@ -498,7 +498,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/eudi-openid4vci-ios-app.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/eudi-openid4vci-ios-app";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/eudi-app-ios-vp-vci-tester.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/eudi-app-ios-vp-vci-tester";
 			};
 			name = Release;
 		};
@@ -537,7 +537,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		97B41B182E533EF300276AA8 /* Build configuration list for PBXProject "eudi-openid4vci-ios-app" */ = {
+		97B41B182E533EF300276AA8 /* Build configuration list for PBXProject "eudi-app-ios-vp-vci-tester" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				97B41B3F2E533EF500276AA8 /* Debug */,
@@ -546,7 +546,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		97B41B412E533EF500276AA8 /* Build configuration list for PBXNativeTarget "eudi-openid4vci-ios-app" */ = {
+		97B41B412E533EF500276AA8 /* Build configuration list for PBXNativeTarget "eudi-app-ios-vp-vci-tester" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				97B41B422E533EF500276AA8 /* Debug */,
@@ -555,7 +555,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		97B41B442E533EF500276AA8 /* Build configuration list for PBXNativeTarget "eudi-openid4vci-ios-appTests" */ = {
+		97B41B442E533EF500276AA8 /* Build configuration list for PBXNativeTarget "eudi-app-ios-vp-vci-testerTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				97B41B452E533EF500276AA8 /* Debug */,
@@ -564,7 +564,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		97B41B472E533EF500276AA8 /* Build configuration list for PBXNativeTarget "eudi-openid4vci-ios-appUITests" */ = {
+		97B41B472E533EF500276AA8 /* Build configuration list for PBXNativeTarget "eudi-app-ios-vp-vci-testerUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				97B41B482E533EF500276AA8 /* Debug */,
