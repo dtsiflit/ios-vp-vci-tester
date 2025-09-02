@@ -30,5 +30,3 @@ let package = Package(
     )
   ]
 )
-
-
