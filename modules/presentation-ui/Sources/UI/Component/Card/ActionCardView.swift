@@ -44,49 +44,71 @@ public struct ActionCardView: View {
   }
 
   public var body: some View {
-    HStack(alignment: .top, spacing: 15) {
-      Image(systemName: icon)
-        .font(.largeTitle)
-        .foregroundStyle(.blue)
+    VStack(spacing: 0) {
+      Rectangle()
+        .foregroundStyle(.gray.opacity(0.1))
+        .frame(height: 180)
+        .overlay {
+          Image(systemName: icon)
+            .font(.system(size: 100))
+            .foregroundStyle(LinearGradient(
+              colors: [.cyan, .blue],
+              startPoint: .top,
+              endPoint: .bottom
+            ))
+        }
 
       VStack(alignment: .leading, spacing: 5) {
         Text(label)
+          .font(.title3)
           .fontWeight(.semibold)
 
         Text(description)
           .foregroundStyle(.gray)
 
-        Button(buttonLabel) {
-          action()
+        Button(action: action) {
+          Text(buttonLabel)
+            .fontWeight(.medium)
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(
+              RoundedRectangle(cornerRadius: 12)
+                .foregroundStyle(.blue)
+                .opacity(0.18)
+            )
         }
-        .fontWeight(.medium)
-        .padding(.horizontal)
-        .padding(.vertical, 5)
-        .background {
-          Capsule()
-            .foregroundStyle(.blue)
-            .opacity(0.18)
-        }
-        .padding(.top, 10)
+        .padding(.top, 15)
+        .contentShape(RoundedRectangle(cornerRadius: 12))
+
+        Text("Only SD-JWT credentials containing PID are supported.")
+          .font(.caption)
+          .foregroundStyle(.secondary)
+          .padding(.top, 10)
+          .padding(.bottom, 5)
       }
+      .padding()
+      .frame(maxWidth: .infinity, alignment: .topLeading)
     }
-    .frame(maxWidth: .infinity, alignment: .topLeading)
-    .padding()
-    .background {
-      RoundedRectangle(cornerRadius: 26)
-        .foregroundStyle(colorScheme == .dark ? Color(UIColor.secondarySystemBackground) : Color(UIColor.systemBackground))
-    }
+    .background(
+      colorScheme == .dark
+      ? Color(UIColor.secondarySystemBackground)
+      : Color(UIColor.systemBackground)
+    )
     .frame(maxWidth: .infinity)
+    .clipShape(RoundedRectangle(cornerRadius: 26))
   }
 }
 
 #Preview {
   ActionCardView(
     isScannerPresented: .constant(true),
-    icon: "qrcode.viewfinder",
+    icon: SymbolManager.issuance.rawValue,
     label: "Credential Offer",
     description: "Scan the QR code provided to receive your credential securely.",
     buttonLabel: "Open Scanner") {
       print("Action")
     }
+    .padding(.horizontal)
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .background(Color(uiColor: .secondarySystemBackground))
 }

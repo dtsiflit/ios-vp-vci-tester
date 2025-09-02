@@ -19,6 +19,25 @@ extension String {
   var toLocalizedStringKey: LocalizedStringKey {
     LocalizedStringKey(self)
   }
+
+  var base64UrlDecodedData: Data? {
+    var base64 = self
+      .replacingOccurrences(of: "-", with: "+")
+      .replacingOccurrences(of: "_", with: "/")
+
+    let remainder = base64.count % 4
+    if remainder > 0 {
+      base64 += String(repeating: "=", count: 4 - remainder)
+    }
+
+    return Data(base64Encoded: base64)
+  }
+
+  var base64UrlDecodedString: String? {
+    guard let data = self.base64UrlDecodedData else { return nil }
+    return String(data: data, encoding: .utf8)
+  }
+
   func format(arguments: [CVarArg]? = nil) -> String {
     guard let arguments, !arguments.isEmpty else {
       return self

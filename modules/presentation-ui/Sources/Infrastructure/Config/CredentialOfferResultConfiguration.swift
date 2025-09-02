@@ -25,7 +25,7 @@ public struct CredentialOfferResultConfiguration: Sendable {
 
 public enum CredentialOfferResultType: Sendable {
   case success(Credential)
-  case failure(Error)
+  case failure(String)
 
   var configuration: CredentialOfferResultConfiguration {
     switch self {

@@ -46,7 +46,8 @@ struct ContentScreenView<Content: View>: View {
         .ignoresSafeArea()
 
       content
-        .padding()
+        .padding(.horizontal)
+        .padding(.top, 10)
     }
     .background(colorScheme == .dark ? Color(UIColor.systemBackground) : Color(UIColor.secondarySystemBackground))
   }

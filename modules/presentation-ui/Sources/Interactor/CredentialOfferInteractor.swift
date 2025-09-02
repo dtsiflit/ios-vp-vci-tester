@@ -75,6 +75,12 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
       controller.clientConfig
     )
 
+    if !credentialOffer.isSDJWT || !credentialOffer.isPID {
+      return .failure(
+        CredentialIssuanceError.unknown(reason: "Credential offer is not a valid SD-JWT or does not contain PID")
+      )
+    }
+
     let issuer = try await controller.getIssuer(
       credentialOffer,
       nil,
@@ -157,5 +163,17 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
     )
 
     return credential
+  }
+}
+
+extension CredentialOffer {
+  var isSDJWT: Bool {
+    credentialConfigurationIdentifiers
+      .contains { $0.value.contains("vc_sd_jwt") }
+  }
+
+  var isPID: Bool {
+    credentialConfigurationIdentifiers
+      .contains { $0.value.contains("pid") }
   }
 }
