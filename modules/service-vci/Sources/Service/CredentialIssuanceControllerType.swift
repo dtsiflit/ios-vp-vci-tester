@@ -315,10 +315,12 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
 
 @MainActor
 public final class AutoPresentationProvider: NSObject, ASWebAuthenticationPresentationContextProviding {
-  public func presentationAnchor(
-    for session: ASWebAuthenticationSession
-  ) -> ASPresentationAnchor {
-    let window = UIApplication.shared.windows.first { $0.isKeyWindow }
+  public func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
+    let windowScene = UIApplication.shared.connectedScenes
+      .compactMap { $0 as? UIWindowScene }
+      .first { $0.activationState == .foregroundActive }
+
+    let window = windowScene?.windows.first { $0.isKeyWindow }
     return window ?? ASPresentationAnchor()
   }
 }
