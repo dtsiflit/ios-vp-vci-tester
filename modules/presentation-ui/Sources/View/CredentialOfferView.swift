@@ -34,7 +34,6 @@ struct CredentialOfferView<Router: RouterGraphType>: View {
     NavigationView {
       ContentScreenView {
         ActionCardView(
-          isScannerPresented: .constant(true),
           icon: SymbolManager.value(for: .issuance),
           label: localization.get(with: .credentialIssuanceCardLabel),
           description: localization.get(with: .credentialIssuanceCardDescription),

@@ -19,8 +19,6 @@ public struct ActionCardView: View {
 
   @Environment(\.colorScheme) var colorScheme
 
-  @Binding var isScannerPresented: Bool
-
   private let icon: String
   private let label: String
   private let description: String
@@ -28,14 +26,12 @@ public struct ActionCardView: View {
   private let action: () -> Void
 
   public init(
-    isScannerPresented: Binding<Bool>,
     icon: String,
     label: String,
     description: String,
     buttonLabel: String,
     action: @escaping () -> Void
   ) {
-    self._isScannerPresented = isScannerPresented
     self.icon = icon
     self.label = label
     self.description = description
@@ -101,7 +97,6 @@ public struct ActionCardView: View {
 
 #Preview {
   ActionCardView(
-    isScannerPresented: .constant(true),
     icon: SymbolManager.issuance.rawValue,
     label: "Credential Offer",
     description: "Scan the QR code provided to receive your credential securely.",
