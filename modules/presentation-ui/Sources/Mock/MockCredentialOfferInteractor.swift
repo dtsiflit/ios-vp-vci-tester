@@ -16,6 +16,7 @@
 import Foundation
 import OpenID4VCI
 import SwiftyJSON
+import service_vci
 
 public final class MockCredentialOfferInteractor: CredentialOfferInteractorType {
 
@@ -25,7 +26,7 @@ public final class MockCredentialOfferInteractor: CredentialOfferInteractorType 
     return false
   }
 
-  public func issueCredential(offerUri: String, scope: String, transactionCode: String?) async -> Result<Credential, Error> {
+  public func issueCredential(offerUri: String, scope: String, transactionCode: String?) async -> CredentialOutcome {
     try? await Task.sleep(nanoseconds: 100_000_000)
 
     let jsonCredential: JSON = [
@@ -39,7 +40,8 @@ public final class MockCredentialOfferInteractor: CredentialOfferInteractorType 
     ]
 
     let mockCredential = Credential.json(jsonCredential)
-    return .success(mockCredential)
+    let credentialOutcome = CredentialOutcome(credential: mockCredential)
+    return credentialOutcome
   }
 
   func retrieveCredentialOffer(
@@ -94,6 +96,12 @@ public final class MockCredentialOfferInteractor: CredentialOfferInteractorType 
     _ authorized: AuthorizedRequest,
     _ credentialConfigurationIdentifier: CredentialConfigurationIdentifier?
   ) async throws -> Credential {
+    throw ValidationError.todo(reason: "Implement soon")
+  }
+
+  func requestDeferredCredential(
+    deferredCredential: DeferredCredential
+  ) async throws -> CredentialOutcome {
     throw ValidationError.todo(reason: "Implement soon")
   }
 }

@@ -14,26 +14,19 @@
  * governing permissions and limitations under the Licence.
  */
 import OpenID4VCI
-import service_vci
 
-public enum Route: Hashable, Identifiable, Equatable {
-  case credentialOffer
-  case credentialOfferResultView(config: CredentialOfferResultType)
-  case deferredPendingView(credentialOutcome: CredentialOutcome)
+public enum IssuanceOutcome {
+  case issued(Credential)
+  case deferred(DeferredCredential)
+}
 
-  public var id: String {
+public extension IssuanceOutcome {
+  func mapToCredentialOutcome() -> CredentialOutcome {
     switch self {
-    case .credentialOffer: return "credentialOffer"
-    case .credentialOfferResultView: return "credentialOfferResultView"
-    case .deferredPendingView: return "deferredPendingView"
+    case .issued(let credential):
+      return .init(credential: credential)
+    case .deferred(let transaction):
+      return .init(deferredCredential: transaction)
     }
-  }
-
-  public static func == (lhs: Route, rhs: Route) -> Bool {
-    lhs.id == rhs.id
-  }
-
-  public func hash(into hasher: inout Hasher) {
-    hasher.combine(id)
   }
 }

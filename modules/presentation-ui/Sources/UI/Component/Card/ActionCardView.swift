@@ -23,12 +23,14 @@ public struct ActionCardView: View {
   private let label: String
   private let description: String
   private let buttonLabel: String
+  private let supportingText: String
   private let action: () -> Void
 
   public init(
     icon: String,
     label: String,
     description: String,
+    supportingText: String,
     buttonLabel: String,
     action: @escaping () -> Void
   ) {
@@ -36,6 +38,7 @@ public struct ActionCardView: View {
     self.label = label
     self.description = description
     self.buttonLabel = buttonLabel
+    self.supportingText = supportingText
     self.action = action
   }
 
@@ -76,7 +79,7 @@ public struct ActionCardView: View {
         .padding(.top, 15)
         .contentShape(RoundedRectangle(cornerRadius: 12))
 
-        Text("Only SD-JWT credentials containing PID are supported.")
+        Text(supportingText)
           .font(.caption)
           .foregroundStyle(.secondary)
           .padding(.top, 10)
@@ -100,6 +103,7 @@ public struct ActionCardView: View {
     icon: SymbolManager.issuance.rawValue,
     label: "Credential Offer",
     description: "Scan the QR code provided to receive your credential securely.",
+    supportingText: "Only SD-JWT credentials containing PID are supported.",
     buttonLabel: "Open Scanner") {
       print("Action")
     }

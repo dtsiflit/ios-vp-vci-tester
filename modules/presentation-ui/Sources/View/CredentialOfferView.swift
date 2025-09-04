@@ -37,6 +37,7 @@ struct CredentialOfferView<Router: RouterGraphType>: View {
           icon: SymbolManager.value(for: .issuance),
           label: localization.get(with: .credentialIssuanceCardLabel),
           description: localization.get(with: .credentialIssuanceCardDescription),
+          supportingText: viewModel.viewState.supportingText,
           buttonLabel: localization.get(with: .credentialIssuanceCardButtonLabel)) {
             isScannerPresented = true
           }
