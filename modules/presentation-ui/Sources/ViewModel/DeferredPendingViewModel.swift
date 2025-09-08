@@ -22,7 +22,8 @@ import service_vci
 @Copyable
 struct DeferredPendingState: ViewState {
   let credential: CredentialOutcome?
-  let label: String
+  let title: String
+  let supportingText: String
   let errorMessage: String?
 }
 
@@ -41,7 +42,8 @@ class DeferredPendingViewModel<Router: RouterGraphType>: ViewModel<Router, Defer
       router: router,
       initialState: .init(
         credential: credentialOutcome,
-        label: "Issuance Pending",
+        title: "Issuance Pending",
+        supportingText: "Try to reissuance",
         errorMessage: nil
       )
     )
@@ -50,30 +52,36 @@ class DeferredPendingViewModel<Router: RouterGraphType>: ViewModel<Router, Defer
   func requestDeferredCredential() async {
     if let deferredCredential = viewState.credential?.deferredCredential {
       do {
-        try await Task.sleep(nanoseconds: 10_000_000_000)
+        try await Task.sleep(for: .seconds(5))
         let outcome = try await interactor.requestDeferredCredential(
           deferredCredential: deferredCredential
         )
 
-        navigateToIssuanceResultView(outcome: outcome)
+        navigateToIssuanceResultView(credential: outcome.credential)
       } catch {
         setState {
           $0.copy(
             errorMessage: error.localizedDescription
           )
         }
-        navigateToIssuanceResultView(outcome: nil)
+        navigateToIssuanceResultView(credential: nil)
       }
     }
   }
 
-  private func navigateToIssuanceResultView(outcome: CredentialOutcome?) {
+  private func navigateToIssuanceResultView(credential: Credential?) {
     let result: CredentialOfferResultType
 
-    if let credential = outcome?.credential {
-      result = .success(credential)
+    if let credential {
+      result = .success(
+        credential: credential,
+        dismiss: false
+      )
     } else {
-      result = .failure(viewState.errorMessage ?? "Unknown error")
+      result = .failure(
+        error: viewState.errorMessage ?? "Unknown error",
+        dismiss: false
+      )
     }
 
     router.navigateTo(

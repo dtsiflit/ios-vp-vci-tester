@@ -16,34 +16,33 @@
 import SwiftUI
 import OpenID4VCI
 
-struct CredentialOfferResultView: View {
+struct CredentialOfferResultView<Router: RouterGraphType>: View {
 
-  @Environment(\.dismiss) var dismiss
   @Environment(\.colorScheme) var colorScheme
   @Environment(\.localizationController) var localization
 
-  private let config: CredentialOfferResultConfiguration
+  @ObservedObject private var viewModel: CredentialOfferResultViewModel<Router>
 
-  init(for result: CredentialOfferResultType) {
-    self.config = result.configuration
+  init(with viewModel: CredentialOfferResultViewModel<Router>) {
+    self.viewModel = viewModel
   }
 
   var body: some View {
     NavigationView {
-      ContentScreenView(bgColor: config.symbolColor) {
+      ContentScreenView(bgColor: viewModel.viewState.config.symbolColor) {
         VStack {
           VStack(spacing: 20) {
-            Image(systemName: config.symbolName)
-              .foregroundStyle(config.symbolColor)
+            Image(systemName: viewModel.viewState.config.symbolName)
+              .foregroundStyle(viewModel.viewState.config.symbolColor)
               .symbolRenderingMode(.hierarchical)
               .font(.system(size: 120))
 
             VStack(spacing: 4) {
-              Text(config.title)
+              Text(viewModel.viewState.config.title)
                 .font(.largeTitle)
                 .fontWeight(.semibold)
 
-              Text(config.description)
+              Text(viewModel.viewState.config.description)
                 .foregroundStyle(.gray)
                 .multilineTextAlignment(.center)
             }
@@ -51,7 +50,7 @@ struct CredentialOfferResultView: View {
           .frame(maxHeight: .infinity)
 
           Text(localization.get(with: .close))
-            .foregroundStyle(config.symbolColor)
+            .foregroundStyle(viewModel.viewState.config.symbolColor)
             .frame(maxWidth: .infinity)
             .padding()
             .background {
@@ -59,17 +58,11 @@ struct CredentialOfferResultView: View {
                 .foregroundStyle(colorScheme == .dark ? Color(UIColor.secondarySystemBackground) : Color(UIColor.systemBackground))
             }
             .onTapGesture {
-              dismiss()
+              viewModel.dismiss()
             }
         }
       }
     }
     .navigationBarBackButtonHidden()
   }
-}
-
-#Preview {
-  CredentialOfferResultView(
-    for: .success(.string(""))
-  )
 }

@@ -40,8 +40,12 @@ struct DeferredPendingView<Router: RouterGraphType>: View {
               .frame(height: 120)
 
             VStack(spacing: 4) {
-              Text("Issuance Pending")
+              Text(viewModel.viewState.title)
                 .font(.largeTitle)
+                .fontWeight(.semibold)
+
+              Text(viewModel.viewState.supportingText)
+                .font(.title)
                 .fontWeight(.semibold)
             }
           }

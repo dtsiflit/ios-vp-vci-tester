@@ -21,27 +21,30 @@ public struct CredentialOfferResultConfiguration: Sendable {
   let symbolName: String
   let symbolColor: Color
   let description: String
+  let dismiss: Bool
 }
 
 public enum CredentialOfferResultType: Sendable {
-  case success(Credential)
-  case failure(String)
+  case success(credential: Credential, dismiss: Bool)
+  case failure(error:String, dismiss: Bool)
 
   var configuration: CredentialOfferResultConfiguration {
     switch self {
-    case .success:
+    case .success(_, let dismiss):
       return CredentialOfferResultConfiguration(
         title: "Success",
         symbolName: SymbolManager.value(for: .success),
         symbolColor: .green,
-        description: "The credential was issued successfully."
+        description: "The credential was issued successfully.",
+        dismiss: dismiss
       )
-    case .failure:
+    case .failure(_, let dismiss):
       return CredentialOfferResultConfiguration(
         title: "Error",
         symbolName: SymbolManager.value(for: .failure),
         symbolColor: .red,
-        description: "Oops! We couldn't issue your credential this time."
+        description: "Oops! We couldn't issue your credential this time.",
+        dismiss: dismiss
       )
     }
   }

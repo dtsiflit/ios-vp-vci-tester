@@ -110,9 +110,15 @@ class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router, Crede
     let result: CredentialOfferResultType
 
     if let credential = viewState.credential {
-      result = .success(credential)
+      result = .success(
+        credential: credential,
+        dismiss: true
+      )
     } else {
-      result = .failure(viewState.errorMessage ?? "Unknown error")
+      result = .failure(
+        error: viewState.errorMessage ?? "Unknown error",
+        dismiss: true
+      )
     }
 
     router.navigateTo(
