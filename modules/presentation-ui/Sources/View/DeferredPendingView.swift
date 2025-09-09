@@ -31,43 +31,25 @@ struct DeferredPendingView<Router: RouterGraphType>: View {
   var body: some View {
     NavigationView {
       ContentScreenView(bgColor: .orange) {
-        VStack {
-          VStack(spacing: 20) {
-            ProgressView()
-              .progressViewStyle(CircularProgressViewStyle())
-              .scaleEffect(2.0)
-              .tint(Color.blue)
-              .frame(height: 120)
-
-            VStack(spacing: 4) {
-              Text(viewModel.viewState.title)
-                .font(.largeTitle)
-                .fontWeight(.semibold)
-
-              Text(viewModel.viewState.supportingText)
-                .font(.title)
-                .fontWeight(.semibold)
-            }
+        ProgressView("Pending Issuance...")
+          .progressViewStyle(
+            CircularProgressViewStyle(tint: .orange)
+          )
+          .task {
+            await viewModel.requestDeferredCredential()
           }
-          .frame(maxHeight: .infinity)
-
-          Text(localization.get(with: .close))
-            .foregroundStyle(Color.gray)
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background {
-              Capsule()
-                .foregroundStyle(colorScheme == .dark ? Color(UIColor.secondarySystemBackground) : Color(UIColor.systemBackground))
-            }
-            .onTapGesture {
-              dismiss()
-            }
-        }
-        .task {
-          await viewModel.requestDeferredCredential()
-        }
       }
     }
     .navigationBarBackButtonHidden()
   }
+}
+
+#Preview {
+  DeferredPendingView(
+    with: .init(
+      router: MockRouterGraph(),
+      interactor: MockCredentialOfferInteractor(),
+      credentialOutcome: .init()
+    )
+  )
 }

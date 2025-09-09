@@ -66,3 +66,27 @@ struct CredentialOfferResultView<Router: RouterGraphType>: View {
     .navigationBarBackButtonHidden()
   }
 }
+
+#Preview("Success") {
+  CredentialOfferResultView(
+    with: .init(
+      router: RouterGraph(),
+      config: .success(
+        credential: .json(""),
+        dismiss: false
+      )
+    )
+  )
+}
+
+#Preview("Failure") {
+  CredentialOfferResultView(
+    with: .init(
+      router: RouterGraph(),
+      config: .failure(
+        error: "Error",
+        dismiss: false
+      )
+    )
+  )
+}
