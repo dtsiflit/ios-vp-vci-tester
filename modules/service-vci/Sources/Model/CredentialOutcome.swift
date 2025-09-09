@@ -27,4 +27,3 @@ public struct CredentialOutcome: Sendable {
     self.deferredCredential = deferredCredential
   }
 }
-

@@ -21,7 +21,7 @@ struct DeferredPendingView<Router: RouterGraphType>: View {
   @Environment(\.dismiss) var dismiss
   @Environment(\.colorScheme) var colorScheme
   @Environment(\.localizationController) var localization
-  
+
   @ObservedObject private var viewModel: DeferredPendingViewModel<Router>
 
   init(with viewModel: DeferredPendingViewModel<Router>) {

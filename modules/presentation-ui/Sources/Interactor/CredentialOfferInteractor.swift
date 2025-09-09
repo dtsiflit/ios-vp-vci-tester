@@ -41,7 +41,7 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
   private let controller: CredentialIssuanceControllerType
 
   init(
-    controller: CredentialIssuanceControllerType,
+    controller: CredentialIssuanceControllerType
   ) {
     self.controller = controller
   }

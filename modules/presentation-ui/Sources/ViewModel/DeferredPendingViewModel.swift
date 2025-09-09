@@ -91,4 +91,3 @@ class DeferredPendingViewModel<Router: RouterGraphType>: ViewModel<Router, Defer
     )
   }
 }
-
