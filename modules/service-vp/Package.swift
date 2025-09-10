@@ -31,8 +31,8 @@ let package = Package(
       dependencies: [
         "Swinject",
         .product(
-          name: "OpenID4VP",
-          package: "eudi-lib-ios-openid4vci-swift"
+          name: "SiopOpenID4VP",
+          package: "eudi-lib-ios-siop-openid4vp-swift"
         ),
         .product(
           name: "Copyable",
