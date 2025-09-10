@@ -14,6 +14,7 @@
  * governing permissions and limitations under the Licence.
  */
 import OpenID4VCI
+import service_vci
 
 public final actor OpenID4VCIUi { }
 
@@ -23,6 +24,7 @@ public extension OpenID4VCIUi {
     case none
     case credentialOffer
     case credentialOfferResultView(credential: CredentialOfferResultType)
+    case deferredPendingView(credentialOutcome: CredentialOutcome)
 
     var id: String {
       return switch self {
@@ -32,6 +34,8 @@ public extension OpenID4VCIUi {
         "credentialOffer"
       case .credentialOfferResultView:
         "credentialOfferResultView"
+      case .deferredPendingView:
+        "deferredPendingView"
       }
     }
 

@@ -26,6 +26,7 @@ public enum LocalizableKey: Sendable, Equatable, Hashable {
   case successIssuanceResultDescription
   case failureIssuanceResultTitle
   case failureIssuanceResultDescription
+  case issuancePending
 
   func defaultTranslation(args: [String]) -> String {
     let value = switch self {
@@ -48,6 +49,8 @@ public enum LocalizableKey: Sendable, Equatable, Hashable {
       "Error"
     case .failureIssuanceResultDescription:
       "Oops! We couldn't issue your credential this time."
+    case .issuancePending:
+      "Issuance Pending"
     }
     return value.format(arguments: args)
   }

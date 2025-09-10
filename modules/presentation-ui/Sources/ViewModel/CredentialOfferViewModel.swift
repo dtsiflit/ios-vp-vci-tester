@@ -17,6 +17,7 @@ import Foundation
 import Copyable
 import OpenID4VCI
 import SwiftyJSON
+import service_vci
 
 @Copyable
 struct CredentialOfferState: ViewState {
@@ -24,6 +25,7 @@ struct CredentialOfferState: ViewState {
   let errorMessage: String?
   let isPreAuthorized: Bool
   let needsTransactionCode: Bool
+  let supportingText: String
 }
 
 class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router, CredentialOfferState> {
@@ -40,7 +42,8 @@ class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router, Crede
         credential: .none,
         errorMessage: "",
         isPreAuthorized: false,
-        needsTransactionCode: false
+        needsTransactionCode: false,
+        supportingText: "Only SD-JWT credentials containing PID are supported."
       )
     )
   }
@@ -78,6 +81,7 @@ class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router, Crede
           errorMessage: error.localizedDescription
         )
       }
+      navigateToIssuanceResultView()
     }
   }
 
@@ -107,25 +111,45 @@ class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router, Crede
     let result: CredentialOfferResultType
 
     if let credential = viewState.credential {
-      result = .success(credential)
+      result = .success(
+        credential: credential,
+        dismiss: true
+      )
     } else {
-      result = .failure(viewState.errorMessage ?? "Unknown error")
+      result = .failure(
+        error: viewState.errorMessage ?? "Unknown error",
+        dismiss: true
+      )
     }
 
-    router.navigateTo(.credentialOfferResultView(config: result))
+    router.navigateTo(
+      .credentialOfferResultView(
+        config: result
+      )
+    )
   }
 
-  private func handleCredentialResult(_ result: Result<Credential, Error>) {
-    switch result {
-    case .success(let credential):
+  private func navigateToPendingDefferedView(credentialOutcome: CredentialOutcome) {
+    router.navigateTo(
+      .deferredPendingView(
+        credentialOutcome: credentialOutcome
+      )
+    )
+  }
+
+  private func handleCredentialResult(_ result: CredentialOutcome) {
+    if let credential = result.credential {
       setState {
         $0.copy(credential: credential)
       }
-    case .failure(let error):
-      setState {
-        $0.copy(errorMessage: error.localizedDescription)
-      }
+      navigateToIssuanceResultView()
     }
-    navigateToIssuanceResultView()
+
+    if let _ = result.deferredCredential {
+      setState {
+        $0.copy(supportingText: "Pending credential issuance...")
+      }
+      navigateToPendingDefferedView(credentialOutcome: result)
+    }
   }
 }

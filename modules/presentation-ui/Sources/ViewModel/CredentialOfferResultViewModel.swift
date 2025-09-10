@@ -13,27 +13,39 @@
  * ANY KIND, either express or implied. See the Licence for the specific language
  * governing permissions and limitations under the Licence.
  */
+import Foundation
+import Copyable
 import OpenID4VCI
+import SwiftyJSON
 import service_vci
 
-public enum Route: Hashable, Identifiable, Equatable {
-  case credentialOffer
-  case credentialOfferResultView(config: CredentialOfferResultType)
-  case deferredPendingView(credentialOutcome: CredentialOutcome)
+@Copyable
+struct CredentialOfferResultState: ViewState {
+  let config: CredentialOfferResultConfiguration
+}
 
-  public var id: String {
-    switch self {
-    case .credentialOffer: return "credentialOffer"
-    case .credentialOfferResultView: return "credentialOfferResultView"
-    case .deferredPendingView: return "deferredPendingView"
+class CredentialOfferResultViewModel<Router: RouterGraphType>: ViewModel<Router, CredentialOfferResultState> {
+
+  private let config: CredentialOfferResultType
+
+  init(
+    router: Router,
+    config: CredentialOfferResultType
+  ) {
+    self.config = config
+    super.init(
+      router: router,
+      initialState: .init(
+        config: config.configuration
+      )
+    )
+  }
+
+  func dismiss() {
+    if config.configuration.dismiss {
+      router.pop()
+    } else {
+      router.navigateToRoot()
     }
-  }
-
-  public static func == (lhs: Route, rhs: Route) -> Bool {
-    lhs.id == rhs.id
-  }
-
-  public func hash(into hasher: inout Hasher) {
-    hasher.combine(id)
   }
 }

@@ -19,27 +19,26 @@ public struct ActionCardView: View {
 
   @Environment(\.colorScheme) var colorScheme
 
-  @Binding var isScannerPresented: Bool
-
   private let icon: String
   private let label: String
   private let description: String
   private let buttonLabel: String
+  private let supportingText: String
   private let action: () -> Void
 
   public init(
-    isScannerPresented: Binding<Bool>,
     icon: String,
     label: String,
     description: String,
+    supportingText: String,
     buttonLabel: String,
     action: @escaping () -> Void
   ) {
-    self._isScannerPresented = isScannerPresented
     self.icon = icon
     self.label = label
     self.description = description
     self.buttonLabel = buttonLabel
+    self.supportingText = supportingText
     self.action = action
   }
 
@@ -80,7 +79,7 @@ public struct ActionCardView: View {
         .padding(.top, 15)
         .contentShape(RoundedRectangle(cornerRadius: 12))
 
-        Text("Only SD-JWT credentials containing PID are supported.")
+        Text(supportingText)
           .font(.caption)
           .foregroundStyle(.secondary)
           .padding(.top, 10)
@@ -101,10 +100,10 @@ public struct ActionCardView: View {
 
 #Preview {
   ActionCardView(
-    isScannerPresented: .constant(true),
     icon: SymbolManager.issuance.rawValue,
     label: "Credential Offer",
     description: "Scan the QR code provided to receive your credential securely.",
+    supportingText: "Only SD-JWT credentials containing PID are supported.",
     buttonLabel: "Open Scanner") {
       print("Action")
     }

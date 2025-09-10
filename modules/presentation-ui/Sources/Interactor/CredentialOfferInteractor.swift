@@ -24,7 +24,11 @@ protocol CredentialOfferInteractorType: Sendable {
     offerUri: String,
     scope: String,
     transactionCode: String?
-  ) async throws -> Result<Credential, Error>
+  ) async throws -> CredentialOutcome
+
+  func requestDeferredCredential(
+    deferredCredential: DeferredCredential
+  ) async throws -> CredentialOutcome
 
   func isPreAuthorizedGrant(
     offerUri: String,
@@ -65,7 +69,7 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
     offerUri: String,
     scope: String,
     transactionCode: String? = ""
-  ) async throws -> Result<Credential, Error> {
+  ) async throws -> CredentialOutcome {
 
     let config = controller.clientConfig
 
@@ -75,11 +79,11 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
       controller.clientConfig
     )
 
-    if !credentialOffer.isSDJWT || !credentialOffer.isPID {
-      return .failure(
-        CredentialIssuanceError.unknown(reason: "Credential offer is not a valid SD-JWT or does not contain PID")
-      )
-    }
+//    if !credentialOffer.isSDJWT || !credentialOffer.isPID {
+//      return .failure(
+//        CredentialIssuanceError.unknown(reason: "Credential offer is not a valid SD-JWT or does not contain PID")
+//      )
+//    }
 
     let issuer = try await controller.getIssuer(
       credentialOffer,
@@ -93,37 +97,41 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
 
     switch grants {
     case .authorizationCode:
-      return .success(
-        try await authorizeRequestWithAuthCodeUseCase(
-          issuer: issuer,
-          credentialOffer: credentialOffer
-        )
+      return try await authorizeRequestWithAuthCodeUseCase(
+        issuer: issuer,
+        credentialOffer: credentialOffer
       )
     case .preAuthorizedCode(let preAuthorizedCode):
-      return .success(
-        try await authorizeWithPreAuthorizationCode(
-          issuer: issuer,
-          credentialOffer: credentialOffer,
-          preAuthorizedCode: preAuthorizedCode,
-          transactionCode: transactionCode ?? ""
-        )
+      return try await authorizeWithPreAuthorizationCode(
+        issuer: issuer,
+        credentialOffer: credentialOffer,
+        preAuthorizedCode: preAuthorizedCode,
+        transactionCode: transactionCode ?? ""
       )
     case .both(_, let preAuthorizedCode):
-      return .success(
-        try await authorizeWithPreAuthorizationCode(
-          issuer: issuer,
-          credentialOffer: credentialOffer,
-          preAuthorizedCode: preAuthorizedCode,
-          transactionCode: transactionCode ?? ""
-        )
+      return try await authorizeWithPreAuthorizationCode(
+        issuer: issuer,
+        credentialOffer: credentialOffer,
+        preAuthorizedCode: preAuthorizedCode,
+        transactionCode: transactionCode ?? ""
       )
     }
+  }
+
+  func requestDeferredCredential(
+    deferredCredential: DeferredCredential
+  ) async throws -> CredentialOutcome {
+    return try await controller.requestDeferredCredential(
+      deferredCredential.issuer,
+      deferredCredential.trasnactionId,
+      deferredCredential
+    ).mapToCredentialOutcome()
   }
 
   private func authorizeRequestWithAuthCodeUseCase(
     issuer: Issuer,
     credentialOffer: CredentialOffer
-  ) async throws -> Credential {
+  ) async throws -> CredentialOutcome {
     let authorized = try await controller.authorizeRequestWithAuthCodeUseCase(
       issuer: issuer,
       offer: credentialOffer
@@ -135,7 +143,7 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
       credentialOffer.credentialConfigurationIdentifiers.first!
     )
 
-    return credential
+    return credential.mapToCredentialOutcome()
   }
 
   private func authorizeWithPreAuthorizationCode(
@@ -143,14 +151,14 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
     credentialOffer: CredentialOffer,
     preAuthorizedCode: Grants.PreAuthorizedCode,
     transactionCode: String
-  ) async throws -> Credential {
+  ) async throws -> CredentialOutcome {
     let authResult = await issuer.authorizeWithPreAuthorizationCode(
       credentialOffer: credentialOffer,
       authorizationCode: .preAuthorizationCode(
         preAuthorizedCode: preAuthorizedCode.preAuthorizedCode ?? "",
         txCode: preAuthorizedCode.txCode
       ),
-      client: .public(id: "218232426"),
+      client: controller.clientConfig.client,
       transactionCode: transactionCode
     )
 
@@ -162,7 +170,7 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
       credentialOffer.credentialConfigurationIdentifiers.first!
     )
 
-    return credential
+    return credential.mapToCredentialOutcome()
   }
 }
 

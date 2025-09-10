@@ -62,7 +62,13 @@ public protocol CredentialIssuanceControllerType: Sendable {
     _ issuer: Issuer,
     _ authorized: AuthorizedRequest,
     _ credentialConfigurationIdentifier: CredentialConfigurationIdentifier?
-  ) async throws -> Credential
+  ) async throws -> IssuanceOutcome
+
+  func requestDeferredCredential(
+    _ issuer: Issuer,
+    _ transactionId: TransactionId,
+    _ deferredCredential: DeferredCredential
+  ) async throws -> IssuanceOutcome
 }
 
 final class CredentialIssuanceController: CredentialIssuanceControllerType {
@@ -226,7 +232,7 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
     _ issuer: Issuer,
     _ authorized: AuthorizedRequest,
     _ credentialConfigurationIdentifier: CredentialConfigurationIdentifier?
-  ) async throws -> Credential {
+  ) async throws -> IssuanceOutcome {
     guard let credentialConfigurationIdentifier else {
       throw CredentialIssuanceError.missingCredentialConfigurationIdentifier
     }
@@ -249,10 +255,16 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
       case .success(let response):
         if let result = response.credentialResponses.first {
           switch result {
-          case .deferred:
-            throw CredentialIssuanceError.deferredIssuance
+          case .deferred(let transaction):
+            return .deferred(
+              DeferredCredential(
+                trasnactionId: transaction,
+                authorizedRequest: authorized,
+                issuer: issuer
+              )
+            )
           case .issued(_, let credential, _, _):
-            return credential
+            return .issued(credential)
           }
         } else {
           throw CredentialIssuanceError.failedCredentialRequest(reason: "No credential response results available")
@@ -263,6 +275,38 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
         throw CredentialIssuanceError.unknown(reason: error.localizedDescription)
       }
     case .failure(let error): throw CredentialIssuanceError.unknown(reason: error.localizedDescription)
+    }
+  }
+
+  func requestDeferredCredential(
+    _ issuer: Issuer,
+    _ transactionId: TransactionId,
+    _ deferredCredential: DeferredCredential
+  ) async throws -> IssuanceOutcome {
+    let requestOutcome = try await issuer.requestDeferredCredential(
+      request: deferredCredential.authorizedRequest,
+      transactionId: deferredCredential.trasnactionId,
+      dPopNonce: nil
+    )
+
+    switch requestOutcome {
+    case .success(let response):
+      switch response {
+      case .issued(let credential):
+        return .issued(credential)
+      case .issuancePending(let transaction):
+        return .deferred(
+          DeferredCredential(
+            trasnactionId: transaction,
+            authorizedRequest: deferredCredential.authorizedRequest,
+            issuer: issuer
+          )
+        )
+      case .errored(let error, _):
+        throw CredentialIssuanceError.unknown(reason: error ?? "")
+      }
+    case .failure(let error):
+      throw CredentialIssuanceError.unknown(reason: error.localizedDescription)
     }
   }
 
@@ -315,10 +359,12 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
 
 @MainActor
 public final class AutoPresentationProvider: NSObject, ASWebAuthenticationPresentationContextProviding {
-  public func presentationAnchor(
-    for session: ASWebAuthenticationSession
-  ) -> ASPresentationAnchor {
-    let window = UIApplication.shared.windows.first { $0.isKeyWindow }
+  public func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
+    let windowScene = UIApplication.shared.connectedScenes
+      .compactMap { $0 as? UIWindowScene }
+      .first { $0.activationState == .foregroundActive }
+
+    let window = windowScene?.windows.first { $0.isKeyWindow }
     return window ?? ASPresentationAnchor()
   }
 }
