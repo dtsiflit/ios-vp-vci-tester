@@ -18,6 +18,7 @@ import Copyable
 import OpenID4VCI
 import SwiftyJSON
 import service_vci
+import domain_business_logic
 
 @Copyable
 struct CredentialOfferState: ViewState {

@@ -14,7 +14,7 @@
  * governing permissions and limitations under the Licence.
  */
 import OpenID4VCI
-import service_vci
+import domain_business_logic
 
 public enum Route: Hashable, Identifiable, Equatable {
   case credentialOffer

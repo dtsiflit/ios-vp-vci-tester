@@ -15,18 +15,31 @@
  */
 import OpenID4VCI
 
-public enum IssuanceOutcome {
-  case issued(Credential)
-  case deferred(DeferredCredentialOutcome)
+public struct DeferredCredentialOutcome: Sendable {
+  public let trasnactionId: TransactionId
+  public let authorizedRequest: AuthorizedRequest
+  public let issuer: Issuer
+
+  public init(
+    trasnactionId: TransactionId,
+    authorizedRequest: AuthorizedRequest,
+    issuer: Issuer
+  ) {
+    self.trasnactionId = trasnactionId
+    self.authorizedRequest = authorizedRequest
+    self.issuer = issuer
+  }
 }
 
-public extension IssuanceOutcome {
-  func mapToCredentialOutcome(isSDJWT: Bool) -> CredentialOutcome {
-    switch self {
-    case .issued(let credential):
-      return .init(issuedCredential: .init(credential: credential, isSDJWT: isSDJWT))
-    case .deferred(let transaction):
-      return .init(deferredCredential: transaction)
-    }
+public struct IssuedCredentialOutcome: Sendable {
+  public let credential: Credential
+  public let isSDJWT: Bool
+
+  public init(
+    credential: Credential,
+    isSDJWT: Bool = false
+  ) {
+    self.credential = credential
+    self.isSDJWT = isSDJWT
   }
 }

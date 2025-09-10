@@ -27,3 +27,19 @@ public struct CredentialOutcome: Sendable {
     self.deferredCredential = deferredCredential
   }
 }
+
+public enum IssuanceOutcome {
+  case issued(Credential)
+  case deferred(DeferredCredentialOutcome)
+}
+
+public extension IssuanceOutcome {
+  func mapToCredentialOutcome(isSDJWT: Bool) -> CredentialOutcome {
+    switch self {
+    case .issued(let credential):
+      return .init(issuedCredential: .init(credential: credential, isSDJWT: isSDJWT))
+    case .deferred(let transaction):
+      return .init(deferredCredential: transaction)
+    }
+  }
+}

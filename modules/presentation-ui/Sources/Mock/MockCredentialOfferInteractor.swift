@@ -16,7 +16,7 @@
 import Foundation
 import OpenID4VCI
 import SwiftyJSON
-import service_vci
+import domain_business_logic
 
 public final class MockCredentialOfferInteractor: CredentialOfferInteractorType {
 

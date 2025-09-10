@@ -16,6 +16,7 @@
 import SwiftUI
 import OpenID4VCI
 import service_vci
+import domain_business_logic
 
 public struct CredentialOfferResultConfiguration: Sendable {
   let title: String

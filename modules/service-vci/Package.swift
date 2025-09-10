@@ -13,6 +13,10 @@ let package = Package(
   ],
   dependencies: [
     .package(
+      name: "domain-business-logic",
+      path: "./domain-business-logic"
+    ),
+    .package(
       url: "https://github.com/Swinject/Swinject.git",
       from: "2.9.1"
     ),
@@ -26,6 +30,7 @@ let package = Package(
       name: "service-vci",
       dependencies: [
         "Swinject",
+        "domain-business-logic",
         .product(
           name: "OpenID4VCI",
           package: "eudi-lib-ios-openid4vci-swift"

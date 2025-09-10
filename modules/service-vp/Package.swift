@@ -15,13 +15,29 @@ let package = Package(
     .package(
       url: "https://github.com/Swinject/Swinject.git",
       from: "2.9.1"
+    ),
+    .package(
+      url: "https://github.com/eu-digital-identity-wallet/eudi-lib-ios-siop-openid4vp-swift",
+      from: "0.16.0"
+    ),
+    .package(
+      url: "https://github.com/eu-digital-identity-wallet/SwiftCopyableMacro.git",
+      from: "0.0.4"
     )
   ],
   targets: [
     .target(
       name: "service-vp",
       dependencies: [
-        "Swinject"
+        "Swinject",
+        .product(
+          name: "OpenID4VP",
+          package: "eudi-lib-ios-openid4vci-swift"
+        ),
+        .product(
+          name: "Copyable",
+          package: "SwiftCopyableMacro"
+        )
       ]
     ),
     .testTarget(

@@ -15,6 +15,7 @@
  */
 import OpenID4VCI
 import AuthenticationServices
+import domain_business_logic
 
 public protocol CredentialIssuanceControllerType: Sendable {
 
