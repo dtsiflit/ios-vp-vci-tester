@@ -21,7 +21,7 @@ import service_vci
 
 @Copyable
 struct CredentialOfferState: ViewState {
-  let credential: Credential?
+  let credential: IssuedCredentialOutcome?
   let errorMessage: String?
   let isPreAuthorized: Bool
   let needsTransactionCode: Bool
@@ -138,7 +138,7 @@ class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router, Crede
   }
 
   private func handleCredentialResult(_ result: CredentialOutcome) {
-    if let credential = result.credential {
+    if let credential = result.issuedCredential {
       setState {
         $0.copy(credential: credential)
       }

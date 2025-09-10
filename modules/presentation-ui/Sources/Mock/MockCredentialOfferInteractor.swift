@@ -40,7 +40,7 @@ public final class MockCredentialOfferInteractor: CredentialOfferInteractorType 
     ]
 
     let mockCredential = Credential.json(jsonCredential)
-    let credentialOutcome = CredentialOutcome(credential: mockCredential)
+    let credentialOutcome = CredentialOutcome(issuedCredential: .init(credential: mockCredential))
     return credentialOutcome
   }
 
@@ -100,7 +100,7 @@ public final class MockCredentialOfferInteractor: CredentialOfferInteractorType 
   }
 
   func requestDeferredCredential(
-    deferredCredential: DeferredCredential
+    deferredCredential: DeferredCredentialOutcome
   ) async throws -> CredentialOutcome {
     throw ValidationError.todo(reason: "Implement soon")
   }

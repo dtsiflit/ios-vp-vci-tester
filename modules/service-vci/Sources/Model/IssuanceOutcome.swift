@@ -17,14 +17,14 @@ import OpenID4VCI
 
 public enum IssuanceOutcome {
   case issued(Credential)
-  case deferred(DeferredCredential)
+  case deferred(DeferredCredentialOutcome)
 }
 
 public extension IssuanceOutcome {
-  func mapToCredentialOutcome() -> CredentialOutcome {
+  func mapToCredentialOutcome(isSDJWT: Bool) -> CredentialOutcome {
     switch self {
     case .issued(let credential):
-      return .init(credential: credential)
+      return .init(issuedCredential: .init(credential: credential, isSDJWT: isSDJWT))
     case .deferred(let transaction):
       return .init(deferredCredential: transaction)
     }

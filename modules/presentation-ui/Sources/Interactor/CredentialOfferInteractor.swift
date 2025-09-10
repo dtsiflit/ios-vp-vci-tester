@@ -27,7 +27,7 @@ protocol CredentialOfferInteractorType: Sendable {
   ) async throws -> CredentialOutcome
 
   func requestDeferredCredential(
-    deferredCredential: DeferredCredential
+    deferredCredential: DeferredCredentialOutcome
   ) async throws -> CredentialOutcome
 
   func isPreAuthorizedGrant(
@@ -79,12 +79,6 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
       controller.clientConfig
     )
 
-//    if !credentialOffer.isSDJWT || !credentialOffer.isPID {
-//      return .failure(
-//        CredentialIssuanceError.unknown(reason: "Credential offer is not a valid SD-JWT or does not contain PID")
-//      )
-//    }
-
     let issuer = try await controller.getIssuer(
       credentialOffer,
       nil,
@@ -119,13 +113,14 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
   }
 
   func requestDeferredCredential(
-    deferredCredential: DeferredCredential
+    deferredCredential: DeferredCredentialOutcome
   ) async throws -> CredentialOutcome {
     return try await controller.requestDeferredCredential(
       deferredCredential.issuer,
       deferredCredential.trasnactionId,
       deferredCredential
-    ).mapToCredentialOutcome()
+    )
+    .mapToCredentialOutcome(isSDJWT: false)
   }
 
   private func authorizeRequestWithAuthCodeUseCase(
@@ -143,7 +138,7 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
       credentialOffer.credentialConfigurationIdentifiers.first!
     )
 
-    return credential.mapToCredentialOutcome()
+    return credential.mapToCredentialOutcome(isSDJWT: credentialOffer.isSDJWT)
   }
 
   private func authorizeWithPreAuthorizationCode(
@@ -170,7 +165,7 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
       credentialOffer.credentialConfigurationIdentifiers.first!
     )
 
-    return credential.mapToCredentialOutcome()
+    return credential.mapToCredentialOutcome(isSDJWT: credentialOffer.isSDJWT)
   }
 }
 

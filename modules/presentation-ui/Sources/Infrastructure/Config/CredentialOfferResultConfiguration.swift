@@ -15,27 +15,30 @@
  */
 import SwiftUI
 import OpenID4VCI
+import service_vci
 
 public struct CredentialOfferResultConfiguration: Sendable {
   let title: String
   let symbolName: String
   let symbolColor: Color
   let description: String
+  let credential: IssuedCredentialOutcome?
   let dismiss: Bool
 }
 
 public enum CredentialOfferResultType: Sendable {
-  case success(credential: Credential, dismiss: Bool)
+  case success(credential: IssuedCredentialOutcome, dismiss: Bool)
   case failure(error: String, dismiss: Bool)
 
   var configuration: CredentialOfferResultConfiguration {
     switch self {
-    case .success(_, let dismiss):
+    case .success(let credential, let dismiss):
       return CredentialOfferResultConfiguration(
         title: "Success",
         symbolName: SymbolManager.value(for: .success),
         symbolColor: .green,
         description: "The credential was issued successfully.",
+        credential: credential,
         dismiss: dismiss
       )
     case .failure(_, let dismiss):
@@ -44,6 +47,7 @@ public enum CredentialOfferResultType: Sendable {
         symbolName: SymbolManager.value(for: .failure),
         symbolColor: .red,
         description: "Oops! We couldn't issue your credential this time.",
+        credential: nil,
         dismiss: dismiss
       )
     }

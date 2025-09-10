@@ -16,14 +16,14 @@
 import OpenID4VCI
 
 public struct CredentialOutcome: Sendable {
-  public let credential: Credential?
-  public let deferredCredential: DeferredCredential?
+  public let issuedCredential: IssuedCredentialOutcome?
+  public let deferredCredential: DeferredCredentialOutcome?
 
   public init(
-    credential: Credential? = nil,
-    deferredCredential: DeferredCredential? = nil
+    issuedCredential: IssuedCredentialOutcome? = nil,
+    deferredCredential: DeferredCredentialOutcome? = nil
   ) {
-    self.credential = credential
+    self.issuedCredential = issuedCredential
     self.deferredCredential = deferredCredential
   }
 }

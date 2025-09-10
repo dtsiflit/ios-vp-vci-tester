@@ -15,8 +15,21 @@
  */
 import OpenID4VCI
 
-public struct DeferredCredential: Sendable {
+public struct DeferredCredentialOutcome: Sendable {
   public let trasnactionId: TransactionId
   public let authorizedRequest: AuthorizedRequest
   public let issuer: Issuer
+}
+
+public struct IssuedCredentialOutcome: Sendable {
+  public let credential: Credential
+  public let isSDJWT: Bool
+
+  public init(
+    credential: Credential,
+    isSDJWT: Bool = false
+  ) {
+    self.credential = credential
+    self.isSDJWT = isSDJWT
+  }
 }

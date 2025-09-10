@@ -67,7 +67,7 @@ public protocol CredentialIssuanceControllerType: Sendable {
   func requestDeferredCredential(
     _ issuer: Issuer,
     _ transactionId: TransactionId,
-    _ deferredCredential: DeferredCredential
+    _ deferredCredential: DeferredCredentialOutcome
   ) async throws -> IssuanceOutcome
 }
 
@@ -257,7 +257,7 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
           switch result {
           case .deferred(let transaction):
             return .deferred(
-              DeferredCredential(
+              DeferredCredentialOutcome(
                 trasnactionId: transaction,
                 authorizedRequest: authorized,
                 issuer: issuer
@@ -281,7 +281,7 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
   func requestDeferredCredential(
     _ issuer: Issuer,
     _ transactionId: TransactionId,
-    _ deferredCredential: DeferredCredential
+    _ deferredCredential: DeferredCredentialOutcome
   ) async throws -> IssuanceOutcome {
     let requestOutcome = try await issuer.requestDeferredCredential(
       request: deferredCredential.authorizedRequest,
@@ -296,7 +296,7 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
         return .issued(credential)
       case .issuancePending(let transaction):
         return .deferred(
-          DeferredCredential(
+          DeferredCredentialOutcome(
             trasnactionId: transaction,
             authorizedRequest: deferredCredential.authorizedRequest,
             issuer: issuer

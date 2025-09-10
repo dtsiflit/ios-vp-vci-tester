@@ -57,7 +57,7 @@ class DeferredPendingViewModel<Router: RouterGraphType>: ViewModel<Router, Defer
           deferredCredential: deferredCredential
         )
 
-        navigateToIssuanceResultView(credential: outcome.credential)
+        navigateToIssuanceResultView(credential: outcome.issuedCredential)
       } catch {
         setState {
           $0.copy(
@@ -69,7 +69,7 @@ class DeferredPendingViewModel<Router: RouterGraphType>: ViewModel<Router, Defer
     }
   }
 
-  private func navigateToIssuanceResultView(credential: Credential?) {
+  private func navigateToIssuanceResultView(credential: IssuedCredentialOutcome?) {
     let result: CredentialOfferResultType
 
     if let credential {

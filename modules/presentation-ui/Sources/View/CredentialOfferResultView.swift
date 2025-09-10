@@ -72,7 +72,7 @@ struct CredentialOfferResultView<Router: RouterGraphType>: View {
     with: .init(
       router: RouterGraph(),
       config: .success(
-        credential: .json(""),
+        credential: .init(credential: .json("")),
         dismiss: false
       )
     )
