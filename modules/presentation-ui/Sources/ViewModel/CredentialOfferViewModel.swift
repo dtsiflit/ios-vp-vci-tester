@@ -81,6 +81,7 @@ class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router, Crede
           errorMessage: error.localizedDescription
         )
       }
+      navigateToIssuanceResultView()
     }
   }
 
