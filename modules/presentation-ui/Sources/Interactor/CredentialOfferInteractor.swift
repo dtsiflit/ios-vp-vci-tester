@@ -172,7 +172,7 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
 extension CredentialOffer {
   var isSDJWT: Bool {
     credentialConfigurationIdentifiers
-      .contains { $0.value.contains("vc_sd_jwt") }
+      .contains { $0.value.contains("sd_jwt") }
   }
 
   var isPID: Bool {

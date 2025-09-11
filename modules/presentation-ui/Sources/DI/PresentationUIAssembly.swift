@@ -16,6 +16,7 @@
 import Swinject
 import Foundation
 import service_vci
+import service_vp
 
 public final class PresentationUIAssembly: Assembly {
 
@@ -26,6 +27,13 @@ public final class PresentationUIAssembly: Assembly {
     container.register(CredentialOfferInteractorType.self) { r in
       CredentialOfferInteractor(
         controller: r.force(CredentialIssuanceControllerType.self)
+      )
+    }
+    .inObjectScope(.container)
+
+    container.register(PresentationInteractorType.self) { r in
+      PresentationInteractor(
+        controller: r.force(PresentationControllerType.self)
       )
     }
     .inObjectScope(.container)

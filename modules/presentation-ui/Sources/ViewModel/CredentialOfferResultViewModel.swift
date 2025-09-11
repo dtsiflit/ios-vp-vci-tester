@@ -27,12 +27,15 @@ struct CredentialOfferResultState: ViewState {
 class CredentialOfferResultViewModel<Router: RouterGraphType>: ViewModel<Router, CredentialOfferResultState> {
 
   private let config: CredentialOfferResultType
+  private let interactor: PresentationInteractorType
 
   init(
     router: Router,
-    config: CredentialOfferResultType
+    config: CredentialOfferResultType,
+    interactor: PresentationInteractorType
   ) {
     self.config = config
+    self.interactor  = interactor
     super.init(
       router: router,
       initialState: .init(
@@ -46,6 +49,14 @@ class CredentialOfferResultViewModel<Router: RouterGraphType>: ViewModel<Router,
       router.pop()
     } else {
       router.navigateToRoot()
+    }
+  }
+
+  func loadAndPresentDocument(url: String) async {
+    do {
+      try await interactor.loadAndPresentDocument(url: url)
+    } catch {
+      print("Error")
     }
   }
 }

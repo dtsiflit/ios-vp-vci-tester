@@ -13,17 +13,23 @@
  * ANY KIND, either express or implied. See the Licence for the specific language
  * governing permissions and limitations under the Licence.
  */
-import Swinject
+import service_vp
 
-public final class ServiceVPAssembly: Assembly {
+protocol PresentationInteractorType: Sendable {
+  func loadAndPresentDocument(url: String) async throws
+}
 
-  public init() {}
+final class PresentationInteractor: PresentationInteractorType {
 
-  public func assemble(container: Container) {
-    container.register(PresentationControllerType.self) { _ in
-      PresentationController()
-    }
-    .inObjectScope(.container)
+  private let controller: PresentationControllerType
+
+  init(
+    controller: PresentationControllerType
+  ) {
+    self.controller = controller
   }
 
+  func loadAndPresentDocument(url: String) async {
+    await controller.loadAndPresentDocument(url: url)
+  }
 }

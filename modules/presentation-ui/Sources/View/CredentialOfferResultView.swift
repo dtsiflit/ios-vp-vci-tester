@@ -49,17 +49,25 @@ struct CredentialOfferResultView<Router: RouterGraphType>: View {
           }
           .frame(maxHeight: .infinity)
 
-          Text(localization.get(with: .close))
-            .foregroundStyle(viewModel.viewState.config.symbolColor)
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background {
-              Capsule()
-                .foregroundStyle(colorScheme == .dark ? Color(UIColor.secondarySystemBackground) : Color(UIColor.systemBackground))
+          VStack {
+            if let isSDJWT = viewModel.viewState.config.credential?.isSDJWT, isSDJWT {
+              CustomCapsuleButton(
+                label: .presentation,
+                color: viewModel.viewState.config.symbolColor) {
+                  Task {
+                    await viewModel.loadAndPresentDocument(url: "")
+                  }
+                }
             }
-            .onTapGesture {
+
+            CustomCapsuleButton(
+              label: .close,
+              color: viewModel.viewState.config.symbolColor,
+              style: .secondary
+            ) {
               viewModel.dismiss()
             }
+          }
         }
       }
     }
@@ -72,9 +80,13 @@ struct CredentialOfferResultView<Router: RouterGraphType>: View {
     with: .init(
       router: RouterGraph(),
       config: .success(
-        credential: .init(credential: .json("")),
+        credential: .init(
+          credential: .json(""),
+          isSDJWT: true
+        ),
         dismiss: false
-      )
+      ),
+      interactor: MockPresentationInteractor()
     )
   )
 }
@@ -86,7 +98,8 @@ struct CredentialOfferResultView<Router: RouterGraphType>: View {
       config: .failure(
         error: "Error",
         dismiss: false
-      )
+      ),
+      interactor: MockPresentationInteractor()
     )
   )
 }

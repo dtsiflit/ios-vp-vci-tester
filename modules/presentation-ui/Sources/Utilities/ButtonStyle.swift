@@ -13,17 +13,9 @@
  * ANY KIND, either express or implied. See the Licence for the specific language
  * governing permissions and limitations under the Licence.
  */
-import Swinject
+import Foundation
 
-public final class ServiceVPAssembly: Assembly {
-
-  public init() {}
-
-  public func assemble(container: Container) {
-    container.register(PresentationControllerType.self) { _ in
-      PresentationController()
-    }
-    .inObjectScope(.container)
-  }
-
+enum ButtonStyle {
+  case primary
+  case secondary
 }
