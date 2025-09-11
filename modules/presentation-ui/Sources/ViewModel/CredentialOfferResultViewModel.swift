@@ -28,12 +28,12 @@ struct CredentialOfferResultState: ViewState {
 class CredentialOfferResultViewModel<Router: RouterGraphType>: ViewModel<Router, CredentialOfferResultState> {
 
   private let config: CredentialOfferResultType
-  private let interactor: PresentationInteractorType
+  private let interactor: CredentialPresentationInteractorType
 
   init(
     router: Router,
     config: CredentialOfferResultType,
-    interactor: PresentationInteractorType
+    interactor: CredentialPresentationInteractorType
   ) {
     self.config = config
     self.interactor  = interactor
@@ -54,9 +54,9 @@ class CredentialOfferResultViewModel<Router: RouterGraphType>: ViewModel<Router,
     }
   }
 
-  func loadAndPresentDocument(url: String) async {
+  func loadAndPresentCredential(using url: String) async {
     do {
-      let presentationSucces = try await interactor.loadAndPresentDocument(url: url)
+      let presentationSucces = try await interactor.loadAndPresentCredential(url: url)
       setState {
         $0.copy(
           presentationSucces: presentationSucces
@@ -70,7 +70,7 @@ class CredentialOfferResultViewModel<Router: RouterGraphType>: ViewModel<Router,
 
   private func handleResult(_ presentationSuccess: Bool) {
     if presentationSuccess {
-      router.navigateTo(.presentationResult)
+      router.navigateTo(.credentialPresentationResult)
     }
   }
 }

@@ -20,8 +20,8 @@ public final class ServiceVPAssembly: Assembly {
   public init() {}
 
   public func assemble(container: Container) {
-    container.register(PresentationControllerType.self) { _ in
-      PresentationController()
+    container.register(CredentialPresentationControllerType.self) { _ in
+      CredentialPresentationController()
     }
     .inObjectScope(.container)
   }

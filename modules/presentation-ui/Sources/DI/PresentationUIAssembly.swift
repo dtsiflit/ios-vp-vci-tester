@@ -31,9 +31,9 @@ public final class PresentationUIAssembly: Assembly {
     }
     .inObjectScope(.container)
 
-    container.register(PresentationInteractorType.self) { r in
-      PresentationInteractor(
-        controller: r.force(PresentationControllerType.self)
+    container.register(CredentialPresentationInteractorType.self) { r in
+      CredentialPresentationInteractor(
+        controller: r.force(CredentialPresentationControllerType.self)
       )
     }
     .inObjectScope(.container)

@@ -13,23 +13,13 @@
  * ANY KIND, either express or implied. See the Licence for the specific language
  * governing permissions and limitations under the Licence.
  */
-import service_vp
+import Foundation
+import OpenID4VCI
+import SwiftyJSON
+import domain_business_logic
 
-protocol PresentationInteractorType: Sendable {
-  func loadAndPresentDocument(url: String) async throws -> Bool
-}
-
-final class PresentationInteractor: PresentationInteractorType {
-
-  private let controller: PresentationControllerType
-
-  init(
-    controller: PresentationControllerType
-  ) {
-    self.controller = controller
-  }
-
-  func loadAndPresentDocument(url: String) async throws -> Bool  {
-    try await controller.loadAndPresentDocument(url: url)
+public final class MockCredentialPresentationInteractor: CredentialPresentationInteractorType {
+  func loadAndPresentCredential(url: String) async throws -> Bool {
+    throw ValidationError.todo(reason: "Implement soon")
   }
 }

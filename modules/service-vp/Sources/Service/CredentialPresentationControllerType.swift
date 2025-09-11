@@ -17,13 +17,13 @@ import JOSESwift
 import Foundation
 import SiopOpenID4VP
 
-public protocol PresentationControllerType: Sendable {
-  func loadAndPresentDocument(url: String) async throws -> Bool
+public protocol CredentialPresentationControllerType: Sendable {
+  func loadAndPresentCredential(using url: String) async throws -> Bool
 }
 
-final class PresentationController: PresentationControllerType {
+final class CredentialPresentationController: CredentialPresentationControllerType {
 
-  func loadAndPresentDocument(url: String) async throws -> Bool {
+  func loadAndPresentCredential(using url: String) async throws -> Bool {
 
     let rsaPrivateKey = try! KeyController.generateRSAPrivateKey()
     let rsaPublicKey = try! KeyController.generateRSAPublicKey(from: rsaPrivateKey)
@@ -81,7 +81,7 @@ final class PresentationController: PresentationControllerType {
 
       let consent: ClientConsent = .vpToken(
         vpContent: .dcql(verifiablePresentations: [
-          try QueryId(value: "query_0"): [.generic(PresentationConfiguration.cbor)]
+          try QueryId(value: "query_0"): [.generic(CredentialPresentationConfiguration.cbor)]
         ])
       )
 
@@ -96,10 +96,10 @@ final class PresentationController: PresentationControllerType {
       case .accepted:
         return true
       default:
-        throw PresentationError.rejected
+        throw CredentialPresentationError.rejected
       }
     default:
-      throw PresentationError.notJwt
+      throw CredentialPresentationError.notJwt
     }
   }
 }

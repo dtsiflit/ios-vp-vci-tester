@@ -51,7 +51,7 @@ public final class RouterGraph: RouterGraphType, @unchecked Sendable {
           router: self,
           config: config,
           interactor: DIGraph.resolver.force(
-            PresentationInteractorType.self
+            CredentialPresentationInteractorType.self
           )
         )
       )
@@ -67,8 +67,8 @@ public final class RouterGraph: RouterGraphType, @unchecked Sendable {
         )
       )
       .eraseToAnyView()
-    case .presentationResult:
-      Text("Presentation Success")
+    case .credentialPresentationResult:
+      Text("Presentation Result")
         .eraseToAnyView()
     }
   }
@@ -101,7 +101,7 @@ public final class RouterGraph: RouterGraphType, @unchecked Sendable {
               router: self,
               config: config,
               interactor: DIGraph.resolver.force(
-                PresentationInteractorType.self
+                CredentialPresentationInteractorType.self
               )
             )
           )

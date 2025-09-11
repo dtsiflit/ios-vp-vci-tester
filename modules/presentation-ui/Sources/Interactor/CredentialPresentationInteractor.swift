@@ -13,21 +13,23 @@
  * ANY KIND, either express or implied. See the Licence for the specific language
  * governing permissions and limitations under the Licence.
  */
-import Foundation
+import service_vp
 
-public enum PresentationError: LocalizedError {
-  case rejected
-  case notJwt
-  case unknown(reason: String)
+protocol CredentialPresentationInteractorType: Sendable {
+  func loadAndPresentCredential(url: String) async throws -> Bool
+}
 
-  public var errorDescription: String? {
-    switch self {
-    case .rejected:
-      return "Rejected"
-    case .notJwt:
-      return "Not JWT"
-    case .unknown(let reason):
-      return "Unknown error: \(reason)"
-    }
+final class CredentialPresentationInteractor: CredentialPresentationInteractorType {
+
+  private let controller: CredentialPresentationControllerType
+
+  init(
+    controller: CredentialPresentationControllerType
+  ) {
+    self.controller = controller
+  }
+
+  func loadAndPresentCredential(url: String) async throws -> Bool {
+    try await controller.loadAndPresentCredential(using: url)
   }
 }

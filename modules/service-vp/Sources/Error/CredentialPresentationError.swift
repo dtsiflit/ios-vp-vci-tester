@@ -14,12 +14,20 @@
  * governing permissions and limitations under the Licence.
  */
 import Foundation
-import OpenID4VCI
-import SwiftyJSON
-import domain_business_logic
 
-public final class MockPresentationInteractor: PresentationInteractorType {
-  func loadAndPresentDocument(url: String) async throws -> Bool {
-    throw ValidationError.todo(reason: "Implement soon")
+public enum CredentialPresentationError: LocalizedError {
+  case rejected
+  case notJwt
+  case unknown(reason: String)
+
+  public var errorDescription: String? {
+    switch self {
+    case .rejected:
+      return "Rejected"
+    case .notJwt:
+      return "Not JWT"
+    case .unknown(let reason):
+      return "Unknown error: \(reason)"
+    }
   }
 }
