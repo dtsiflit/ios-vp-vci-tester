@@ -23,49 +23,28 @@ public protocol CredentialPresentationControllerType: Sendable {
 
 final class CredentialPresentationController: CredentialPresentationControllerType {
 
+  private let keyProvider: KeyProvider
+
+  public init(keyProvider: KeyProvider) {
+    self.keyProvider = keyProvider
+  }
+
   func loadAndPresentCredential(using url: String) async throws -> Bool {
+    let privateKey = try await keyProvider.generateECDHPrivateKey()
+    let rsaJWK = try await keyProvider.generateRsaJWKKey()
 
-    let rsaPrivateKey = try! KeyController.generateRSAPrivateKey()
-    let rsaPublicKey = try! KeyController.generateRSAPublicKey(from: rsaPrivateKey)
-    let privateKey = try! KeyController.generateECDHPrivateKey()
+    guard let keySet = try? WebKeySet(jwk: rsaJWK) else {
+      throw CredentialPresentationError.invalidWebKeySet
+    }
 
-    let rsaJWK = try! RSAPublicKey(
-      publicKey: rsaPublicKey,
-      additionalParameters: [
-        "use": "sig",
-        "kid": UUID().uuidString,
-        "alg": "RS256"
-      ])
+    guard let publicKeysURL = URL(string: CredentialPresentationConfiguration.publicKeys) else {
+      throw CredentialPresentationError.invalidPublicKey
+    }
 
-    let keySet = try! WebKeySet(jwk: rsaJWK)
-    let publicKeysURL = URL(string: "https://dev.verifier-backend.eudiw.dev/wallet/public-keys.json")!
-
-    let wallet: SiopOpenId4VPConfiguration = .init(
-      subjectSyntaxTypesSupported: [
-        .decentralizedIdentifier,
-        .jwkThumbprint
-      ],
-      preferredSubjectSyntaxType: .jwkThumbprint,
-      decentralizedIdentifier: try! .init(rawValue: "did:example:123"),
+    let wallet: SiopOpenId4VPConfiguration = vpConfiguration(
       privateKey: privateKey,
-      publicWebKeySet: keySet,
-      supportedClientIdSchemes: [
-        .preregistered(clients: [
-          "dev.verifier-backend.eudiw.dev": .init(
-            clientId: "dev.verifier-backend.eudiw.dev",
-            legalName: "Verifier",
-            jarSigningAlg: .init(.RS256),
-            jwkSetSource: .fetchByReference(url: publicKeysURL)
-          )
-        ]),
-        .x509SanDns(trust: { _ in
-          true
-        })
-      ],
-      vpFormatsSupported: ClaimFormat.default(),
-      jarConfiguration: .noEncryptionOption,
-      vpConfiguration: .default(),
-      responseEncryptionConfiguration: .default()
+      keySet: keySet,
+      publicKeysURL: publicKeysURL
     )
 
     let sdk = SiopOpenID4VP(walletConfiguration: wallet)
@@ -101,5 +80,39 @@ final class CredentialPresentationController: CredentialPresentationControllerTy
     default:
       throw CredentialPresentationError.notJwt
     }
+  }
+
+  private func vpConfiguration(
+    privateKey: SecKey,
+    keySet: WebKeySet,
+    publicKeysURL: URL
+  ) -> SiopOpenId4VPConfiguration {
+    .init(
+      subjectSyntaxTypesSupported: [
+        .decentralizedIdentifier,
+        .jwkThumbprint
+      ],
+      preferredSubjectSyntaxType: .jwkThumbprint,
+      decentralizedIdentifier: try! .init(rawValue: "did:example:123"),
+      privateKey: privateKey,
+      publicWebKeySet: keySet,
+      supportedClientIdSchemes: [
+        .preregistered(clients: [
+          "dev.verifier-backend.eudiw.dev": .init(
+            clientId: "dev.verifier-backend.eudiw.dev",
+            legalName: "Verifier",
+            jarSigningAlg: .init(.RS256),
+            jwkSetSource: .fetchByReference(url: publicKeysURL)
+          )
+        ]),
+        .x509SanDns(trust: { _ in
+          true
+        })
+      ],
+      vpFormatsSupported: ClaimFormat.default(),
+      jarConfiguration: .noEncryptionOption,
+      vpConfiguration: .default(),
+      responseEncryptionConfiguration: .default()
+    )
   }
 }

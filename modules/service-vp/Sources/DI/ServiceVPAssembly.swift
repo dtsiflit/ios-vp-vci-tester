@@ -20,8 +20,19 @@ public final class ServiceVPAssembly: Assembly {
   public init() {}
 
   public func assemble(container: Container) {
-    container.register(CredentialPresentationControllerType.self) { _ in
-      CredentialPresentationController()
+    container.register(KeyProvider.self) { _ in
+      KeyProviderImpl()
+    }
+    .inObjectScope(.container)
+
+    container.register(CredentialPresentationControllerType.self) { r in
+      guard let keyProvider = r.resolve(KeyProvider.self) else {
+        preconditionFailure("KeyProvider not registered")
+      }
+
+      return CredentialPresentationController(
+        keyProvider: keyProvider
+      )
     }
     .inObjectScope(.container)
   }

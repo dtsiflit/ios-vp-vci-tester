@@ -18,6 +18,8 @@ import Foundation
 public enum CredentialPresentationError: LocalizedError {
   case rejected
   case notJwt
+  case invalidPublicKey
+  case invalidWebKeySet
   case unknown(reason: String)
 
   public var errorDescription: String? {
@@ -26,6 +28,10 @@ public enum CredentialPresentationError: LocalizedError {
       return "Rejected"
     case .notJwt:
       return "Not JWT"
+    case .invalidPublicKey:
+      return "Invalid public key"
+    case .invalidWebKeySet:
+      return "Invalid WebKeySet"
     case .unknown(let reason):
       return "Unknown error: \(reason)"
     }
