@@ -16,7 +16,7 @@
 import service_vp
 
 protocol PresentationInteractorType: Sendable {
-  func loadAndPresentDocument(url: String) async throws
+  func loadAndPresentDocument(url: String) async throws -> Bool
 }
 
 final class PresentationInteractor: PresentationInteractorType {
@@ -29,7 +29,7 @@ final class PresentationInteractor: PresentationInteractorType {
     self.controller = controller
   }
 
-  func loadAndPresentDocument(url: String) async {
-    await controller.loadAndPresentDocument(url: url)
+  func loadAndPresentDocument(url: String) async throws -> Bool  {
+    try await controller.loadAndPresentDocument(url: url)
   }
 }

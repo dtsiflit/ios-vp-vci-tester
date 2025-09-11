@@ -18,12 +18,12 @@ import Foundation
 import SiopOpenID4VP
 
 public protocol PresentationControllerType: Sendable {
-  func loadAndPresentDocument(url: String) async
+  func loadAndPresentDocument(url: String) async throws -> Bool
 }
 
 final class PresentationController: PresentationControllerType {
 
-  func loadAndPresentDocument(url: String) async {
+  func loadAndPresentDocument(url: String) async throws -> Bool {
 
     let rsaPrivateKey = try! KeyController.generateRSAPrivateKey()
     let rsaPublicKey = try! KeyController.generateRSAPublicKey(from: rsaPrivateKey)
@@ -76,6 +76,30 @@ final class PresentationController: PresentationControllerType {
       )!
     )
 
-    print(result)
+    switch result {
+    case .jwt(let request):
+
+      let consent: ClientConsent = .vpToken(
+        vpContent: .dcql(verifiablePresentations: [
+          try QueryId(value: "query_0"): [.generic(PresentationConfiguration.cbor)]
+        ])
+      )
+
+      let response = try? AuthorizationResponse(
+        resolvedRequest: request,
+        consent: consent,
+        walletOpenId4VPConfig: wallet
+      )
+
+      let result: DispatchOutcome = try await sdk.dispatch(response: response!)
+      switch result {
+      case .accepted:
+        return true
+      default:
+        throw PresentationError.rejected
+      }
+    default:
+      throw PresentationError.notJwt
+    }
   }
 }

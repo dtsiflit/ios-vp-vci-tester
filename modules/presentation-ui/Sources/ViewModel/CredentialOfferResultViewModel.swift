@@ -22,6 +22,7 @@ import service_vci
 @Copyable
 struct CredentialOfferResultState: ViewState {
   let config: CredentialOfferResultConfiguration
+  let presentationSucces: Bool
 }
 
 class CredentialOfferResultViewModel<Router: RouterGraphType>: ViewModel<Router, CredentialOfferResultState> {
@@ -39,7 +40,8 @@ class CredentialOfferResultViewModel<Router: RouterGraphType>: ViewModel<Router,
     super.init(
       router: router,
       initialState: .init(
-        config: config.configuration
+        config: config.configuration,
+        presentationSucces: false
       )
     )
   }
@@ -54,9 +56,21 @@ class CredentialOfferResultViewModel<Router: RouterGraphType>: ViewModel<Router,
 
   func loadAndPresentDocument(url: String) async {
     do {
-      try await interactor.loadAndPresentDocument(url: url)
+      let presentationSucces = try await interactor.loadAndPresentDocument(url: url)
+      setState {
+        $0.copy(
+          presentationSucces: presentationSucces
+        )
+      }
+      handleResult(presentationSucces)
     } catch {
       print("Error")
+    }
+  }
+
+  private func handleResult(_ presentationSuccess: Bool) {
+    if presentationSuccess {
+      router.navigateTo(.presentationResult)
     }
   }
 }

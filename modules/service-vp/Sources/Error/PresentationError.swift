@@ -14,15 +14,20 @@
  * governing permissions and limitations under the Licence.
  */
 import Foundation
-import OpenID4VCI
 
-public struct WalletConfiguration {
+public enum PresentationError: LocalizedError {
+  case rejected
+  case notJwt
+  case unknown(reason: String)
 
-  public static let scheme = "eudi-openid4ci"
-
-  public static let clientConfig: OpenId4VCIConfig = .init(
-    client: .public(id: "wallet-dev"),
-    authFlowRedirectionURI: URL(string: "eudi-openid4ci://authorize")!,
-    authorizeIssuanceConfig: .favorScopes
-  )
+  public var errorDescription: String? {
+    switch self {
+    case .rejected:
+      return "Rejected"
+    case .notJwt:
+      return "Not JWT"
+    case .unknown(let reason):
+      return "Unknown error: \(reason)"
+    }
+  }
 }

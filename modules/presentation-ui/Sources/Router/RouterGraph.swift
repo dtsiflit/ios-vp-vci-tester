@@ -67,6 +67,9 @@ public final class RouterGraph: RouterGraphType, @unchecked Sendable {
         )
       )
       .eraseToAnyView()
+    case .presentationResult:
+      Text("Presentation Success")
+        .eraseToAnyView()
     }
   }
 

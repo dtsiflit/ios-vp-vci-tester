@@ -55,7 +55,7 @@ struct CredentialOfferResultView<Router: RouterGraphType>: View {
                 label: .presentation,
                 color: viewModel.viewState.config.symbolColor) {
                   Task {
-                    await viewModel.loadAndPresentDocument(url: "")
+                    await viewModel.loadAndPresentDocument(url: "eudi-openid4vp://?client_id=x509_san_dns%3Adev.verifier-backend.eudiw.dev&request_uri=https%3A%2F%2Fdev.verifier-backend.eudiw.dev%2Fwallet%2Frequest.jwt%2FT_P8i_u66oLstBWKrBCHWGrtDl3Ot6N6aDzWpD7qvgHPy5Yegik7_spIClZJwHMqQX7_HPkttVYOi8ZQ5k2fzQ&request_uri_method=get")
                   }
                 }
             }

@@ -19,7 +19,7 @@ import SwiftyJSON
 import domain_business_logic
 
 public final class MockPresentationInteractor: PresentationInteractorType {
-  func loadAndPresentDocument(url: String) async throws {
+  func loadAndPresentDocument(url: String) async throws -> Bool {
     throw ValidationError.todo(reason: "Implement soon")
   }
 }

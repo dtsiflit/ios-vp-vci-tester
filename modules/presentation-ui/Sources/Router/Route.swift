@@ -20,12 +20,14 @@ public enum Route: Hashable, Identifiable, Equatable {
   case credentialOffer
   case credentialOfferResultView(config: CredentialOfferResultType)
   case deferredPendingView(credentialOutcome: CredentialOutcome)
+  case presentationResult
 
   public var id: String {
     switch self {
     case .credentialOffer: return "credentialOffer"
     case .credentialOfferResultView: return "credentialOfferResultView"
     case .deferredPendingView: return "deferredPendingView"
+    case .presentationResult: return "presentationResult"
     }
   }
 
