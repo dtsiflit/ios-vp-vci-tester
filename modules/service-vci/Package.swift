@@ -19,10 +19,6 @@ let package = Package(
     .package(
       url: "https://github.com/Swinject/Swinject.git",
       from: "2.9.1"
-    ),
-    .package(
-      url: "https://github.com/eu-digital-identity-wallet/eudi-lib-ios-openid4vci-swift.git",
-      from: "0.15.4"
     )
   ],
   targets: [
@@ -30,11 +26,7 @@ let package = Package(
       name: "service-vci",
       dependencies: [
         "Swinject",
-        "domain-business-logic",
-        .product(
-          name: "OpenID4VCI",
-          package: "eudi-lib-ios-openid4vci-swift"
-        )
+        "domain-business-logic"
       ]
     ),
     .testTarget(

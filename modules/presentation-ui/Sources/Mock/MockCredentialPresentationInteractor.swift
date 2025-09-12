@@ -19,7 +19,7 @@ import SwiftyJSON
 import domain_business_logic
 
 public final class MockCredentialPresentationInteractor: CredentialPresentationInteractorType {
-  func loadAndPresentCredential(url: String) async throws -> Bool {
+  func loadAndPresentCredential(url: String, privateKey: SecKey, sdJwtVc: String) async throws -> Bool {
     throw ValidationError.todo(reason: "Implement soon")
   }
 }

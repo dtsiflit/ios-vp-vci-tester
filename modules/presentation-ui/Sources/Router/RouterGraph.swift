@@ -68,7 +68,7 @@ public final class RouterGraph: RouterGraphType, @unchecked Sendable {
       )
       .eraseToAnyView()
     case .credentialPresentationResult:
-      Text("Presentation Result")
+      ProgressView()
         .eraseToAnyView()
     }
   }

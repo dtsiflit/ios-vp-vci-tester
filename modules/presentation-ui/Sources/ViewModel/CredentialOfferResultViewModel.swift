@@ -56,15 +56,25 @@ class CredentialOfferResultViewModel<Router: RouterGraphType>: ViewModel<Router,
 
   func loadAndPresentCredential(using url: String) async {
     do {
-      let presentationSucces = try await interactor.loadAndPresentCredential(url: url)
+
+      guard let outcome = viewState.config.credential,
+            let privateKey = outcome.privateKey else {
+        print("No private key available")
+        return
+      }
+
+      let presentationSucces = try await interactor.loadAndPresentCredential(
+        url: url,
+        privateKey: privateKey,
+        sdJwtVc: config.configuration.credential?.sdJwtVc ?? ""
+      )
+
       setState {
-        $0.copy(
-          presentationSucces: presentationSucces
-        )
+        $0.copy(presentationSucces: presentationSucces)
       }
       handleResult(presentationSucces)
     } catch {
-      print("Error")
+      print("Error: \(error)")
     }
   }
 

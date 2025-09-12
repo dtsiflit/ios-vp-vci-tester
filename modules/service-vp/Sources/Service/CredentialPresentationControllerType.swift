@@ -18,7 +18,11 @@ import Foundation
 import SiopOpenID4VP
 
 public protocol CredentialPresentationControllerType: Sendable {
-  func loadAndPresentCredential(using url: String) async throws -> Bool
+  func loadAndPresentCredential(
+    using url: String,
+    and privateKey: SecKey,
+    sdJwtVc: String
+  ) async throws -> Bool
 }
 
 final class CredentialPresentationController: CredentialPresentationControllerType {
@@ -29,8 +33,11 @@ final class CredentialPresentationController: CredentialPresentationControllerTy
     self.keyProvider = keyProvider
   }
 
-  func loadAndPresentCredential(using url: String) async throws -> Bool {
-    let privateKey = try await keyProvider.generateECDHPrivateKey()
+  func loadAndPresentCredential(
+    using url: String,
+    and privateKey: SecKey,
+    sdJwtVc: String
+  ) async throws -> Bool {
     let rsaJWK = try await keyProvider.generateRsaJWKKey()
 
     guard let keySet = try? WebKeySet(jwk: rsaJWK) else {
@@ -66,7 +73,9 @@ final class CredentialPresentationController: CredentialPresentationControllerTy
           transactiondata: request.transactionData,
           clientID: request.client.id.originalClientId,
           nonce: request.nonce,
-          useSha3: false
+          useSha3: false,
+          privateKey: privateKey,
+          sdJwtVc: sdJwtVc
         )
       default:
         print("Error")
@@ -87,6 +96,7 @@ final class CredentialPresentationController: CredentialPresentationControllerTy
       let result: DispatchOutcome = try await sdk.dispatch(response: response!)
       switch result {
       case .accepted:
+        print("Success")
         return true
       default:
         throw CredentialPresentationError.rejected

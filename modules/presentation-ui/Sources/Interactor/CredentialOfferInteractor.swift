@@ -39,11 +39,14 @@ protocol CredentialOfferInteractorType: Sendable {
 final class CredentialOfferInteractor: CredentialOfferInteractorType {
 
   private let controller: CredentialIssuanceControllerType
+  private let bindingKey: BindingKey
 
   init(
-    controller: CredentialIssuanceControllerType
+    controller: CredentialIssuanceControllerType,
+    bindingKey: BindingKey
   ) {
     self.controller = controller
+    self.bindingKey = bindingKey
   }
 
   func isPreAuthorizedGrant(offerUri: String, scope: String) async throws -> Bool {
@@ -138,7 +141,11 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
       credentialOffer.credentialConfigurationIdentifiers.first!
     )
 
-    return credential.mapToCredentialOutcome(isSDJWT: credentialOffer.isSDJWT)
+    return await credential.mapToCredentialOutcome(
+      isSDJWT: credentialOffer.isSDJWT,
+      privateKey: bindingKey.privateKeyOrGenerate,
+      sdJwtVc: issuer.issuerMetadata.signedMetadata
+    )
   }
 
   private func authorizeWithPreAuthorizationCode(

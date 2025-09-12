@@ -25,9 +25,9 @@ public final class PresentationUIAssembly: Assembly {
   public func assemble(container: Container) {
 
     container.register(CredentialOfferInteractorType.self) { r in
-      CredentialOfferInteractor(
-        controller: r.force(CredentialIssuanceControllerType.self)
-      )
+        let controller = r.force(CredentialIssuanceControllerType.self)
+        let key = controller.bindingKeys.first!
+        return CredentialOfferInteractor(controller: controller, bindingKey: key)
     }
     .inObjectScope(.container)
 

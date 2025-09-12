@@ -39,3 +39,26 @@ public enum BindingKeys {
     )
   }()
 }
+
+extension BindingKey {
+  var privateKey: SecKey? {
+    switch self {
+    case .jwk(_, _, let privateKeyProxy, _),
+        .keyAttestation(_, _, _, let privateKeyProxy, _):
+      if case let .secKey(secKey) = privateKeyProxy {
+        return secKey
+      } else {
+        return nil
+      }
+    default:
+      return nil
+    }
+  }
+
+  public var privateKeyOrGenerate: SecKey {
+    if let key = self.privateKey {
+      return key
+    }
+    return try! KeyController.generateECDHPrivateKey()
+  }
+}

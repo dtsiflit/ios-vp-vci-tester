@@ -13,6 +13,10 @@ let package = Package(
   ],
   dependencies: [
     .package(
+      name: "domain-business-logic",
+      path: "./domain-business-logic"
+    ),
+    .package(
       url: "https://github.com/Swinject/Swinject.git",
       from: "2.9.1"
     ),
@@ -33,6 +37,7 @@ let package = Package(
     .target(
       name: "service-vp",
       dependencies: [
+        "domain-business-logic",
         "Swinject",
         .product(
           name: "SiopOpenID4VP",

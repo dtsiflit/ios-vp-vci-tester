@@ -13,10 +13,17 @@
  * ANY KIND, either express or implied. See the Licence for the specific language
  * governing permissions and limitations under the Licence.
  */
+import JOSESwift
+import Foundation
 import service_vp
+import SiopOpenID4VP
 
 protocol CredentialPresentationInteractorType: Sendable {
-  func loadAndPresentCredential(url: String) async throws -> Bool
+  func loadAndPresentCredential(
+    url: String,
+    privateKey: SecKey,
+    sdJwtVc: String
+  ) async throws -> Bool
 }
 
 final class CredentialPresentationInteractor: CredentialPresentationInteractorType {
@@ -29,7 +36,11 @@ final class CredentialPresentationInteractor: CredentialPresentationInteractorTy
     self.controller = controller
   }
 
-  func loadAndPresentCredential(url: String) async throws -> Bool {
-    try await controller.loadAndPresentCredential(using: url)
+  func loadAndPresentCredential(url: String, privateKey: SecKey, sdJwtVc: String) async throws -> Bool {
+    try await controller.loadAndPresentCredential(
+      using: url,
+      and: privateKey,
+      sdJwtVc: sdJwtVc
+    )
   }
 }
