@@ -44,7 +44,7 @@ class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router, Crede
         errorMessage: "",
         isPreAuthorized: false,
         needsTransactionCode: false,
-        supportingText: "Only SD-JWT credentials containing PID are supported."
+        supportingText: "Only SD-JWT credentials are supported."
       )
     )
   }

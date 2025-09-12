@@ -33,7 +33,7 @@ public enum LocalizableKey: Sendable, Equatable, Hashable {
     let value = switch self {
     case .custom(let literal): literal
     case .actions:
-      "Actions"
+      "Action"
     case .credentialIssuanceCardLabel:
       "Issue Credential"
     case .credentialIssuanceCardDescription:

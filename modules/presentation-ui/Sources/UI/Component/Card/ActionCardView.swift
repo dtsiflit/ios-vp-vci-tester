@@ -19,7 +19,6 @@ public struct ActionCardView: View {
 
   @Environment(\.colorScheme) var colorScheme
 
-  private let icon: String
   private let label: String
   private let description: String
   private let buttonLabel: String
@@ -27,14 +26,12 @@ public struct ActionCardView: View {
   private let action: () -> Void
 
   public init(
-    icon: String,
     label: String,
     description: String,
     supportingText: String,
     buttonLabel: String,
     action: @escaping () -> Void
   ) {
-    self.icon = icon
     self.label = label
     self.description = description
     self.buttonLabel = buttonLabel
@@ -44,19 +41,6 @@ public struct ActionCardView: View {
 
   public var body: some View {
     VStack(spacing: 0) {
-      Rectangle()
-        .foregroundStyle(.gray.opacity(0.1))
-        .frame(height: 180)
-        .overlay {
-          Image(systemName: icon)
-            .font(.system(size: 100))
-            .foregroundStyle(LinearGradient(
-              colors: [.cyan, .blue],
-              startPoint: .top,
-              endPoint: .bottom
-            ))
-        }
-
       VStack(alignment: .leading, spacing: 5) {
         Text(label)
           .font(.title3)
@@ -64,6 +48,7 @@ public struct ActionCardView: View {
 
         Text(description)
           .foregroundStyle(.gray)
+          .font(.callout)
 
         Button(action: action) {
           Text(buttonLabel)
@@ -71,13 +56,13 @@ public struct ActionCardView: View {
             .padding()
             .frame(maxWidth: .infinity)
             .background(
-              RoundedRectangle(cornerRadius: 12)
+              Capsule()
                 .foregroundStyle(.blue)
                 .opacity(0.18)
             )
         }
         .padding(.top, 15)
-        .contentShape(RoundedRectangle(cornerRadius: 12))
+        .contentShape(Capsule())
 
         Text(supportingText)
           .font(.caption)
@@ -85,7 +70,7 @@ public struct ActionCardView: View {
           .padding(.top, 10)
           .padding(.bottom, 5)
       }
-      .padding()
+      .padding(20)
       .frame(maxWidth: .infinity, alignment: .topLeading)
     }
     .background(
@@ -100,10 +85,9 @@ public struct ActionCardView: View {
 
 #Preview {
   ActionCardView(
-    icon: SymbolManager.issuance.rawValue,
     label: "Credential Offer",
     description: "Scan the QR code provided to receive your credential securely.",
-    supportingText: "Only SD-JWT credentials containing PID are supported.",
+    supportingText: "Only SD-JWT credentials are supported.",
     buttonLabel: "Open Scanner") {
       print("Action")
     }

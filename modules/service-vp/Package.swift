@@ -23,6 +23,10 @@ let package = Package(
     .package(
       url: "https://github.com/eu-digital-identity-wallet/SwiftCopyableMacro.git",
       from: "0.0.4"
+    ),
+    .package(
+      url: "https://github.com/krzyzanowskim/CryptoSwift.git",
+      from: "1.8.4"
     )
   ],
   targets: [
@@ -37,6 +41,10 @@ let package = Package(
         .product(
           name: "Copyable",
           package: "SwiftCopyableMacro"
+        ),
+        .product(
+          name: "CryptoSwift",
+          package: "CryptoSwift"
         )
       ]
     ),

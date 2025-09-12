@@ -57,10 +57,24 @@ final class CredentialPresentationController: CredentialPresentationControllerTy
 
     switch result {
     case .jwt(let request):
+      let resolved = request
+      var presentation: String?
+
+      switch resolved {
+      case .vpToken(let request):
+        presentation = CredentialPresentationConfiguration.sdJwtPresentations(
+          transactiondata: request.transactionData,
+          clientID: request.client.id.originalClientId,
+          nonce: request.nonce,
+          useSha3: false
+        )
+      default:
+        print("Error")
+      }
 
       let consent: ClientConsent = .vpToken(
         vpContent: .dcql(verifiablePresentations: [
-          try QueryId(value: "query_0"): [.generic(CredentialPresentationConfiguration.cbor)]
+          try QueryId(value: "query_0"): [.generic(presentation!)]
         ])
       )
 
@@ -99,7 +113,7 @@ final class CredentialPresentationController: CredentialPresentationControllerTy
       supportedClientIdSchemes: [
         .preregistered(clients: [
           "dev.verifier-backend.eudiw.dev": .init(
-            clientId: "dev.verifier-backend.eudiw.dev",
+            clientId: CredentialPresentationConfiguration.clientId,
             legalName: "Verifier",
             jarSigningAlg: .init(.RS256),
             jwkSetSource: .fetchByReference(url: publicKeysURL)

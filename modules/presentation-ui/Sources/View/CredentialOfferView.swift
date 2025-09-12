@@ -33,7 +33,6 @@ struct CredentialOfferView<Router: RouterGraphType>: View {
     NavigationView {
       ContentScreenView {
         ActionCardView(
-          icon: SymbolManager.value(for: .issuance),
           label: localization.get(with: .credentialIssuanceCardLabel),
           description: localization.get(with: .credentialIssuanceCardDescription),
           supportingText: viewModel.viewState.supportingText,
