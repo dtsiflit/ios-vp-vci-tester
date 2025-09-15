@@ -16,12 +16,14 @@
 import JOSESwift
 import Foundation
 import SiopOpenID4VP
+import OpenID4VCI
+import domain_business_logic
 
 public protocol CredentialPresentationControllerType: Sendable {
   func loadAndPresentCredential(
     using url: String,
-    and privateKey: SecKey,
-    sdJwtVc: String
+    and credential: Credential,
+    and privateKey: SecKey
   ) async throws -> Bool
 }
 
@@ -35,9 +37,10 @@ final class CredentialPresentationController: CredentialPresentationControllerTy
 
   func loadAndPresentCredential(
     using url: String,
-    and privateKey: SecKey,
-    sdJwtVc: String
+    and credential: Credential,
+    and privateKey: SecKey
   ) async throws -> Bool {
+
     let rsaJWK = try await keyProvider.generateRsaJWKKey()
 
     guard let keySet = try? WebKeySet(jwk: rsaJWK) else {
@@ -75,7 +78,7 @@ final class CredentialPresentationController: CredentialPresentationControllerTy
           nonce: request.nonce,
           useSha3: false,
           privateKey: privateKey,
-          sdJwtVc: sdJwtVc
+          credential: credential
         )
       default:
         print("Error")

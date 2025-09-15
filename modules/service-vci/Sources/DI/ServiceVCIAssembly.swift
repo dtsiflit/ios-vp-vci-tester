@@ -14,15 +14,16 @@
  * governing permissions and limitations under the Licence.
  */
 import Swinject
+import domain_business_logic
 
 public final class ServiceVCIAssembly: Assembly {
 
   public init() {}
 
   public func assemble(container: Container) {
-    container.register(CredentialIssuanceControllerType.self) { _ in
+    container.register(CredentialIssuanceControllerType.self) { r in
       CredentialIssuanceController(
-        bindingKeys: [BindingKeys.bindingKey],
+        keyProvider: r.force(KeyProvider.self),
         clientConfig: WalletConfiguration.clientConfig,
         credentialOfferRequestResolver: .init()
       )

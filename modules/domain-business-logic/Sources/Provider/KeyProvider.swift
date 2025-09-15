@@ -15,20 +15,17 @@
  */
 import JOSESwift
 import Foundation
-import SiopOpenID4VP
+import OpenID4VCI
 
 public protocol KeyProvider: Sendable {
-  func generateECDHPrivateKey() async throws -> SecKey
   func generateRsaJWKKey() async throws -> RSAPublicKey
+  func generateBindingKey() async throws -> BindingKey
+  func parseBindingKey(from key: BindingKey) -> SecKey?
 }
 
 public struct KeyProviderImpl: KeyProvider {
 
   public init() {}
-
-  public func generateECDHPrivateKey() async throws -> SecKey {
-    try KeyController.generateECDHPrivateKey()
-  }
 
   public func generateRsaJWKKey() async throws -> RSAPublicKey {
     let rsaPublicKey = try await generateRSAPublicKey()
@@ -39,6 +36,51 @@ public struct KeyProviderImpl: KeyProvider {
         "kid": UUID().uuidString,
         "alg": "RS256"
       ])
+  }
+
+  public func generateBindingKey() async throws -> BindingKey {
+
+    let privateKey = try await generateECDHPrivateKey()
+    let publicKey = try KeyController.generateECDHPublicKey(from: privateKey)
+    let alg = JWSAlgorithm(.ES256)
+
+    let publicKeyJWK = try ECPublicKey(
+      publicKey: publicKey,
+      additionalParameters: [
+        "alg": alg.name,
+        "use": "sig",
+        "kid": UUID().uuidString
+      ]
+    )
+
+    return .jwk(
+      algorithm: alg,
+      jwk: publicKeyJWK,
+      privateKey: .secKey(privateKey)
+    )
+  }
+
+  public func parseBindingKey(from key: BindingKey) -> SecKey? {
+    switch key {
+    case .jwk(_, _, let privateKeyProxy, _),
+        .keyAttestation(_, _, _, let privateKeyProxy, _):
+      if case let .secKey(secKey) = privateKeyProxy {
+        return secKey
+      }
+      return nil
+    case .did:
+      return nil
+    case .x509:
+      return nil
+    case .attestation:
+      return nil
+    @unknown default:
+      return nil
+    }
+  }
+
+  private func generateECDHPrivateKey() async throws -> SecKey {
+    try KeyController.generateECDHPrivateKey()
   }
 
   private func generateRSAPublicKey() async throws -> SecKey {

@@ -14,16 +14,32 @@
  * governing permissions and limitations under the Licence.
  */
 import Foundation
-import OpenID4VCI
-import SwiftyJSON
-import domain_business_logic
+import Copyable
 
-public final class MockCredentialPresentationInteractor: CredentialPresentationInteractorType {
-  func loadAndPresentCredential(
-    url: String,
-    credential: Credential,
-    privateKey: SecKey
-  ) async throws -> Bool {
-    throw ValidationError.todo(reason: "Implement soon")
+@Copyable
+struct CredentialPresentationResultViewState: ViewState {
+  let config: CredentialResultConfiguration
+}
+
+class CredentialPresentationResultViewModel<Router: RouterGraphType>: ViewModel<Router, CredentialPresentationResultViewState> {
+
+  private let config: CredentialOfferResultType
+
+  init(
+    router: Router,
+    config: CredentialOfferResultType
+  ) {
+    self.config = config
+
+    super.init(
+      router: router,
+      initialState: .init(
+        config: config.configuration
+      )
+    )
+  }
+
+  func navigateToRoot() {
+    router.navigateToRoot()
   }
 }

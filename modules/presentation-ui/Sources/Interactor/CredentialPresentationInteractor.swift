@@ -16,13 +16,14 @@
 import JOSESwift
 import Foundation
 import service_vp
+import OpenID4VCI
 import SiopOpenID4VP
 
 protocol CredentialPresentationInteractorType: Sendable {
   func loadAndPresentCredential(
     url: String,
-    privateKey: SecKey,
-    sdJwtVc: String
+    credential: Credential,
+    privateKey: SecKey
   ) async throws -> Bool
 }
 
@@ -36,11 +37,15 @@ final class CredentialPresentationInteractor: CredentialPresentationInteractorTy
     self.controller = controller
   }
 
-  func loadAndPresentCredential(url: String, privateKey: SecKey, sdJwtVc: String) async throws -> Bool {
+  func loadAndPresentCredential(
+    url: String,
+    credential: Credential,
+    privateKey: SecKey
+  ) async throws -> Bool {
     try await controller.loadAndPresentCredential(
       using: url,
-      and: privateKey,
-      sdJwtVc: sdJwtVc
+      and: credential,
+      and: privateKey
     )
   }
 }

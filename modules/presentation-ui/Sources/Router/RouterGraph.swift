@@ -67,9 +67,14 @@ public final class RouterGraph: RouterGraphType, @unchecked Sendable {
         )
       )
       .eraseToAnyView()
-    case .credentialPresentationResult:
-      ProgressView()
-        .eraseToAnyView()
+    case .credentialPresentationResult(let config):
+      CredentialPresentationResultView(
+        with: .init(
+          router: self,
+          config: config
+        )
+      )
+      .eraseToAnyView()
     }
   }
 

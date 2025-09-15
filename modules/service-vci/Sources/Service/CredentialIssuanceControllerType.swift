@@ -19,7 +19,7 @@ import domain_business_logic
 
 public protocol CredentialIssuanceControllerType: Sendable {
 
-  var bindingKeys: [BindingKey] { get }
+  var keyProvider: KeyProvider { get }
   var clientConfig: OpenId4VCIConfig { get }
 
   func setProvider(autoPresentationProvider: AutoPresentationProvider?)
@@ -62,7 +62,8 @@ public protocol CredentialIssuanceControllerType: Sendable {
   func issueCredential(
     _ issuer: Issuer,
     _ authorized: AuthorizedRequest,
-    _ credentialConfigurationIdentifier: CredentialConfigurationIdentifier?
+    _ credentialConfigurationIdentifier: CredentialConfigurationIdentifier?,
+    _ bindingKey: [BindingKey]
   ) async throws -> IssuanceOutcome
 
   func requestDeferredCredential(
@@ -74,17 +75,17 @@ public protocol CredentialIssuanceControllerType: Sendable {
 
 final class CredentialIssuanceController: CredentialIssuanceControllerType {
 
-  internal let bindingKeys: [BindingKey]
+  internal let keyProvider: KeyProvider
   internal let clientConfig: OpenId4VCIConfig
   internal let credentialOfferRequestResolver: CredentialOfferRequestResolver
   nonisolated(unsafe) var autoPresentationProvider: AutoPresentationProvider?
 
   init(
-    bindingKeys: [BindingKey],
+    keyProvider: KeyProvider,
     clientConfig: OpenId4VCIConfig,
     credentialOfferRequestResolver: CredentialOfferRequestResolver
   ) {
-    self.bindingKeys = bindingKeys
+    self.keyProvider = keyProvider
     self.clientConfig = clientConfig
     self.credentialOfferRequestResolver = credentialOfferRequestResolver
   }
@@ -232,7 +233,8 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
   func issueCredential(
     _ issuer: Issuer,
     _ authorized: AuthorizedRequest,
-    _ credentialConfigurationIdentifier: CredentialConfigurationIdentifier?
+    _ credentialConfigurationIdentifier: CredentialConfigurationIdentifier?,
+    _ bindingKey: [BindingKey]
   ) async throws -> IssuanceOutcome {
     guard let credentialConfigurationIdentifier else {
       throw CredentialIssuanceError.missingCredentialConfigurationIdentifier
@@ -244,7 +246,7 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
 
     let requestOutcome = try await issuer.requestCredential(
       request: authorized,
-      bindingKeys: bindingKeys,
+      bindingKeys: bindingKey,
       requestPayload: payload
     ) {
       Issuer.createResponseEncryptionSpec($0)

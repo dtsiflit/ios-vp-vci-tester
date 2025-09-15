@@ -18,7 +18,12 @@ import OpenID4VCI
 import service_vci
 import domain_business_logic
 
-public struct CredentialOfferResultConfiguration: Sendable {
+public enum CredentialStage: Sendable {
+  case issuance
+  case presentation
+}
+
+public struct CredentialResultConfiguration: Sendable {
   let title: String
   let symbolName: String
   let symbolColor: Color
@@ -28,26 +33,30 @@ public struct CredentialOfferResultConfiguration: Sendable {
 }
 
 public enum CredentialOfferResultType: Sendable {
-  case success(credential: IssuedCredentialOutcome, dismiss: Bool)
-  case failure(error: String, dismiss: Bool)
+  case success(credential: IssuedCredentialOutcome, dismiss: Bool, stage: CredentialStage = .issuance)
+  case failure(error: String, dismiss: Bool, stage: CredentialStage = .issuance)
 
-  var configuration: CredentialOfferResultConfiguration {
+  var configuration: CredentialResultConfiguration {
     switch self {
-    case .success(let credential, let dismiss):
-      return CredentialOfferResultConfiguration(
+    case .success(let credential, let dismiss, let stage):
+      return CredentialResultConfiguration(
         title: "Success",
         symbolName: SymbolManager.value(for: .success),
         symbolColor: .green,
-        description: "The credential was issued successfully.",
+        description: stage == .issuance
+          ? "The credential was issued successfully."
+          : "The credential was presented successfully.",
         credential: credential,
         dismiss: dismiss
       )
-    case .failure(_, let dismiss):
-      return CredentialOfferResultConfiguration(
+    case .failure(_, let dismiss, let stage):
+      return CredentialResultConfiguration(
         title: "Error",
         symbolName: SymbolManager.value(for: .failure),
         symbolColor: .red,
-        description: "Oops! We couldn't issue your credential this time.",
+        description: stage == .issuance
+          ? "Oops! We couldn't issue your credential this time."
+          : "Oops! We couldn't present your credential this time.",
         credential: nil,
         dismiss: dismiss
       )

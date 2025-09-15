@@ -19,5 +19,10 @@ public final class DomainBusinessAssembly: Assembly {
 
   public init() {}
 
-  public func assemble(container: Container) { }
+  public func assemble(container: Container) {
+    container.register(KeyProvider.self) { _ in
+      KeyProviderImpl()
+    }
+    .inObjectScope(.container)
+  }
 }

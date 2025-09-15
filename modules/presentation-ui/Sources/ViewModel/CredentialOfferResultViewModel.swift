@@ -13,7 +13,6 @@
  * ANY KIND, either express or implied. See the Licence for the specific language
  * governing permissions and limitations under the Licence.
  */
-import Foundation
 import Copyable
 import OpenID4VCI
 import SwiftyJSON
@@ -21,7 +20,7 @@ import service_vci
 
 @Copyable
 struct CredentialOfferResultState: ViewState {
-  let config: CredentialOfferResultConfiguration
+  let config: CredentialResultConfiguration
   let presentationSucces: Bool
 }
 
@@ -57,22 +56,29 @@ class CredentialOfferResultViewModel<Router: RouterGraphType>: ViewModel<Router,
   func loadAndPresentCredential(using url: String) async {
     do {
 
-      guard let outcome = viewState.config.credential,
-            let privateKey = outcome.privateKey else {
+      let outcome = viewState.config.credential
+
+      guard let credential = outcome?.credential else {
+        throw CredentialIssuanceError.invalidIssuanceRequest("No credential available")
+      }
+
+      guard let privateKey = outcome?.privateKey else {
         print("No private key available")
         return
       }
 
-      let presentationSucces = try await interactor.loadAndPresentCredential(
+      let presentationSuccess = try await interactor.loadAndPresentCredential(
         url: url,
-        privateKey: privateKey,
-        sdJwtVc: config.configuration.credential?.sdJwtVc ?? ""
+        credential: credential,
+        privateKey: privateKey
       )
 
       setState {
-        $0.copy(presentationSucces: presentationSucces)
+        $0.copy(presentationSucces: presentationSuccess)
       }
-      handleResult(presentationSucces)
+
+      handleResult(presentationSuccess)
+
     } catch {
       print("Error: \(error)")
     }
@@ -80,7 +86,27 @@ class CredentialOfferResultViewModel<Router: RouterGraphType>: ViewModel<Router,
 
   private func handleResult(_ presentationSuccess: Bool) {
     if presentationSuccess {
-      router.navigateTo(.credentialPresentationResult)
+      if let credential = config.configuration.credential {
+        router.navigateTo(
+          .credentialPresentationResult(
+            config: .success(
+              credential: credential,
+              dismiss: false,
+              stage: .presentation
+            )
+          )
+        )
+      } else {
+        router.navigateTo(
+          .credentialPresentationResult(
+            config: .failure(
+              error: "Missing credential outcome",
+              dismiss: false,
+              stage: .presentation
+            )
+          )
+        )
+      }
     }
   }
 }

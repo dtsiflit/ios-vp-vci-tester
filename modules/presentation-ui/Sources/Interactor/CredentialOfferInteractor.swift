@@ -39,14 +39,14 @@ protocol CredentialOfferInteractorType: Sendable {
 final class CredentialOfferInteractor: CredentialOfferInteractorType {
 
   private let controller: CredentialIssuanceControllerType
-  private let bindingKey: BindingKey
+  private let keyProvider: KeyProvider
 
   init(
     controller: CredentialIssuanceControllerType,
-    bindingKey: BindingKey
+    keyProvider: KeyProvider
   ) {
     self.controller = controller
-    self.bindingKey = bindingKey
+    self.keyProvider = keyProvider
   }
 
   func isPreAuthorizedGrant(offerUri: String, scope: String) async throws -> Bool {
@@ -123,28 +123,33 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
       deferredCredential.trasnactionId,
       deferredCredential
     )
-    .mapToCredentialOutcome(isSDJWT: false)
+    .mapToCredentialOutcome(isSDJWT: true)
   }
 
   private func authorizeRequestWithAuthCodeUseCase(
     issuer: Issuer,
     credentialOffer: CredentialOffer
   ) async throws -> CredentialOutcome {
+
     let authorized = try await controller.authorizeRequestWithAuthCodeUseCase(
       issuer: issuer,
       offer: credentialOffer
     )
 
+    let bindingKey = try await keyProvider.generateBindingKey()
+
     let credential = try await controller.issueCredential(
       issuer,
       authorized,
-      credentialOffer.credentialConfigurationIdentifiers.first!
+      credentialOffer.credentialConfigurationIdentifiers.first!,
+      [bindingKey]
     )
 
-    return await credential.mapToCredentialOutcome(
+    let privateKey = keyProvider.parseBindingKey(from: bindingKey)
+
+    return credential.mapToCredentialOutcome(
       isSDJWT: credentialOffer.isSDJWT,
-      privateKey: bindingKey.privateKeyOrGenerate,
-      sdJwtVc: issuer.issuerMetadata.signedMetadata
+      privateKey: privateKey
     )
   }
 
@@ -154,6 +159,7 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
     preAuthorizedCode: Grants.PreAuthorizedCode,
     transactionCode: String
   ) async throws -> CredentialOutcome {
+
     let authResult = await issuer.authorizeWithPreAuthorizationCode(
       credentialOffer: credentialOffer,
       authorizationCode: .preAuthorizationCode(
@@ -166,10 +172,13 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
 
     let auth = try authResult.get()
 
+    let bindingKey = try await keyProvider.generateBindingKey()
+
     let credential = try await controller.issueCredential(
       issuer,
       auth,
-      credentialOffer.credentialConfigurationIdentifiers.first!
+      credentialOffer.credentialConfigurationIdentifiers.first!,
+      [bindingKey]
     )
 
     return credential.mapToCredentialOutcome(isSDJWT: credentialOffer.isSDJWT)
@@ -180,10 +189,5 @@ extension CredentialOffer {
   var isSDJWT: Bool {
     credentialConfigurationIdentifiers
       .contains { $0.value.contains("sd_jwt") }
-  }
-
-  var isPID: Bool {
-    credentialConfigurationIdentifiers
-      .contains { $0.value.contains("pid") }
   }
 }

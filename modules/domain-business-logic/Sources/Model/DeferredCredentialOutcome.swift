@@ -13,8 +13,8 @@
  * ANY KIND, either express or implied. See the Licence for the specific language
  * governing permissions and limitations under the Licence.
  */
-@preconcurrency import Foundation
 import OpenID4VCI
+@preconcurrency import Security
 
 public struct DeferredCredentialOutcome: Sendable {
   public let trasnactionId: TransactionId
@@ -35,18 +35,15 @@ public struct DeferredCredentialOutcome: Sendable {
 public struct IssuedCredentialOutcome: Sendable {
   public let credential: Credential
   public let privateKey: SecKey?
-  public let sdJwtVc: String?
   public let isSDJWT: Bool
 
   public init(
     credential: Credential,
     privateKey: SecKey? = nil,
-    sdJwtVc: String? = "",
     isSDJWT: Bool = false
   ) {
     self.credential = credential
     self.privateKey = privateKey
-    self.sdJwtVc = sdJwtVc
     self.isSDJWT = isSDJWT
   }
 }

@@ -37,8 +37,7 @@ public enum IssuanceOutcome {
 public extension IssuanceOutcome {
   func mapToCredentialOutcome(
     isSDJWT: Bool,
-    privateKey: SecKey? = nil,
-    sdJwtVc: String? = nil
+    privateKey: SecKey? = nil
   ) -> CredentialOutcome {
     switch self {
     case .issued(let credential):
@@ -46,7 +45,6 @@ public extension IssuanceOutcome {
         issuedCredential: .init(
           credential: credential,
           privateKey: privateKey,
-          sdJwtVc: sdJwtVc,
           isSDJWT: isSDJWT
         )
       )

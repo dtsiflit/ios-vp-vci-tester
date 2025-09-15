@@ -130,7 +130,7 @@ class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router, Crede
     )
   }
 
-  private func navigateToPendingDefferedView(credentialOutcome: CredentialOutcome) {
+  private func navigateToPendingDeferredView(credentialOutcome: CredentialOutcome) {
     router.navigateTo(
       .deferredPendingView(
         credentialOutcome: credentialOutcome
@@ -150,7 +150,7 @@ class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router, Crede
       setState {
         $0.copy(supportingText: "Pending credential issuance...")
       }
-      navigateToPendingDefferedView(credentialOutcome: result)
+      navigateToPendingDeferredView(credentialOutcome: result)
     }
   }
 }
