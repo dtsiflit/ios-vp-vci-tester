@@ -14,17 +14,40 @@
  * governing permissions and limitations under the Licence.
  */
 import OpenID4VCI
+import Security
+
+public struct CredentialOutcome: Sendable {
+  public let issuedCredential: IssuedCredentialOutcome?
+  public let deferredCredential: DeferredCredentialOutcome?
+
+  public init(
+    issuedCredential: IssuedCredentialOutcome? = nil,
+    deferredCredential: DeferredCredentialOutcome? = nil
+  ) {
+    self.issuedCredential = issuedCredential
+    self.deferredCredential = deferredCredential
+  }
+}
 
 public enum IssuanceOutcome {
   case issued(Credential)
-  case deferred(DeferredCredential)
+  case deferred(DeferredCredentialOutcome)
 }
 
 public extension IssuanceOutcome {
-  func mapToCredentialOutcome() -> CredentialOutcome {
+  func mapToCredentialOutcome(
+    isSDJWT: Bool,
+    privateKey: SecKey? = nil
+  ) -> CredentialOutcome {
     switch self {
     case .issued(let credential):
-      return .init(credential: credential)
+      return .init(
+        issuedCredential: .init(
+          credential: credential,
+          privateKey: privateKey,
+          isSDJWT: isSDJWT
+        )
+      )
     case .deferred(let transaction):
       return .init(deferredCredential: transaction)
     }

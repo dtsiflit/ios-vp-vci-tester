@@ -23,6 +23,9 @@ struct CredentialOfferResultView<Router: RouterGraphType>: View {
 
   @ObservedObject private var viewModel: CredentialOfferResultViewModel<Router>
 
+  @State private var isScannerPresented = false
+  @State private var lastPresentationURL: String = ""
+
   init(with viewModel: CredentialOfferResultViewModel<Router>) {
     self.viewModel = viewModel
   }
@@ -49,18 +52,36 @@ struct CredentialOfferResultView<Router: RouterGraphType>: View {
           }
           .frame(maxHeight: .infinity)
 
-          Text(localization.get(with: .close))
-            .foregroundStyle(viewModel.viewState.config.symbolColor)
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background {
-              Capsule()
-                .foregroundStyle(colorScheme == .dark ? Color(UIColor.secondarySystemBackground) : Color(UIColor.systemBackground))
+          VStack {
+            if let isSDJWT = viewModel.viewState.config.credential?.isSDJWT, isSDJWT {
+              CustomCapsuleButton(
+                label: .presentation,
+                color: viewModel.viewState.config.symbolColor) {
+                  isScannerPresented = true
+                }
             }
-            .onTapGesture {
+
+            CustomCapsuleButton(
+              label: .close,
+              color: viewModel.viewState.config.symbolColor,
+              style: .secondary
+            ) {
               viewModel.dismiss()
             }
+          }
         }
+      }
+      .fullScreenCover(isPresented: $isScannerPresented) {
+        QRCodeScanncerView(
+          onSuccess: { scannedString in
+            isScannerPresented = false
+            lastPresentationURL = scannedString
+            await viewModel.loadAndPresentCredential(using: lastPresentationURL)
+          },
+          onCancel: {
+            isScannerPresented = false
+          }
+        )
       }
     }
     .navigationBarBackButtonHidden()
@@ -72,9 +93,13 @@ struct CredentialOfferResultView<Router: RouterGraphType>: View {
     with: .init(
       router: RouterGraph(),
       config: .success(
-        credential: .json(""),
+        credential: .init(
+          credential: .json(""),
+          isSDJWT: true
+        ),
         dismiss: false
-      )
+      ),
+      interactor: MockCredentialPresentationInteractor()
     )
   )
 }
@@ -86,7 +111,8 @@ struct CredentialOfferResultView<Router: RouterGraphType>: View {
       config: .failure(
         error: "Error",
         dismiss: false
-      )
+      ),
+      interactor: MockCredentialPresentationInteractor()
     )
   )
 }

@@ -14,11 +14,18 @@
  * governing permissions and limitations under the Licence.
  */
 import Swinject
+import domain_business_logic
 
 public final class ServiceVPAssembly: Assembly {
 
   public init() {}
 
-  public func assemble(container: Container) { }
-
+  public func assemble(container: Container) {
+    container.register(CredentialPresentationControllerType.self) { r in
+      return CredentialPresentationController(
+        keyProvider: r.force(KeyProvider.self)
+      )
+    }
+    .inObjectScope(.container)
+  }
 }

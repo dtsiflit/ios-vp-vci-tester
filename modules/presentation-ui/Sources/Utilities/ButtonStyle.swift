@@ -13,10 +13,9 @@
  * ANY KIND, either express or implied. See the Licence for the specific language
  * governing permissions and limitations under the Licence.
  */
-import OpenID4VCI
+import Foundation
 
-public struct DeferredCredential: Sendable {
-  public let trasnactionId: TransactionId
-  public let authorizedRequest: AuthorizedRequest
-  public let issuer: Issuer
+enum ButtonStyle {
+  case primary
+  case secondary
 }

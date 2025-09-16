@@ -14,7 +14,6 @@
  * governing permissions and limitations under the Licence.
  */
 import SwiftUI
-import CodeScanner
 
 struct CredentialOfferView<Router: RouterGraphType>: View {
 
@@ -34,7 +33,6 @@ struct CredentialOfferView<Router: RouterGraphType>: View {
     NavigationView {
       ContentScreenView {
         ActionCardView(
-          icon: SymbolManager.value(for: .issuance),
           label: localization.get(with: .credentialIssuanceCardLabel),
           description: localization.get(with: .credentialIssuanceCardDescription),
           supportingText: viewModel.viewState.supportingText,
@@ -45,44 +43,20 @@ struct CredentialOfferView<Router: RouterGraphType>: View {
       }
       .navigationTitle(localization.get(with: .actions))
       .fullScreenCover(isPresented: $isScannerPresented) {
-        ZStack(alignment: .top) {
-          CodeScannerView(
-            codeTypes: [.qr],
-            scanMode: .once,
-            isGalleryPresented: .constant(false)
-          ) { result in
-            switch result {
-            case .success(let scanResult):
-              Task {
-                isScannerPresented = false
-                lastOfferUri = scanResult.string
-                await viewModel.scanAndIssueCredential(
-                  offerUri: scanResult.string,
-                  scope: "myScope",
-                  transactionCode: ""
-                )
-              }
-            case .failure(let error):
-              print(error)
-              isScannerPresented = false
-            }
+        QRCodeScanncerView(
+          onSuccess: { scannedString in
+            isScannerPresented = false
+            lastOfferUri = scannedString
+            await viewModel.scanAndIssueCredential(
+              offerUri: scannedString,
+              scope: "myScope",
+              transactionCode: ""
+            )
+          },
+          onCancel: {
+            isScannerPresented = false
           }
-          .ignoresSafeArea()
-
-          Image(systemName: SymbolManager.value(for: .close))
-            .font(.callout)
-            .fontWeight(.medium)
-            .padding(8)
-            .background {
-              Circle()
-                .fill(.ultraThinMaterial)
-            }
-            .frame(maxWidth: .infinity, alignment: .topTrailing)
-            .padding(.horizontal)
-            .onTapGesture {
-              isScannerPresented = false
-            }
-        }
+        )
       }
       .sheet(isPresented: Binding(
         get: { viewModel.viewState.needsTransactionCode },

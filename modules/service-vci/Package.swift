@@ -13,12 +13,12 @@ let package = Package(
   ],
   dependencies: [
     .package(
-      url: "https://github.com/Swinject/Swinject.git",
-      from: "2.9.1"
+      name: "domain-business-logic",
+      path: "./domain-business-logic"
     ),
     .package(
-      url: "https://github.com/eu-digital-identity-wallet/eudi-lib-ios-openid4vci-swift.git",
-      from: "0.15.4"
+      url: "https://github.com/Swinject/Swinject.git",
+      from: "2.9.1"
     )
   ],
   targets: [
@@ -26,10 +26,7 @@ let package = Package(
       name: "service-vci",
       dependencies: [
         "Swinject",
-        .product(
-          name: "OpenID4VCI",
-          package: "eudi-lib-ios-openid4vci-swift"
-        )
+        "domain-business-logic"
       ]
     ),
     .testTarget(

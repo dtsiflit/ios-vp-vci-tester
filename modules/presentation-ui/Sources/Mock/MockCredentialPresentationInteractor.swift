@@ -15,27 +15,15 @@
  */
 import Foundation
 import OpenID4VCI
-import JOSESwift
+import SwiftyJSON
+import domain_business_logic
 
-public enum BindingKeys {
-  public static let bindingKey: BindingKey = {
-    let privateKey = try! KeyController.generateECDHPrivateKey()
-    let publicKey = try! KeyController.generateECDHPublicKey(from: privateKey)
-
-    let alg = JWSAlgorithm(.ES256)
-    let publicKeyJWK = try! ECPublicKey(
-      publicKey: publicKey,
-      additionalParameters: [
-        "alg": alg.name,
-        "use": "sig",
-        "kid": UUID().uuidString
-      ]
-    )
-
-    return .jwk(
-      algorithm: alg,
-      jwk: publicKeyJWK,
-      privateKey: .secKey(privateKey)
-    )
-  }()
+public final class MockCredentialPresentationInteractor: CredentialPresentationInteractorType {
+  func loadAndPresentCredential(
+    url: String,
+    credential: Credential,
+    privateKey: SecKey
+  ) async throws -> Bool {
+    throw ValidationError.todo(reason: "Implement soon")
+  }
 }

@@ -49,7 +49,10 @@ public final class RouterGraph: RouterGraphType, @unchecked Sendable {
       CredentialOfferResultView(
         with: .init(
           router: self,
-          config: config
+          config: config,
+          interactor: DIGraph.resolver.force(
+            CredentialPresentationInteractorType.self
+          )
         )
       )
       .eraseToAnyView()
@@ -61,6 +64,14 @@ public final class RouterGraph: RouterGraphType, @unchecked Sendable {
             CredentialOfferInteractorType.self
           ),
           credentialOutcome: credentialOutcome
+        )
+      )
+      .eraseToAnyView()
+    case .credentialPresentationResult(let config):
+      CredentialPresentationResultView(
+        with: .init(
+          router: self,
+          config: config
         )
       )
       .eraseToAnyView()
@@ -93,7 +104,10 @@ public final class RouterGraph: RouterGraphType, @unchecked Sendable {
           CredentialOfferResultView(
             with: .init(
               router: self,
-              config: config
+              config: config,
+              interactor: DIGraph.resolver.force(
+                CredentialPresentationInteractorType.self
+              )
             )
           )
           .eraseToAnyView()

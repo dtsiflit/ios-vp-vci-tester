@@ -14,15 +14,32 @@
  * governing permissions and limitations under the Licence.
  */
 import Foundation
-import OpenID4VCI
+import Copyable
 
-public struct WalletConfiguration {
+@Copyable
+struct CredentialPresentationResultViewState: ViewState {
+  let config: CredentialResultConfiguration
+}
 
-  public static let scheme = "eudi-openid4ci"
+class CredentialPresentationResultViewModel<Router: RouterGraphType>: ViewModel<Router, CredentialPresentationResultViewState> {
 
-  public static let clientConfig: OpenId4VCIConfig = .init(
-    client: .public(id: "wallet-dev"),
-    authFlowRedirectionURI: URL(string: "eudi-openid4ci://authorize")!,
-    authorizeIssuanceConfig: .favorScopes
-  )
+  private let config: CredentialOfferResultType
+
+  init(
+    router: Router,
+    config: CredentialOfferResultType
+  ) {
+    self.config = config
+
+    super.init(
+      router: router,
+      initialState: .init(
+        config: config.configuration
+      )
+    )
+  }
+
+  func navigateToRoot() {
+    router.navigateToRoot()
+  }
 }

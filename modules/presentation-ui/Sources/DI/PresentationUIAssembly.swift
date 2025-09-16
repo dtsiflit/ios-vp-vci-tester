@@ -16,6 +16,8 @@
 import Swinject
 import Foundation
 import service_vci
+import service_vp
+import domain_business_logic
 
 public final class PresentationUIAssembly: Assembly {
 
@@ -24,8 +26,16 @@ public final class PresentationUIAssembly: Assembly {
   public func assemble(container: Container) {
 
     container.register(CredentialOfferInteractorType.self) { r in
-      CredentialOfferInteractor(
+      return CredentialOfferInteractor(
+        keyProvider: KeyProviderImpl(),
         controller: r.force(CredentialIssuanceControllerType.self)
+      )
+    }
+    .inObjectScope(.container)
+
+    container.register(CredentialPresentationInteractorType.self) { r in
+      CredentialPresentationInteractor(
+        controller: r.force(CredentialPresentationControllerType.self)
       )
     }
     .inObjectScope(.container)

@@ -13,17 +13,27 @@
  * ANY KIND, either express or implied. See the Licence for the specific language
  * governing permissions and limitations under the Licence.
  */
-import OpenID4VCI
+import Foundation
 
-public struct CredentialOutcome: Sendable {
-  public let credential: Credential?
-  public let deferredCredential: DeferredCredential?
+public enum CredentialPresentationError: LocalizedError {
+  case rejected
+  case notJwt
+  case invalidPublicKey
+  case invalidWebKeySet
+  case unknown(reason: String)
 
-  public init(
-    credential: Credential? = nil,
-    deferredCredential: DeferredCredential? = nil
-  ) {
-    self.credential = credential
-    self.deferredCredential = deferredCredential
+  public var errorDescription: String? {
+    switch self {
+    case .rejected:
+      return "Rejected"
+    case .notJwt:
+      return "Not JWT"
+    case .invalidPublicKey:
+      return "Invalid public key"
+    case .invalidWebKeySet:
+      return "Invalid WebKeySet"
+    case .unknown(let reason):
+      return "Unknown error: \(reason)"
+    }
   }
 }

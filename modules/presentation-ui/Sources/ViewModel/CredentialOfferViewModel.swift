@@ -18,10 +18,11 @@ import Copyable
 import OpenID4VCI
 import SwiftyJSON
 import service_vci
+import domain_business_logic
 
 @Copyable
 struct CredentialOfferState: ViewState {
-  let credential: Credential?
+  let credential: IssuedCredentialOutcome?
   let errorMessage: String?
   let isPreAuthorized: Bool
   let needsTransactionCode: Bool
@@ -43,7 +44,7 @@ class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router, Crede
         errorMessage: "",
         isPreAuthorized: false,
         needsTransactionCode: false,
-        supportingText: "Only SD-JWT credentials containing PID are supported."
+        supportingText: "Only SD-JWT credentials are supported."
       )
     )
   }
@@ -129,7 +130,7 @@ class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router, Crede
     )
   }
 
-  private func navigateToPendingDefferedView(credentialOutcome: CredentialOutcome) {
+  private func navigateToPendingDeferredView(credentialOutcome: CredentialOutcome) {
     router.navigateTo(
       .deferredPendingView(
         credentialOutcome: credentialOutcome
@@ -138,7 +139,7 @@ class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router, Crede
   }
 
   private func handleCredentialResult(_ result: CredentialOutcome) {
-    if let credential = result.credential {
+    if let credential = result.issuedCredential {
       setState {
         $0.copy(credential: credential)
       }
@@ -149,7 +150,7 @@ class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router, Crede
       setState {
         $0.copy(supportingText: "Pending credential issuance...")
       }
-      navigateToPendingDefferedView(credentialOutcome: result)
+      navigateToPendingDeferredView(credentialOutcome: result)
     }
   }
 }
