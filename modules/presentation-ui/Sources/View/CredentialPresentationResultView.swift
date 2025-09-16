@@ -27,7 +27,7 @@ struct CredentialPresentationResultView<Router: RouterGraphType>: View {
   }
 
   public var body: some View {
-    ContentScreenView(bgColor: .green) {
+    ContentScreenView(bgColor: viewModel.viewState.config.symbolColor) {
       VStack {
         VStack(spacing: 20) {
           Image(systemName: viewModel.viewState.config.symbolName)
@@ -66,7 +66,8 @@ struct CredentialPresentationResultView<Router: RouterGraphType>: View {
       router: MockRouterGraph(),
       config: .failure(
         error: "",
-        dismiss: false
+        dismiss: false,
+        stage: .presentation
       )
     )
   )

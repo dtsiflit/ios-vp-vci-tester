@@ -63,13 +63,17 @@ public protocol CredentialIssuanceControllerType: Sendable {
     _ issuer: Issuer,
     _ authorized: AuthorizedRequest,
     _ credentialConfigurationIdentifier: CredentialConfigurationIdentifier?,
-    _ bindingKey: [BindingKey]
+    _ bindingKey: [BindingKey],
+    _ isSDJWT: Bool,
+    _ privateKey: SecKey
   ) async throws -> IssuanceOutcome
 
   func requestDeferredCredential(
     _ issuer: Issuer,
     _ transactionId: TransactionId,
-    _ deferredCredential: DeferredCredentialOutcome
+    _ deferredCredential: DeferredCredentialOutcome,
+    _ isSDJWT: Bool,
+    _ privateKey: SecKey
   ) async throws -> IssuanceOutcome
 }
 
@@ -234,7 +238,9 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
     _ issuer: Issuer,
     _ authorized: AuthorizedRequest,
     _ credentialConfigurationIdentifier: CredentialConfigurationIdentifier?,
-    _ bindingKey: [BindingKey]
+    _ bindingKey: [BindingKey],
+    _ isSDJWT: Bool,
+    _ privateKey: SecKey
   ) async throws -> IssuanceOutcome {
     guard let credentialConfigurationIdentifier else {
       throw CredentialIssuanceError.missingCredentialConfigurationIdentifier
@@ -263,7 +269,9 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
               DeferredCredentialOutcome(
                 trasnactionId: transaction,
                 authorizedRequest: authorized,
-                issuer: issuer
+                issuer: issuer,
+                isSDJWT: isSDJWT,
+                privateKey: privateKey
               )
             )
           case .issued(_, let credential, _, _):
@@ -284,7 +292,9 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
   func requestDeferredCredential(
     _ issuer: Issuer,
     _ transactionId: TransactionId,
-    _ deferredCredential: DeferredCredentialOutcome
+    _ deferredCredential: DeferredCredentialOutcome,
+    _ isSDJWT: Bool,
+    _ privateKey: SecKey
   ) async throws -> IssuanceOutcome {
     let requestOutcome = try await issuer.requestDeferredCredential(
       request: deferredCredential.authorizedRequest,
@@ -302,7 +312,9 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
           DeferredCredentialOutcome(
             trasnactionId: transaction,
             authorizedRequest: deferredCredential.authorizedRequest,
-            issuer: issuer
+            issuer: issuer,
+            isSDJWT: isSDJWT,
+            privateKey: privateKey
           )
         )
       case .errored(let error, _):

@@ -20,15 +20,21 @@ public struct DeferredCredentialOutcome: Sendable {
   public let trasnactionId: TransactionId
   public let authorizedRequest: AuthorizedRequest
   public let issuer: Issuer
+  public let isSDJWT: Bool
+  public let privateKey: SecKey
 
   public init(
     trasnactionId: TransactionId,
     authorizedRequest: AuthorizedRequest,
-    issuer: Issuer
+    issuer: Issuer,
+    isSDJWT: Bool,
+    privateKey: SecKey
   ) {
     self.trasnactionId = trasnactionId
     self.authorizedRequest = authorizedRequest
     self.issuer = issuer
+    self.isSDJWT = isSDJWT
+    self.privateKey = privateKey
   }
 }
 

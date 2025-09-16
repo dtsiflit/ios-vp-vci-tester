@@ -81,7 +81,7 @@ final class CredentialPresentationController: CredentialPresentationControllerTy
           credential: credential
         )
       default:
-        print("Error")
+        throw CredentialPresentationError.rejected
       }
 
       let consent: ClientConsent = .vpToken(
@@ -99,7 +99,6 @@ final class CredentialPresentationController: CredentialPresentationControllerTy
       let result: DispatchOutcome = try await sdk.dispatch(response: response!)
       switch result {
       case .accepted:
-        print("Success")
         return true
       default:
         throw CredentialPresentationError.rejected

@@ -38,15 +38,15 @@ protocol CredentialOfferInteractorType: Sendable {
 
 final class CredentialOfferInteractor: CredentialOfferInteractorType {
 
-  private let controller: CredentialIssuanceControllerType
   private let keyProvider: KeyProvider
+  private let controller: CredentialIssuanceControllerType
 
   init(
-    controller: CredentialIssuanceControllerType,
-    keyProvider: KeyProvider
+    keyProvider: KeyProvider,
+    controller: CredentialIssuanceControllerType
   ) {
-    self.controller = controller
     self.keyProvider = keyProvider
+    self.controller = controller
   }
 
   func isPreAuthorizedGrant(offerUri: String, scope: String) async throws -> Bool {
@@ -115,15 +115,18 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
     }
   }
 
-  func requestDeferredCredential(
-    deferredCredential: DeferredCredentialOutcome
-  ) async throws -> CredentialOutcome {
+  func requestDeferredCredential(deferredCredential: DeferredCredentialOutcome) async throws -> CredentialOutcome {
     return try await controller.requestDeferredCredential(
       deferredCredential.issuer,
       deferredCredential.trasnactionId,
-      deferredCredential
+      deferredCredential,
+      deferredCredential.isSDJWT,
+      deferredCredential.privateKey
     )
-    .mapToCredentialOutcome(isSDJWT: true)
+    .mapToCredentialOutcome(
+      isSDJWT: deferredCredential.isSDJWT,
+      privateKey: deferredCredential.privateKey
+    )
   }
 
   private func authorizeRequestWithAuthCodeUseCase(
@@ -131,21 +134,28 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
     credentialOffer: CredentialOffer
   ) async throws -> CredentialOutcome {
 
+    // Authorize
     let authorized = try await controller.authorizeRequestWithAuthCodeUseCase(
       issuer: issuer,
       offer: credentialOffer
     )
 
+    // Generate binding key
     let bindingKey = try await keyProvider.generateBindingKey()
 
+    guard let privateKey = keyProvider.parseBindingKey(from: bindingKey) else {
+      throw CredentialError.issuerDoesNotSupportDeferredIssuance
+    }
+
+    // Issue credential
     let credential = try await controller.issueCredential(
       issuer,
       authorized,
       credentialOffer.credentialConfigurationIdentifiers.first!,
-      [bindingKey]
+      [bindingKey],
+      credentialOffer.isSDJWT,
+      privateKey
     )
-
-    let privateKey = keyProvider.parseBindingKey(from: bindingKey)
 
     return credential.mapToCredentialOutcome(
       isSDJWT: credentialOffer.isSDJWT,
@@ -160,6 +170,7 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
     transactionCode: String
   ) async throws -> CredentialOutcome {
 
+    // Authorize
     let authResult = await issuer.authorizeWithPreAuthorizationCode(
       credentialOffer: credentialOffer,
       authorizationCode: .preAuthorizationCode(
@@ -169,19 +180,29 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
       client: controller.clientConfig.client,
       transactionCode: transactionCode
     )
-
     let auth = try authResult.get()
 
+    // Generate binding key
     let bindingKey = try await keyProvider.generateBindingKey()
 
+    guard let privateKey = keyProvider.parseBindingKey(from: bindingKey) else {
+      throw CredentialError.issuerDoesNotSupportDeferredIssuance
+    }
+
+    // Issue credential
     let credential = try await controller.issueCredential(
       issuer,
       auth,
       credentialOffer.credentialConfigurationIdentifiers.first!,
-      [bindingKey]
+      [bindingKey],
+      credentialOffer.isSDJWT,
+      privateKey
     )
 
-    return credential.mapToCredentialOutcome(isSDJWT: credentialOffer.isSDJWT)
+    return credential.mapToCredentialOutcome(
+      isSDJWT: credentialOffer.isSDJWT,
+      privateKey: privateKey
+    )
   }
 }
 
