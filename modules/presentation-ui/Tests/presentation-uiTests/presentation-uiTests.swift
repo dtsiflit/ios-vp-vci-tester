@@ -1,5 +1,5 @@
 import XCTest
-@testable import logic_ui
+@testable import presentation_ui
 
 final class logic_uiTests: XCTestCase {
     func testExample() throws {

@@ -1,5 +1,5 @@
 import XCTest
-@testable import ServiceVCI
+@testable import service_vci
 
 final class ServiceVCITests: XCTestCase {
     func testExample() throws {

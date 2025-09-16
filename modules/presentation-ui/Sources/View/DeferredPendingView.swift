@@ -31,10 +31,8 @@ struct DeferredPendingView<Router: RouterGraphType>: View {
   var body: some View {
     NavigationView {
       ContentScreenView(bgColor: .orange) {
-        ProgressView("Pending Issuance...")
-          .progressViewStyle(
-            CircularProgressViewStyle(tint: .orange)
-          )
+        ProgressView(localization.get(with: .pendingIssuance))
+          .progressViewStyle(CircularProgressViewStyle(tint: .orange))
           .task {
             await viewModel.requestDeferredCredential()
           }

@@ -1,5 +1,5 @@
 import XCTest
-@testable import ServiceVP
+@testable import service_vp
 
 final class ServiceVPTests: XCTestCase {
     func testExample() throws {

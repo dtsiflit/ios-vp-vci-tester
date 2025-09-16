@@ -64,10 +64,10 @@ struct CredentialOfferView<Router: RouterGraphType>: View {
       ) {
         VStack(spacing: 0) {
           List {
-            Section(header: Text("Issuance Request")) {
+            Section(header: Text(localization.get(with: .issuanceRequest))) {
               HStack(spacing: 15) {
-                Text("Transaction Code")
-                TextField("5-digit code", text: $transactionCodeInput)
+                Text(localization.get(with: .transactionCode))
+                TextField(localization.get(with: .fiveDigits), text: $transactionCodeInput)
                   .textFieldStyle(.plain)
               }
             }
@@ -77,7 +77,7 @@ struct CredentialOfferView<Router: RouterGraphType>: View {
           .scrollContentBackground(.hidden)
           .padding(.top)
 
-          Text("Submit")
+          Text(localization.get(with: .submit))
             .frame(maxWidth: .infinity)
             .disabled(transactionCodeInput.isEmpty)
             .foregroundStyle(.white)

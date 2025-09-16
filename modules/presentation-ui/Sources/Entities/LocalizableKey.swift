@@ -28,6 +28,11 @@ public enum LocalizableKey: Sendable, Equatable, Hashable {
   case failureIssuanceResultDescription
   case issuancePending
   case presentation
+  case submit
+  case issuanceRequest
+  case transactionCode
+  case fiveDigits
+  case pendingIssuance
 
   func defaultTranslation(args: [String]) -> String {
     let value = switch self {
@@ -54,6 +59,16 @@ public enum LocalizableKey: Sendable, Equatable, Hashable {
       "Issuance Pending"
     case .presentation:
       "Presentation"
+    case .submit:
+      "Submi"
+    case .issuanceRequest:
+      "Issuance Request"
+    case .transactionCode:
+      "Transaction Code"
+    case .fiveDigits:
+      "5-digit code"
+    case .pendingIssuance:
+      "Pending Issuance..."
     }
     return value.format(arguments: args)
   }

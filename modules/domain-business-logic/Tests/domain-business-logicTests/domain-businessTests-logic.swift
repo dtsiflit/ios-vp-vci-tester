@@ -1,5 +1,5 @@
 import XCTest
-@testable import logic_business
+@testable import domain_business_logic
 
 final class logic_businessTests: XCTestCase {
     func testExample() throws {
