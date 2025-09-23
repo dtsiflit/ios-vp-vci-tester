@@ -59,10 +59,12 @@ final class CredentialPresentationController: CredentialPresentationControllerTy
 
     let sdk = SiopOpenID4VP(walletConfiguration: wallet)
 
+    guard let url = URL(string: url) else {
+      throw CredentialPresentationError.unknown(reason: "Invalid url")
+    }
+
     let result = await sdk.authorize(
-      url: URL(
-        string: url
-      )!
+      url: url,
     )
 
     switch result {

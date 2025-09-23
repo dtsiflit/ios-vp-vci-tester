@@ -62,48 +62,53 @@ struct CredentialOfferView<Router: RouterGraphType>: View {
         get: { viewModel.viewState.needsTransactionCode },
         set: { _ in })
       ) {
-        VStack(spacing: 0) {
-          List {
-            Section(header: Text(localization.get(with: .issuanceRequest))) {
-              HStack(spacing: 15) {
-                Text(localization.get(with: .transactionCode))
-                TextField(localization.get(with: .fiveDigits), text: $transactionCodeInput)
-                  .textFieldStyle(.plain)
-              }
-            }
-          }
-          .listStyle(.insetGrouped)
-          .scrollDisabled(true)
-          .scrollContentBackground(.hidden)
-          .padding(.top)
-
-          Text(localization.get(with: .submit))
-            .frame(maxWidth: .infinity)
-            .disabled(transactionCodeInput.isEmpty)
-            .foregroundStyle(.white)
-            .padding(15)
-            .background {
-              RoundedRectangle(cornerRadius: 12)
-                .foregroundStyle(transactionCodeInput.isEmpty ? .gray.opacity(0.28) : .blue)
-            }
-            .animation(.easeInOut, value: transactionCodeInput)
-            .frame(maxWidth: .infinity)
-            .onTapGesture {
-              Task {
-                await viewModel.continueWithTransactionCode(
-                  offerUri: lastOfferUri,
-                  scope: "myScope",
-                  transactionCode: transactionCodeInput
-                )
-              }
-            }
-            .padding(.horizontal)
-            .padding()
-        }
-        .presentationDetents([.height(190)])
-        .keyboardType(.numberPad)
+        transactionCode()
       }
     }
+  }
+
+  @ViewBuilder
+  private func transactionCode() -> some View {
+    VStack(spacing: .zero) {
+      List {
+        Section(header: Text(localization.get(with: .issuanceRequest))) {
+          HStack(spacing: 15) {
+            Text(localization.get(with: .transactionCode))
+            TextField(localization.get(with: .fiveDigits), text: $transactionCodeInput)
+              .textFieldStyle(.plain)
+          }
+        }
+      }
+      .listStyle(.insetGrouped)
+      .scrollDisabled(true)
+      .scrollContentBackground(.hidden)
+      .padding(.top)
+
+      Text(localization.get(with: .submit))
+        .frame(maxWidth: .infinity)
+        .disabled(transactionCodeInput.isEmpty)
+        .foregroundStyle(.white)
+        .padding(15)
+        .background {
+          RoundedRectangle(cornerRadius: 12)
+            .foregroundStyle(transactionCodeInput.isEmpty ? .gray.opacity(0.28) : .blue)
+        }
+        .animation(.easeInOut, value: transactionCodeInput)
+        .frame(maxWidth: .infinity)
+        .onTapGesture {
+          Task {
+            await viewModel.continueWithTransactionCode(
+              offerUri: lastOfferUri,
+              scope: "myScope",
+              transactionCode: transactionCodeInput
+            )
+          }
+        }
+        .padding(.horizontal)
+        .padding()
+    }
+    .presentationDetents([.height(190)])
+    .keyboardType(.numberPad)
   }
 }
 

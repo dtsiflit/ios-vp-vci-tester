@@ -32,7 +32,7 @@ public struct CredentialPresentationConfiguration {
     useSha3: Bool = true,
     privateKey: SecKey,
     credential: Credential
-  ) -> String {
+  ) -> String? {
 
     let credentialString: String
 
@@ -45,7 +45,7 @@ public struct CredentialPresentationConfiguration {
 
     let sdHash = useSha3 ? sha3_256Hash(credentialString) : sha256Hash(credentialString)
 
-    return try! generateVerifiablePresentation(
+    return try? generateVerifiablePresentation(
       audience: clientID,
       nonce: nonce,
       sdHash: sdHash,
@@ -62,14 +62,16 @@ public struct CredentialPresentationConfiguration {
     transactionData: [TransactionData]?,
     privateKey: SecKey,
     credential: Credential
-  ) throws -> String {
+  ) throws -> String? {
 
-    let header = try! JWSHeader(
+    guard let header = try? JWSHeader(
       parameters: [
         "alg": "ES256",
         "typ": "kb+jwt"
       ]
-    )
+    ) else {
+      throw CredentialPresentationError.unknown(reason: "Not valid jws header")
+    }
 
     var claims: [String: Any] = [
       "aud": audience,
@@ -90,32 +92,37 @@ public struct CredentialPresentationConfiguration {
       claims["transaction_data_hashes"] = transactionDataHashes
     }
 
-    let payloadData = try! JSONSerialization.data(
+    let payloadData = try? JSONSerialization.data(
       withJSONObject: claims,
       options: []
     )
-    let payload = Payload(payloadData)
 
-    let jws = try JWS(
-      header: header,
-      payload: payload,
-      signer: Signer(
-        signatureAlgorithm: .ES256,
-        key: privateKey
-      )!
-    )
+    if let payloadData, let singer = Signer(
+      signatureAlgorithm: .ES256,
+      key: privateKey
+    ) {
+      let payload = Payload(payloadData)
 
-    let keyBindingJwt = jws.compactSerializedString
+      let jws = try JWS(
+        header: header,
+        payload: payload,
+        signer: singer
+      )
 
-    let credentialContent: String
-    switch credential {
-    case .string(let str):
-      credentialContent = str
-    case .json(let json):
-      credentialContent = json[0]["credential"].string ?? "{}"
+      let keyBindingJwt = jws.compactSerializedString
+
+      let credentialContent: String
+      switch credential {
+      case .string(let str):
+        credentialContent = str
+      case .json(let json):
+        credentialContent = json[0]["credential"].string ?? "{}"
+      }
+
+      return "\(credentialContent)\(keyBindingJwt)"
     }
 
-    return "\(credentialContent)\(keyBindingJwt)"
+    return nil
   }
 
   private static func sha3_256Hash(_ input: String) -> String {
