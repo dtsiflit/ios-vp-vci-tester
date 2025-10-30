@@ -23,7 +23,8 @@ protocol CredentialOfferInteractorType: Sendable {
   func issueCredential(
     offerUri: String,
     scope: String,
-    transactionCode: String?
+    transactionCode: String?,
+    attestation: String?
   ) async throws -> CredentialOutcome
 
   func requestDeferredCredential(
@@ -34,21 +35,42 @@ protocol CredentialOfferInteractorType: Sendable {
     offerUri: String,
     scope: String
   ) async throws -> Bool
+  
+  func attest() async throws -> String
 }
 
 final class CredentialOfferInteractor: CredentialOfferInteractorType {
 
   private let keyProvider: KeyProvider
   private let controller: CredentialIssuanceControllerType
-
+  private let attestationClient: AppAttestClient
+  
   init(
     keyProvider: KeyProvider,
-    controller: CredentialIssuanceControllerType
+    controller: CredentialIssuanceControllerType,
+    attestationClient: AppAttestClient
   ) {
     self.keyProvider = keyProvider
     self.controller = controller
+    self.attestationClient = attestationClient
   }
 
+  func attest() async throws -> String {
+    
+    let privateKey = keyProvider.privateKey
+    let keyID = try await attestationClient.generateKeyID()
+    let result = try await attestationClient.attest(using: keyID)
+    
+    let jwt = try await attestationClient.getKeyAttestation(
+      publicKey: try KeyController.generateECDHPublicKey(
+        from: privateKey
+      ),
+      result: result
+    )
+    
+    return jwt
+  }
+  
   func isPreAuthorizedGrant(offerUri: String, scope: String) async throws -> Bool {
     let credentialOffer = try await controller.retrieveCredentialOffer(
       offerUri,
@@ -71,15 +93,36 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
   func issueCredential(
     offerUri: String,
     scope: String,
-    transactionCode: String? = ""
+    transactionCode: String? = "",
+    attestation: String?
   ) async throws -> CredentialOutcome {
 
-    let config = controller.clientConfig
+    let config: VCIConfig = if let attestation {
+      .init(
+        client: .attested(attestationJWT: try .init(
+          jws: .init(
+            compactSerialization: attestation
+          )), popJwtSpec: try .init(
+            signingAlgorithm: .ES256,
+            duration: 300.0,
+            typ: "oauth-client-attestation-pop+jwt",
+            jwsSigner: .init(
+              signatureAlgorithm: .ES256,
+              key: keyProvider.privateKey
+            )!
+          )),
+        authFlowRedirectionURI: controller.clientConfig.authFlowRedirectionURI,
+        authorizeIssuanceConfig: controller.clientConfig.authorizeIssuanceConfig,
+        clientAttestationPoPBuilder: DefaultClientAttestationPoPBuilder.default
+      )
+    } else {
+      controller.clientConfig
+    }
 
     let credentialOffer = try await controller.retrieveCredentialOffer(
       offerUri,
       scope,
-      controller.clientConfig
+      config
     )
 
     let issuer = try await controller.getIssuer(
