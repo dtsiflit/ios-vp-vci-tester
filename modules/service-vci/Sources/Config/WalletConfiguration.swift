@@ -23,6 +23,7 @@ public struct WalletConfiguration {
   public static let clientConfig: OpenId4VCIConfig = .init(
     client: .public(id: "wallet-dev"),
     authFlowRedirectionURI: URL(string: "eudi-openid4ci://authorize")!,
-    authorizeIssuanceConfig: .favorScopes
+    authorizeIssuanceConfig: .favorScopes,
+    clientAttestationPoPBuilder: DefaultClientAttestationPoPBuilder.default
   )
 }
