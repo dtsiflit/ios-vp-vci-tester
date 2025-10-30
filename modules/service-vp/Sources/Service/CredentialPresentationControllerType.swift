@@ -133,6 +133,9 @@ final class CredentialPresentationController: CredentialPresentationControllerTy
         ]),
         .x509SanDns(trust: { _ in
           true
+        }),
+        .x509Hash(trust: { _ in
+          true
         })
       ],
       vpFormatsSupported: ClaimFormat.default(),
