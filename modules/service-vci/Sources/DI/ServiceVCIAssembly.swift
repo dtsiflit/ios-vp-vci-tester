@@ -15,6 +15,9 @@
  */
 import Swinject
 import domain_business_logic
+import OpenID4VCI
+
+public typealias VCIConfig = OpenId4VCIConfig
 
 public final class ServiceVCIAssembly: Assembly {
 

@@ -264,7 +264,7 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
       case .success(let response):
         if let result = response.credentialResponses.first {
           switch result {
-          case .deferred(let transaction):
+          case .deferred(let transaction, _):
             return .deferred(
               DeferredCredentialOutcome(
                 trasnactionId: transaction,
@@ -307,7 +307,7 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
       switch response {
       case .issued(let credential):
         return .issued(credential)
-      case .issuancePending(let transaction):
+      case .issuancePending(let transaction, _):
         return .deferred(
           DeferredCredentialOutcome(
             trasnactionId: transaction,
@@ -319,6 +319,8 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
         )
       case .errored(let error, _):
         throw CredentialIssuanceError.unknown(reason: error ?? "")
+      case .issuanceStillPending(_):
+        throw CredentialIssuanceError.unknown(reason: "Still pending")
       }
     case .failure(let error):
       throw CredentialIssuanceError.unknown(reason: error.localizedDescription)
