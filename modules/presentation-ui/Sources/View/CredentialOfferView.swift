@@ -37,7 +37,8 @@ struct CredentialOfferView<Router: RouterGraphType>: View {
       ContentScreenView {
         VStack {
           Spacer()
-            .frame(width: .infinity, height: 50.0)
+            .frame(height: 50.0)
+          
           Text("Attestation type")
             .frame(maxWidth: .infinity, alignment: .leading)
           Picker("What is your favorite color?", selection: $attestationSchemeSegment) {
