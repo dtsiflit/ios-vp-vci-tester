@@ -55,14 +55,15 @@ class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router, Crede
     offerUri: String,
     scope: String,
     transactionCode: String,
-    attest: Bool
+    attestationType: Int
   ) async {
     do {
       
-      let jwt: String? = if attest {
-        try await self.attest()
-      } else {
-        nil
+      let jwt: String? =  switch attestationType {
+      case 0: nil
+      case 1: try await self.platformAttest()
+      case 2: try await self.jwkAttest()
+      default: nil
       }
       
       let isPreAuth = try await interactor.isPreAuthorizedGrant(
@@ -169,7 +170,12 @@ class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router, Crede
   }
   
   nonisolated
-  func attest() async throws -> String {
-    return try await interactor.attest()
+  func platformAttest() async throws -> String {
+    return try await interactor.platformAttest()
+  }
+  
+  nonisolated
+  func jwkAttest() async throws -> String {
+    return try await interactor.jwkAttest()
   }
 }

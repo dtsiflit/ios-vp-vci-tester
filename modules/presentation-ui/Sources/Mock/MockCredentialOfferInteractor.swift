@@ -105,7 +105,11 @@ public final class MockCredentialOfferInteractor: CredentialOfferInteractorType 
     throw ValidationError.todo(reason: "Implement soon")
   }
   
-  func attest() async throws -> String {
+  func platformAttest() async throws -> String {
+    throw ValidationError.todo(reason: "Implement soon")
+  }
+  
+  func jwkAttest() async throws -> String {
     throw ValidationError.todo(reason: "Implement soon")
   }
 }

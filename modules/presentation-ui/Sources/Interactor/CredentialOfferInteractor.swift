@@ -36,7 +36,8 @@ protocol CredentialOfferInteractorType: Sendable {
     scope: String
   ) async throws -> Bool
   
-  func attest() async throws -> String
+  func platformAttest() async throws -> String
+  func jwkAttest() async throws -> String
 }
 
 final class CredentialOfferInteractor: CredentialOfferInteractorType {
@@ -55,11 +56,11 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
     self.attestationClient = attestationClient
   }
 
-  func attest() async throws -> String {
+  func platformAttest() async throws -> String {
     
     let privateKey = keyProvider.privateKey
     let keyID = try await attestationClient.generateKeyID()
-    let result = try await attestationClient.attest(using: keyID)
+    let result = try await attestationClient.platformAttest(using: keyID)
     
     let jwt = try await attestationClient.getKeyAttestation(
       publicKey: try KeyController.generateECDHPublicKey(
@@ -69,6 +70,13 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
     )
     
     return jwt
+  }
+  
+  func jwkAttest() async throws -> String {
+    return try await attestationClient.jwkAttest(using: [
+      "clientId": controller.clientConfig.client.id,
+      "jwk": keyProvider.generateECJWKKey().toDictionary()
+    ])
   }
   
   func isPreAuthorizedGrant(offerUri: String, scope: String) async throws -> Bool {
@@ -99,18 +107,23 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
 
     let config: VCIConfig = if let attestation {
       .init(
-        client: .attested(attestationJWT: try .init(
-          jws: .init(
-            compactSerialization: attestation
-          )), popJwtSpec: try .init(
-            signingAlgorithm: .ES256,
-            duration: 300.0,
-            typ: "oauth-client-attestation-pop+jwt",
-            jwsSigner: .init(
-              signatureAlgorithm: .ES256,
-              key: keyProvider.privateKey
-            )!
-          )),
+        client: 
+          .attested(
+            attestationJWT: try .init(
+              jws: .init(
+                compactSerialization: attestation
+              )
+            ),
+            popJwtSpec: try .init(
+              signingAlgorithm: .ES256,
+              duration: 300.0,
+              typ: "oauth-client-attestation-pop+jwt",
+              jwsSigner: .init(
+                signatureAlgorithm: .ES256,
+                key: keyProvider.privateKey
+              )!
+            )
+          ),
         authFlowRedirectionURI: controller.clientConfig.authFlowRedirectionURI,
         authorizeIssuanceConfig: controller.clientConfig.authorizeIssuanceConfig,
         clientAttestationPoPBuilder: DefaultClientAttestationPoPBuilder.default
