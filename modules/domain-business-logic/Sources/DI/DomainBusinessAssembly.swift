@@ -15,7 +15,6 @@
  */
 import Foundation
 import Swinject
-import DeviceCheck
 
 public final class DomainBusinessAssembly: Assembly {
 
@@ -32,8 +31,7 @@ public final class DomainBusinessAssembly: Assembly {
 
     container.register(AppAttestClient.self) { r in
       AppAttestClient(
-        walletClient: r.force(WalletProviderClient.self),
-        deviceCheck: DCAppAttestService.shared
+        walletClient: r.force(WalletProviderClient.self)
       )
     }
     .inObjectScope(ObjectScope.container)

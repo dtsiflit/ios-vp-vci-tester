@@ -67,11 +67,10 @@ public final class AppAttestClient: Sendable {
   private let walletClient: WalletProviderClient
   
   public init(
-    walletClient: WalletProviderClient,
-    deviceCheck: DCAppAttestService = .shared
+    walletClient: WalletProviderClient
   ) {
     self.walletClient = walletClient
-    self.deviceCheck = deviceCheck
+    self.deviceCheck = .shared
   }
   
   // MARK: - Step 1: Generate an App Attest key and get its keyID
@@ -90,7 +89,7 @@ public final class AppAttestClient: Sendable {
   ///
   /// - Parameter keyID: The App Attest key identifier (previously created via `generateKeyID()`).
   /// - Returns: `AttestationResult` containing the keyID, attestation object (binary), and the challenge.
-  public func attest(using keyID: String) async throws -> AttestationResult {
+  public func platformAttest(using keyID: String) async throws -> AttestationResult {
     guard deviceCheck.isSupported else { throw AppAttestClientError.notSupported }
     
     // 1) Get challenge from your server
@@ -113,6 +112,18 @@ public final class AppAttestClient: Sendable {
       attestationObject: attestationObject,
       challenge: challenge
     )
+  }
+  
+  /// Fetches a client attestation JWT from you wallet provider.
+  ///
+  /// - Returns: `String` containing the wallet application attestation.
+  public func jwkAttest(using payload: [String: Any]) async throws -> String {
+    
+    let walletApplicationAttestation = try await walletClient.issueWalletApplicationAttestationJwk(
+      payload: payload
+    )
+    
+    return walletApplicationAttestation.walletApplicationAttestation
   }
   
   public func getKeyAttestation(publicKey: SecKey, result: AttestationResult) async throws -> String {
