@@ -26,7 +26,7 @@ public final class MockCredentialOfferInteractor: CredentialOfferInteractorType 
     return false
   }
 
-  public func issueCredential(offerUri: String, scope: String, transactionCode: String?) async -> CredentialOutcome {
+  public func issueCredential(offerUri: String, scope: String, transactionCode: String?, attestation: String?) async -> CredentialOutcome {
     try? await Task.sleep(nanoseconds: 100_000_000)
 
     let jsonCredential: JSON = [
@@ -102,6 +102,14 @@ public final class MockCredentialOfferInteractor: CredentialOfferInteractorType 
   func requestDeferredCredential(
     deferredCredential: DeferredCredentialOutcome
   ) async throws -> CredentialOutcome {
+    throw ValidationError.todo(reason: "Implement soon")
+  }
+  
+  func platformAttest() async throws -> String {
+    throw ValidationError.todo(reason: "Implement soon")
+  }
+  
+  func jwkAttest() async throws -> String {
     throw ValidationError.todo(reason: "Implement soon")
   }
 }

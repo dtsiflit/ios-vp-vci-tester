@@ -63,7 +63,6 @@ class CredentialOfferResultViewModel<Router: RouterGraphType>: ViewModel<Router,
       }
 
       guard let privateKey = outcome?.privateKey else {
-        print("No private key available")
         return
       }
 

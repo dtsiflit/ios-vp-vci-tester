@@ -13,7 +13,6 @@
  * ANY KIND, either express or implied. See the Licence for the specific language
  * governing permissions and limitations under the Licence.
  */
-import JOSESwift
 import Foundation
 import SiopOpenID4VP
 import OpenID4VCI
@@ -134,6 +133,9 @@ final class CredentialPresentationController: CredentialPresentationControllerTy
           )
         ]),
         .x509SanDns(trust: { _ in
+          true
+        }),
+        .x509Hash(trust: { _ in
           true
         })
       ],

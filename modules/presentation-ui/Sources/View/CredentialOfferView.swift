@@ -24,7 +24,10 @@ struct CredentialOfferView<Router: RouterGraphType>: View {
   @State private var isScannerPresented = false
   @State private var lastOfferUri: String = ""
   @State private var transactionCodeInput: String = ""
-
+  
+  @State private var enableWalletAttestation = false
+  @State private var attestationSchemeSegment = 0
+  
   init(with viewModel: CredentialOfferViewModel<Router>) {
     self.viewModel = viewModel
   }
@@ -32,6 +35,20 @@ struct CredentialOfferView<Router: RouterGraphType>: View {
   var body: some View {
     NavigationView {
       ContentScreenView {
+        VStack {
+          Spacer()
+            .frame(height: 50.0)
+          
+          Text("Attestation type")
+            .frame(maxWidth: .infinity, alignment: .leading)
+          Picker("What is your favorite color?", selection: $attestationSchemeSegment) {
+            Text("None").tag(0)
+            Text("Device").tag(1)
+            Text("JWK").tag(2)
+          }
+          .pickerStyle(.segmented)
+        }
+        
         ActionCardView(
           label: localization.get(with: .credentialIssuanceCardLabel),
           description: localization.get(with: .credentialIssuanceCardDescription),
@@ -50,7 +67,8 @@ struct CredentialOfferView<Router: RouterGraphType>: View {
             await viewModel.scanAndIssueCredential(
               offerUri: scannedString,
               scope: "myScope",
-              transactionCode: ""
+              transactionCode: "",
+              attestationType: attestationSchemeSegment
             )
           },
           onCancel: {

@@ -28,7 +28,8 @@ public final class PresentationUIAssembly: Assembly {
     container.register(CredentialOfferInteractorType.self) { r in
       return CredentialOfferInteractor(
         keyProvider: KeyProviderImpl(),
-        controller: r.force(CredentialIssuanceControllerType.self)
+        controller: r.force(CredentialIssuanceControllerType.self),
+        attestationClient: r.force(AppAttestClient.self)
       )
     }
     .inObjectScope(.container)

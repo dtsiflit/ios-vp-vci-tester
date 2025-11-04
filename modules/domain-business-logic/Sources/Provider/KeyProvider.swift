@@ -14,10 +14,13 @@
  * governing permissions and limitations under the Licence.
  */
 import JOSESwift
-import Foundation
+@preconcurrency import Foundation
 import OpenID4VCI
 
 public protocol KeyProvider: Sendable {
+  var privateKey: SecKey { get }
+  
+  func generateECJWKKey() async throws -> ECPublicKey
   func generateRsaJWKKey() async throws -> RSAPublicKey
   func generateBindingKey() async throws -> BindingKey
   func parseBindingKey(from key: BindingKey) -> SecKey?
@@ -25,7 +28,11 @@ public protocol KeyProvider: Sendable {
 
 public struct KeyProviderImpl: KeyProvider {
 
-  public init() {}
+  public let privateKey: SecKey
+  
+  public init() {
+    privateKey = try! KeyController.generateECDHPrivateKey()
+  }
 
   public func generateRsaJWKKey() async throws -> RSAPublicKey {
     let rsaPublicKey = try await generateRSAPublicKey()
@@ -37,10 +44,20 @@ public struct KeyProviderImpl: KeyProvider {
         "alg": "RS256"
       ])
   }
+  
+  public func generateECJWKKey() async throws -> ECPublicKey {
+    let publicKey = try KeyController.generateECDHPublicKey(from: privateKey)
+    return try ECPublicKey(
+      publicKey: publicKey,
+      additionalParameters: [
+        "use": "sig",
+        "kid": UUID().uuidString,
+        "alg": "ES256"
+      ])
+  }
 
   public func generateBindingKey() async throws -> BindingKey {
 
-    let privateKey = try await generateECDHPrivateKey()
     let publicKey = try KeyController.generateECDHPublicKey(from: privateKey)
     let alg = JWSAlgorithm(.ES256)
 
@@ -63,7 +80,7 @@ public struct KeyProviderImpl: KeyProvider {
   public func parseBindingKey(from key: BindingKey) -> SecKey? {
     switch key {
     case .jwk(_, _, let privateKeyProxy, _),
-        .keyAttestation(_, _, _, let privateKeyProxy, _):
+        .keyAttestation(_, _, _, let privateKeyProxy, _, _):
       if case let .secKey(secKey) = privateKeyProxy {
         return secKey
       }
@@ -77,10 +94,6 @@ public struct KeyProviderImpl: KeyProvider {
     @unknown default:
       return nil
     }
-  }
-
-  private func generateECDHPrivateKey() async throws -> SecKey {
-    try KeyController.generateECDHPrivateKey()
   }
 
   private func generateRSAPublicKey() async throws -> SecKey {

@@ -13,6 +13,7 @@
  * ANY KIND, either express or implied. See the Licence for the specific language
  * governing permissions and limitations under the Licence.
  */
+import Foundation
 import Swinject
 
 public final class DomainBusinessAssembly: Assembly {
@@ -20,6 +21,21 @@ public final class DomainBusinessAssembly: Assembly {
   public init() {}
 
   public func assemble(container: Container) {
+    
+    container.register(WalletProviderClient.self) { _ in
+      WalletProviderClient(baseURL: URL(
+        string: "https://dev.wallet-provider.eudiw.dev"
+      )!)
+    }
+    .inObjectScope(.container)
+
+    container.register(AppAttestClient.self) { r in
+      AppAttestClient(
+        walletClient: r.force(WalletProviderClient.self)
+      )
+    }
+    .inObjectScope(ObjectScope.container)
+    
     container.register(KeyProvider.self) { _ in
       KeyProviderImpl()
     }

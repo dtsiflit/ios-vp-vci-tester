@@ -17,6 +17,7 @@ import Foundation
 import Copyable
 import OpenID4VCI
 import SwiftyJSON
+import DeviceCheck
 import service_vci
 import domain_business_logic
 
@@ -27,6 +28,7 @@ struct CredentialOfferState: ViewState {
   let isPreAuthorized: Bool
   let needsTransactionCode: Bool
   let supportingText: String
+  let attestation: String?
 }
 
 class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router, CredentialOfferState> {
@@ -44,7 +46,8 @@ class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router, Crede
         errorMessage: "",
         isPreAuthorized: false,
         needsTransactionCode: false,
-        supportingText: "Only SD-JWT credentials are supported."
+        supportingText: "Only SD-JWT credentials are supported.",
+        attestation: nil
       )
     )
   }
@@ -52,9 +55,18 @@ class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router, Crede
   func scanAndIssueCredential(
     offerUri: String,
     scope: String,
-    transactionCode: String
+    transactionCode: String,
+    attestationType: Int
   ) async {
     do {
+      
+      let jwt: String? =  switch attestationType {
+      case 0: nil
+      case 1: try await self.platformAttest()
+      case 2: try await self.jwkAttest()
+      default: nil
+      }
+      
       let isPreAuth = try await interactor.isPreAuthorizedGrant(
         offerUri: offerUri,
         scope: scope
@@ -64,7 +76,8 @@ class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router, Crede
         setState {
           $0.copy(
             isPreAuthorized: true,
-            needsTransactionCode: true
+            needsTransactionCode: true,
+            attestation: jwt
           )
         }
         return
@@ -72,8 +85,10 @@ class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router, Crede
         let result = try await interactor.issueCredential(
           offerUri: offerUri,
           scope: scope,
-          transactionCode: nil
+          transactionCode: nil,
+          attestation: jwt
         )
+        
         handleCredentialResult(result)
       }
     } catch {
@@ -95,7 +110,8 @@ class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router, Crede
       let result = try await interactor.issueCredential(
         offerUri: offerUri,
         scope: scope,
-        transactionCode: transactionCode
+        transactionCode: transactionCode,
+        attestation: viewState.attestation
       )
       handleCredentialResult(result)
     } catch {
@@ -152,5 +168,18 @@ class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router, Crede
       }
       navigateToPendingDeferredView(credentialOutcome: result)
     }
+  }
+  
+  nonisolated
+  func platformAttest() async throws -> String {
+    if DCAppAttestService.shared.isSupported {
+      return try await interactor.platformAttest()
+    }
+    return try await interactor.jwkAttest()
+  }
+  
+  nonisolated
+  func jwkAttest() async throws -> String {
+    return try await interactor.jwkAttest()
   }
 }
