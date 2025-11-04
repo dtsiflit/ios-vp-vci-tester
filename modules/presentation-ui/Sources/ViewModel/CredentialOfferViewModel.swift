@@ -17,6 +17,7 @@ import Foundation
 import Copyable
 import OpenID4VCI
 import SwiftyJSON
+import DeviceCheck
 import service_vci
 import domain_business_logic
 
@@ -171,7 +172,10 @@ class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router, Crede
   
   nonisolated
   func platformAttest() async throws -> String {
-    return try await interactor.platformAttest()
+    if DCAppAttestService.shared.isSupported {
+      return try await interactor.platformAttest()
+    }
+    return try await interactor.jwkAttest()
   }
   
   nonisolated
