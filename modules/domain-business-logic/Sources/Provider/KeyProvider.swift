@@ -70,7 +70,7 @@ public struct KeyProviderImpl: KeyProvider {
       ]
     )
 
-    return .jwk(
+    return .jwt(
       algorithm: alg,
       jwk: publicKeyJWK,
       privateKey: .secKey(privateKey)
@@ -79,8 +79,8 @@ public struct KeyProviderImpl: KeyProvider {
 
   public func parseBindingKey(from key: BindingKey) -> SecKey? {
     switch key {
-    case .jwk(_, _, let privateKeyProxy, _),
-        .keyAttestation(_, _, _, let privateKeyProxy, _, _):
+    case .jwt(_, _, let privateKeyProxy, _),
+        .jwtKeyAttestation(_, _, _, let privateKeyProxy, _):
       if case let .secKey(secKey) = privateKeyProxy {
         return secKey
       }
