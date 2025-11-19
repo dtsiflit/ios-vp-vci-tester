@@ -118,10 +118,7 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
               signingAlgorithm: .ES256,
               duration: 300.0,
               typ: "oauth-client-attestation-pop+jwt",
-              jwsSigner: .init(
-                signatureAlgorithm: .ES256,
-                key: keyProvider.privateKey
-              )!
+              signingKey: .secKey(keyProvider.privateKey)
             )
           ),
         authFlowRedirectionURI: controller.clientConfig.authFlowRedirectionURI,

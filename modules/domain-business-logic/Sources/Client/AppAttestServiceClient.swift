@@ -119,11 +119,11 @@ public final class AppAttestClient: Sendable {
   /// - Returns: `String` containing the wallet application attestation.
   public func jwkAttest(using payload: [String: Any]) async throws -> String {
     
-    let walletApplicationAttestation = try await walletClient.issueWalletApplicationAttestationJwk(
+    let walletInstanceAttestation = try await walletClient.issueWalletInstanceAttestationJwk(
       payload: payload
     )
     
-    return walletApplicationAttestation.walletApplicationAttestation
+    return walletInstanceAttestation.walletInstanceAttestation
   }
   
   public func getKeyAttestation(publicKey: SecKey, result: AttestationResult) async throws -> String {
@@ -137,7 +137,7 @@ public final class AppAttestClient: Sendable {
       "challenge": result.challenge
     ]
     
-    let jwt = try await walletClient.issueWalletApplicationAttestationIos(payload: [
+    let jwt = try await walletClient.issueWalletInstanceAttestationIos(payload: [
       "clientId": "wallet-dev",
       "keyAttestation": [
         "attestation": result.attestationObjectBase64,
@@ -146,7 +146,7 @@ public final class AppAttestClient: Sendable {
       "challenge": result.challenge
     ])
     
-    return jwt.walletApplicationAttestation
+    return jwt.walletInstanceAttestation
   }
 }
 
