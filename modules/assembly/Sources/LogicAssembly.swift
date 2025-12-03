@@ -17,4 +17,5 @@
 @_exported import domain_business_logic
 @_exported import service_vci
 @_exported import service_vp
+@_exported import api
 @_exported import presentation_ui

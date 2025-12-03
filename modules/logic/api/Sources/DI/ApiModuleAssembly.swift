@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 European Commission
+ * Copyright (c) 2025 European Commission
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the European
  * Commission - subsequent versions of the EUPL (the "Licence"); You may not use this work
@@ -13,18 +13,17 @@
  * ANY KIND, either express or implied. See the Licence for the specific language
  * governing permissions and limitations under the Licence.
  */
+import domain_business_logic
+import Swinject
 
-public extension DIGraph {
-  @MainActor static func assembleDependenciesGraph() {
-    DIGraph.lazyLoad(
-      with: [
-        DomainBusinessAssembly(),
-        ServiceVCIAssembly(),
-        ServiceVPAssembly(),
-        PresentationUIAssembly(),
-        AssemblyModule(),
-        ApiModuleAssembly()
-      ]
-    )
+public final class ApiModuleAssembly: Assembly {
+
+  public init() {}
+
+  public func assemble(container: Container) {
+    container.register(NetworkManager.self) { r in
+      NetworkManagerImpl()
+    }
+    .inObjectScope(ObjectScope.transient)
   }
 }
