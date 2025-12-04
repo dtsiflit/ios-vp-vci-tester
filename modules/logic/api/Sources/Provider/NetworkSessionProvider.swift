@@ -15,14 +15,15 @@
  */
 import Foundation
 
-extension NetworkManager {
-  func execute<R: NetworkRequest>(
-    with request: R,
-    parameters: [NetworkParameter]? = nil
-  ) async throws -> R.Response where R.Response: Decodable & Sendable {
-    return try await execute(
-      with: request,
-      parameters: parameters
-    ) as R.Response
+public protocol NetworkSessionProvider: Sendable {
+  var urlSession: URLSession { get }
+}
+
+final class NetworkSessionProviderImpl: NetworkSessionProvider {
+
+  let urlSession: URLSession
+
+  init() {
+    self.urlSession = URLSession.shared
   }
 }

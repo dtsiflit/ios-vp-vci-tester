@@ -18,6 +18,7 @@ import Foundation
 import service_vci
 import service_vp
 import domain_business_logic
+import api
 
 public final class PresentationUIAssembly: Assembly {
 
@@ -29,7 +30,7 @@ public final class PresentationUIAssembly: Assembly {
       return CredentialOfferInteractor(
         keyProvider: KeyProviderImpl(),
         controller: r.force(CredentialIssuanceControllerType.self),
-        attestationClient: r.force(AppAttestClient.self)
+        attestationClient: r.force(AttestationClientType.self)
       )
     }
     .inObjectScope(.container)

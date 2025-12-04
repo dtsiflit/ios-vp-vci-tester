@@ -35,29 +35,24 @@ struct CredentialOfferView<Router: RouterGraphType>: View {
   var body: some View {
     NavigationView {
       ContentScreenView {
-        VStack {
-          Spacer()
-            .frame(height: 50.0)
-          
-          Text("Attestation type")
-            .frame(maxWidth: .infinity, alignment: .leading)
-          Picker("What is your favorite color?", selection: $attestationSchemeSegment) {
-            Text("None").tag(0)
-            Text("Device").tag(1)
-            Text("JWK").tag(2)
+        List {
+          Section(
+            header: Text("Configuration"),
+            footer: Text(viewModel.viewState.supportingText)
+          ){
+            Picker("Attestation Type", selection: $attestationSchemeSegment) {
+              Text("None")
+                .tag(0)
+              Text("Device")
+                .tag(1)
+              Text("JWK")
+                .tag(2)
+            }
           }
-          .pickerStyle(.segmented)
         }
-        
-        ActionCardView(
-          label: localization.get(with: .credentialIssuanceCardLabel),
-          description: localization.get(with: .credentialIssuanceCardDescription),
-          supportingText: viewModel.viewState.supportingText,
-          buttonLabel: localization.get(with: .credentialIssuanceCardButtonLabel)) {
-            isScannerPresented = true
-          }
-          .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .scrollContentBackground(.hidden)
       }
+      .scrollDisabled(true)
       .navigationTitle(localization.get(with: .actions))
       .fullScreenCover(isPresented: $isScannerPresented) {
         QRCodeScanncerView(
@@ -81,6 +76,15 @@ struct CredentialOfferView<Router: RouterGraphType>: View {
         set: { _ in })
       ) {
         transactionCode()
+      }
+      .toolbar {
+        ToolbarItem(placement: .topBarTrailing) {
+          Button {
+            isScannerPresented = true
+          } label: {
+            Image(systemName: "qrcode.viewfinder")
+          }
+        }
       }
     }
   }

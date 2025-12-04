@@ -25,6 +25,10 @@ let package = Package(
       path: "./service-vp"
     ),
     .package(
+      name: "api",
+      path: "../../api"
+    ),
+    .package(
       url: "https://github.com/twostraws/CodeScanner",
       from: "2.4.1"
     )
@@ -34,6 +38,7 @@ let package = Package(
       name: "presentation-ui",
       dependencies: [
         "domain-business-logic",
+        "api",
         "service-vci",
         "service-vp",
         .product(

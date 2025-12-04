@@ -15,31 +15,8 @@
  */
 import Foundation
 
-enum NetworkError: Error, LocalizedError {
-  case invalidURL
-  case noData
-  case decodingFailed(Error)
-  case httpError(statusCode: Int, data: Data?)
-  case unauthorized
-  case serverError
-  case unknown(Error)
-  
-  var errorDescription: String? {
-    switch self {
-    case .invalidURL:
-      return "Invalid URL"
-    case .noData:
-      return "No data received"
-    case .decodingFailed(let error):
-      return "Failed to decode: \(error.localizedDescription)"
-    case .httpError(let code, _):
-      return "HTTP Error: \(code)"
-    case .unauthorized:
-      return "Unauthorized access"
-    case .serverError:
-      return "Server error occurred"
-    case .unknown(let error):
-      return "Unknown error: \(error.localizedDescription)"
-    }
-  }
+enum NetworkError: Error {
+  case invalidResponse
+  case httpStatus(code: Int, data: Data?)
+  case decoding(Error)
 }

@@ -22,64 +22,51 @@ public struct ActionCardView: View {
   private let label: String
   private let description: String
   private let buttonLabel: String
-  private let supportingText: String
   private let action: () -> Void
 
   public init(
     label: String,
     description: String,
-    supportingText: String,
     buttonLabel: String,
     action: @escaping () -> Void
   ) {
     self.label = label
     self.description = description
     self.buttonLabel = buttonLabel
-    self.supportingText = supportingText
     self.action = action
   }
 
   public var body: some View {
-    VStack(spacing: 0) {
-      VStack(alignment: .leading, spacing: 5) {
+    HStack(alignment: .top){
+      Image(systemName: "qrcode.viewfinder")
+        .font(.system(size: 40))
+        .foregroundStyle(
+          LinearGradient(
+            colors: [
+              .blue,
+              .cyan
+            ],
+            startPoint: .bottom,
+            endPoint: .top
+          )
+        )
+      VStack(alignment: .leading,spacing: 4) {
         Text(label)
-          .font(.title3)
+          .font(.headline)
           .fontWeight(.semibold)
 
         Text(description)
           .foregroundStyle(.gray)
-          .font(.callout)
-
+          .font(.subheadline)
+        
         Button(action: action) {
           Text(buttonLabel)
-            .fontWeight(.medium)
-            .padding()
-            .frame(maxWidth: .infinity)
-            .background(
-              Capsule()
-                .foregroundStyle(.blue)
-                .opacity(0.18)
-            )
+            .font(.footnote)
         }
-        .padding(.top, 15)
-        .contentShape(Capsule())
-
-        Text(supportingText)
-          .font(.caption)
-          .foregroundStyle(.secondary)
-          .padding(.top, 10)
-          .padding(.bottom, 5)
+        .buttonStyle(.borderedProminent)
+        .padding(.top, 10)
       }
-      .padding(20)
-      .frame(maxWidth: .infinity, alignment: .topLeading)
     }
-    .background(
-      colorScheme == .dark
-      ? Color(UIColor.secondarySystemBackground)
-      : Color(UIColor.systemBackground)
-    )
-    .frame(maxWidth: .infinity)
-    .clipShape(RoundedRectangle(cornerRadius: 26))
   }
 }
 
@@ -87,7 +74,6 @@ public struct ActionCardView: View {
   ActionCardView(
     label: "Credential Offer",
     description: "Scan the QR code provided to receive your credential securely.",
-    supportingText: "Only SD-JWT credentials are supported.",
     buttonLabel: "Open Scanner") {
       print("Action")
     }

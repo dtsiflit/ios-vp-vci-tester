@@ -17,6 +17,7 @@ import OpenID4VCI
 import service_vci
 import domain_business_logic
 import AuthenticationServices
+import api
 
 protocol CredentialOfferInteractorType: Sendable {
 
@@ -44,12 +45,12 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
 
   private let keyProvider: KeyProvider
   private let controller: CredentialIssuanceControllerType
-  private let attestationClient: AppAttestClient
+  private let attestationClient: AttestationClientType
   
   init(
     keyProvider: KeyProvider,
     controller: CredentialIssuanceControllerType,
-    attestationClient: AppAttestClient
+    attestationClient: AttestationClientType
   ) {
     self.keyProvider = keyProvider
     self.controller = controller

@@ -20,22 +20,7 @@ public final class DomainBusinessAssembly: Assembly {
 
   public init() {}
 
-  public func assemble(container: Container) {
-    
-    container.register(WalletProviderClient.self) { _ in
-      WalletProviderClient(baseURL: URL(
-        string: "https://dev.wallet-provider.eudiw.dev"
-      )!)
-    }
-    .inObjectScope(.container)
-
-    container.register(AppAttestClient.self) { r in
-      AppAttestClient(
-        walletClient: r.force(WalletProviderClient.self)
-      )
-    }
-    .inObjectScope(ObjectScope.container)
-    
+  public func assemble(container: Container) {    
     container.register(KeyProvider.self) { _ in
       KeyProviderImpl()
     }

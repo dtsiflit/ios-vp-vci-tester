@@ -38,7 +38,7 @@ public enum LocalizableKey: Sendable, Equatable, Hashable {
     let value = switch self {
     case .custom(let literal): literal
     case .actions:
-      "Action"
+      "Actions"
     case .credentialIssuanceCardLabel:
       "Issue Credential"
     case .credentialIssuanceCardDescription:
@@ -46,7 +46,7 @@ public enum LocalizableKey: Sendable, Equatable, Hashable {
     case .close:
       "Close"
     case .credentialIssuanceCardButtonLabel:
-      "Open Scanner"
+      "Open"
     case .successIssuanceResultTitle:
       "Success"
     case .successIssuanceResultDescription:

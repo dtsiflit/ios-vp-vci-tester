@@ -13,16 +13,32 @@
  * ANY KIND, either express or implied. See the Licence for the specific language
  * governing permissions and limitations under the Licence.
  */
-import domain_business_logic
 import Swinject
+import domain_business_logic
 
 public final class ApiModuleAssembly: Assembly {
 
   public init() {}
 
   public func assemble(container: Container) {
+
+    container.register(NetworkSessionProvider.self) { _ in
+      NetworkSessionProviderImpl()
+    }
+    .inObjectScope(ObjectScope.container)
+
     container.register(NetworkManager.self) { r in
-      NetworkManagerImpl()
+      NetworkManagerImpl(with: r.force(NetworkSessionProvider.self))
+    }
+    .inObjectScope(ObjectScope.transient)
+    
+    container.register(AttestationRepositoryType.self) { r in
+      AttestationRepository(networkManager: r.force(NetworkManager.self))
+    }
+    .inObjectScope(ObjectScope.transient)
+    
+    container.register(AttestationClientType.self) { r in
+      AttestationClient(repository: r.force(AttestationRepositoryType.self))
     }
     .inObjectScope(ObjectScope.transient)
   }

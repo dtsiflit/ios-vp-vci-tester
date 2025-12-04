@@ -16,10 +16,14 @@
 import Foundation
 
 struct GetChallengeRequest: NetworkRequest {
-  typealias Response = ChallengeResponse
-  
-  var method: NetworkMethod = .POST
-  var path: String = "challenge"
-  var additionalHeaders: [String: String] = [:]
-  var body: Data? = nil
+    typealias Response = ChallengeResponse
+    
+    var method: NetworkMethod = .POST
+    var path: String = "challenge"
+    var additionalHeaders: [String: String] = [:]
+    var body: Data?
+    
+    init(request: Data) {
+        self.body = request
+    }
 }

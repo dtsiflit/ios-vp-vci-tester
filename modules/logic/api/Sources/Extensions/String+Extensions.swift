@@ -16,6 +16,10 @@
 import Foundation
 
 public extension String {
+  var nonEmpty: String? {
+    isEmpty ? nil : self
+  }
+
   func toCompatibleUrl() -> URL? {
     guard let decoded = self.removingPercentEncoding else { return nil }
     return if let url = URL(string: decoded) {

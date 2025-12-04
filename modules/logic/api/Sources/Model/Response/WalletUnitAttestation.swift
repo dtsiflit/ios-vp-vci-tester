@@ -15,16 +15,10 @@
  */
 import Foundation
 
-struct IssueAttestationJWKRequest: NetworkRequest {
-  typealias Response = WalletUnitAttestation
+public struct WalletUnitAttestation: Codable, Sendable {
+  public let walletUnitAttestation: String
   
-  var method: NetworkMethod { .POST }
-  var additionalHeaders: [String: String] {[:]}
-  var path: String { "wallet-instance-attestation/jwk" }
-  
-  var body: Data? {
-    return request
+  public init(walletUnitAttestation: String) {
+    self.walletUnitAttestation = walletUnitAttestation
   }
-  let request: Data
-  let host: String
 }

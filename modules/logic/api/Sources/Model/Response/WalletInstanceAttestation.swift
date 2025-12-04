@@ -15,10 +15,10 @@
  */
 import Foundation
 
-public struct WalletAttestationResponse: Codable, Sendable {
-  public let walletAttestation: String
+public struct WalletInstanceAttestation: Codable, Sendable {
+  public let walletInstanceAttestation: String
   
-  public init(walletAttestation: String) {
-    self.walletAttestation = walletAttestation
+  public init(walletInstanceAttestation: String) {
+    self.walletInstanceAttestation = walletInstanceAttestation
   }
 }

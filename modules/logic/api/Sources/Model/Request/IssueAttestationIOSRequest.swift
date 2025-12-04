@@ -16,17 +16,15 @@
 import Foundation
 
 struct IssueAttestationIOSRequest: NetworkRequest {
-  typealias Response = WalletAttestationResponse
+  typealias Response = WalletUnitAttestation
   
-  var method: NetworkMethod = .POST
-  var path: String = "wallet-instance-attestation/platform-key-attestation/ios"
-  var additionalHeaders: [String: String] = [:]
-  var body: Data?
+  var method: NetworkMethod { .POST }
+  var additionalHeaders: [String: String] {[:]}
+  var path: String { "wallet-instance-attestation/platform-key-attestation/ios" }
   
-  init(payload: [String: Any]) throws {
-    self.body = try JSONSerialization.data(
-      withJSONObject: payload,
-      options: [.sortedKeys]
-    )
+  var body: Data? {
+    return request
   }
+  let request: Data
+  let host: String
 }

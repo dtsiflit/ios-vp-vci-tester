@@ -15,16 +15,16 @@
  */
 import Foundation
 
-struct IssueAttestationJWKRequest: NetworkRequest {
-  typealias Response = WalletUnitAttestation
+enum X963ExportError: Error, LocalizedError {
+  case notECKey
+  case cfError(Error)
+  case unexpectedFormat
   
-  var method: NetworkMethod { .POST }
-  var additionalHeaders: [String: String] {[:]}
-  var path: String { "wallet-instance-attestation/jwk" }
-  
-  var body: Data? {
-    return request
+  var errorDescription: String? {
+    switch self {
+    case .notECKey: return "Key is not an EC P-256 key."
+    case .cfError(let e): return "Security framework error: \(e.localizedDescription)"
+    case .unexpectedFormat: return "Exported key is not in uncompressed X9.63 format."
+    }
   }
-  let request: Data
-  let host: String
 }

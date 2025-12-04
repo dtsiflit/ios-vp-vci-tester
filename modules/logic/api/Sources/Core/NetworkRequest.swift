@@ -15,11 +15,11 @@
  */
 import struct Foundation.Data
 
-enum NetworkMethod: String {
+public enum NetworkMethod: String, Sendable{
   case POST
 }
 
-protocol NetworkRequest: Sendable {
+public protocol NetworkRequest: Sendable {
 
   associatedtype Response
 
