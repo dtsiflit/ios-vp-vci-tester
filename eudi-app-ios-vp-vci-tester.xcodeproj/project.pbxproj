@@ -10,7 +10,7 @@
 		971ECD402E6716E600AA5E52 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 971ECD3A2E6716E600AA5E52 /* Preview Assets.xcassets */; };
 		971ECD412E6716E600AA5E52 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 971ECD3D2E6716E600AA5E52 /* Assets.xcassets */; };
 		971ECD432E6716E600AA5E52 /* Application.swift in Sources */ = {isa = PBXBuildFile; fileRef = 971ECD3C2E6716E600AA5E52 /* Application.swift */; };
-		97AEA8F42E65A7380062F996 /* assembly in Frameworks */ = {isa = PBXBuildFile; productRef = 97AEA8F32E65A7380062F996 /* assembly */; };
+		972D62372EE70A4B001DAC97 /* assembly in Frameworks */ = {isa = PBXBuildFile; productRef = 972D62362EE70A4B001DAC97 /* assembly */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,7 +53,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				97AEA8F42E65A7380062F996 /* assembly in Frameworks */,
+				972D62372EE70A4B001DAC97 /* assembly in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -140,7 +140,7 @@
 			);
 			name = "eudi-app-ios-vp-vci-tester";
 			packageProductDependencies = (
-				97AEA8F32E65A7380062F996 /* assembly */,
+				972D62362EE70A4B001DAC97 /* assembly */,
 			);
 			productName = "eudi-openid4vci-ios-app";
 			productReference = 97B41B1D2E533EF300276AA8 /* eudi-app-ios-vp-vci-tester.app */;
@@ -598,7 +598,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		97AEA8F32E65A7380062F996 /* assembly */ = {
+		972D62362EE70A4B001DAC97 /* assembly */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = assembly;
 		};

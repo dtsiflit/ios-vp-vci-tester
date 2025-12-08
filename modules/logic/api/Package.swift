@@ -16,15 +16,15 @@ let package = Package(
   ],
   dependencies: [
     .package(
-      name: "domain-business-logic",
-      path: "../../domain-business-logic"
+      name: "domain-business",
+      path: "../domain-business"
     ),
   ],
   targets: [
     .target(
       name: "api",
       dependencies: [
-        "domain-business-logic"
+        "domain-business"
       ]
     ),
     .testTarget(

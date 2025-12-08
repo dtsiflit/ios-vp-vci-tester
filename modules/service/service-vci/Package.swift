@@ -3,12 +3,12 @@
 import PackageDescription
 
 let package = Package(
-  name: "assembly",
+  name: "service-vci",
   platforms: [.iOS(.v16)],
   products: [
     .library(
-      name: "assembly",
-      targets: ["assembly"]
+      name: "service-vci",
+      targets: ["service-vci"]
     )
   ],
   dependencies: [
@@ -21,28 +21,22 @@ let package = Package(
       path: "../logic/api"
     ),
     .package(
-      name: "presentation-ui",
-      path: "../logic/presentation-ui"
-    ),
-    .package(
-      name: "service-vci",
-      path: "../service//service-vci"
-    ),
-    .package(
-      name: "service-vp",
-      path: "../service//service-vp"
+      url: "https://github.com/Swinject/Swinject.git",
+      from: "2.9.1"
     )
   ],
   targets: [
     .target(
-      name: "assembly",
+      name: "service-vci",
       dependencies: [
-        "api",
+        "Swinject",
         "domain-business",
-        "presentation-ui",
-        "service-vci",
-        "service-vp"
+        "api"
       ]
+    ),
+    .testTarget(
+      name: "service-vciTests",
+      dependencies: ["service-vci"]
     )
   ]
 )

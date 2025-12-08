@@ -13,9 +13,17 @@
  * ANY KIND, either express or implied. See the Licence for the specific language
  * governing permissions and limitations under the Licence.
  */
+import Foundation
+import OpenID4VCI
+import SwiftyJSON
+import domain_business
 
-@_exported import domain_business
-@_exported import service_vci
-@_exported import service_vp
-@_exported import api
-@_exported import presentation_ui
+public final class MockCredentialPresentationInteractor: CredentialPresentationInteractorType {
+  func loadAndPresentCredential(
+    url: String,
+    credential: Credential,
+    privateKey: SecKey
+  ) async throws -> Bool {
+    throw ValidationError.todo(reason: "Implement soon")
+  }
+}

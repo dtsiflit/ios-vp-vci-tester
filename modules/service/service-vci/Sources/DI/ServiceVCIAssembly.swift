@@ -13,9 +13,25 @@
  * ANY KIND, either express or implied. See the Licence for the specific language
  * governing permissions and limitations under the Licence.
  */
+import Swinject
+import domain_business
+import OpenID4VCI
 
-@_exported import domain_business
-@_exported import service_vci
-@_exported import service_vp
-@_exported import api
-@_exported import presentation_ui
+public typealias VCIConfig = OpenId4VCIConfig
+
+public final class ServiceVCIAssembly: Assembly {
+
+  public init() {}
+
+  public func assemble(container: Container) {
+    container.register(CredentialIssuanceControllerType.self) { r in
+      CredentialIssuanceController(
+        keyProvider: r.force(KeyProvider.self),
+        clientConfig: WalletConfiguration.clientConfig,
+        credentialOfferRequestResolver: .init()
+      )
+    }
+    .inObjectScope(.container)
+  }
+
+}

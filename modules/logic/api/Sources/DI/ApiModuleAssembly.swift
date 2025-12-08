@@ -14,7 +14,7 @@
  * governing permissions and limitations under the Licence.
  */
 import Swinject
-import domain_business_logic
+import domain_business
 
 public final class ApiModuleAssembly: Assembly {
 
