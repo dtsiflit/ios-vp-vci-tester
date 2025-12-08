@@ -257,6 +257,14 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
     ) {
       Issuer.createResponseEncryptionSpec($0)
     }
+    
+//    switch attestationType {
+//    case .jwk:
+//      let authorizationServerMetadata = await issuer.authorizationServerMetadata
+//      print(authorizationServerMetadata)
+//    case .device, .none:
+//      break
+//    }
 
     switch requestOutcome {
     case .success(let request):

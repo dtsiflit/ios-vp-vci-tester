@@ -16,37 +16,73 @@
 import SwiftUI
 
 struct CredentialOfferView<Router: RouterGraphType>: View {
-
+  
   @ObservedObject var viewModel: CredentialOfferViewModel<Router>
   @Environment(\.localizationController) var localization
-
-  @State private var isGalleryPresented = false
+  
+  @State private var showDeviceWarning = false
   @State private var isScannerPresented = false
+  @State private var isGalleryPresented = false
+  @State private var enableWalletAttestation = false
+  
   @State private var lastOfferUri: String = ""
   @State private var transactionCodeInput: String = ""
   
-  @State private var enableWalletAttestation = false
   @State private var attestationSchemeSegment = 0
   
   init(with viewModel: CredentialOfferViewModel<Router>) {
     self.viewModel = viewModel
   }
-
+  
   var body: some View {
     NavigationView {
-      ContentScreenView {
+      ContentScreenView(
+        bgColor: showDeviceWarning
+        ? .yellow
+        : .blue
+      ) {
         List {
+          if showDeviceWarning {
+            Section {
+              HStack(alignment: .top,spacing: 12){
+                Image(systemName: "viewfinder.trianglebadge.exclamationmark")
+                  .font(.largeTitle)
+                  .foregroundStyle(.yellow)
+                  .symbolRenderingMode(.hierarchical)
+                VStack(alignment: .leading){
+                  Text("Attestation Unavailable")
+                    .font(.headline)
+                  Text("Device attestation cannot be performed in the Simulator.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                }
+              }
+            }
+          }
+          
           Section(
             header: Text("Configuration"),
             footer: Text(viewModel.viewState.supportingText)
           ){
-            Picker("Attestation Type", selection: $attestationSchemeSegment) {
-              Text("None")
-                .tag(0)
-              Text("Device")
-                .tag(1)
-              Text("JWK")
-                .tag(2)
+            HStack {
+              Picker("Attestation Type", selection: $attestationSchemeSegment) {
+                ForEach(AttestationType.allCases) { type in
+                  Text(type.displayName).tag(type.rawValue)
+                }
+              }
+              .onChange(of: attestationSchemeSegment) { newValue in
+                withAnimation(.easeOut) {
+                  if AttestationType(rawValue: newValue) == .device {
+                    #if targetEnvironment(simulator)
+                    showDeviceWarning = true
+                    #else
+                    showDeviceWarning = false
+                    #endif
+                  } else {
+                    showDeviceWarning = false
+                  }
+                }
+              }
             }
           }
         }
@@ -84,11 +120,12 @@ struct CredentialOfferView<Router: RouterGraphType>: View {
           } label: {
             Image(systemName: "qrcode.viewfinder")
           }
+          .disabled(showDeviceWarning)
         }
       }
     }
   }
-
+  
   @ViewBuilder
   private func transactionCode() -> some View {
     VStack(spacing: .zero) {
@@ -105,7 +142,7 @@ struct CredentialOfferView<Router: RouterGraphType>: View {
       .scrollDisabled(true)
       .scrollContentBackground(.hidden)
       .padding(.top)
-
+      
       Text(localization.get(with: .submit))
         .frame(maxWidth: .infinity)
         .disabled(transactionCodeInput.isEmpty)
