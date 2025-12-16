@@ -25,8 +25,8 @@ let package = Package(
       from: "0.0.4"
     ),
     .package(
-      url: "https://github.com/eu-digital-identity-wallet/eudi-lib-ios-siop-openid4vp-swift",
-      from: "0.16.0"
+      url: "https://github.com/eu-digital-identity-wallet/eudi-lib-ios-openid4vp-swift",
+      from: "0.19.0"
     ),
     .package(url: "https://github.com/airsidemobile/JOSESwift.git", from: "3.0.0")
   ],
@@ -44,8 +44,8 @@ let package = Package(
           package: "SwiftCopyableMacro"
         ),
         .product(
-          name: "SiopOpenID4VP",
-          package: "eudi-lib-ios-siop-openid4vp-swift"
+          name: "OpenID4VP",
+          package: "eudi-lib-ios-openid4vp-swift"
         ),
         .product(name: "JOSESwift", package: "JOSESwift")
       ]

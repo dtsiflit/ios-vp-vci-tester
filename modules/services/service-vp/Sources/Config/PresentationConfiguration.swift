@@ -17,7 +17,7 @@ import Foundation
 import JOSESwift
 import CryptoKit
 import CryptoSwift
-import SiopOpenID4VP
+import OpenID4VP
 import OpenID4VCI
 
 public struct CredentialPresentationConfiguration {

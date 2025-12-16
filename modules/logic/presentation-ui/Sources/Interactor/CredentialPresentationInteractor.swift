@@ -16,7 +16,7 @@
 import Foundation
 import service_vp
 import OpenID4VCI
-import SiopOpenID4VP
+import OpenID4VP
 
 protocol CredentialPresentationInteractorType: Sendable {
   func loadAndPresentCredential(

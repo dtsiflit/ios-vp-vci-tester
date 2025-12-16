@@ -25,8 +25,8 @@ let package = Package(
       from: "2.9.1"
     ),
     .package(
-      url: "https://github.com/eu-digital-identity-wallet/eudi-lib-ios-siop-openid4vp-swift",
-      from: "0.16.0"
+      url: "https://github.com/eu-digital-identity-wallet/eudi-lib-ios-openid4vp-swift",
+      from: "0.19.0"
     ),
     .package(
       url: "https://github.com/eu-digital-identity-wallet/SwiftCopyableMacro.git",
@@ -45,8 +45,8 @@ let package = Package(
         "api",
         "Swinject",
         .product(
-          name: "SiopOpenID4VP",
-          package: "eudi-lib-ios-siop-openid4vp-swift"
+          name: "OpenID4VP",
+          package: "eudi-lib-ios-openid4vp-swift"
         ),
         .product(
           name: "Copyable",
