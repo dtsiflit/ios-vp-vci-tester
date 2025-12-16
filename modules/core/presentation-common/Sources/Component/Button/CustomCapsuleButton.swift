@@ -14,6 +14,7 @@
  * governing permissions and limitations under the Licence.
  */
 import SwiftUI
+import presentation_ui
 
 public struct CustomCapsuleButton: View {
   @Environment(\.colorScheme) var colorScheme

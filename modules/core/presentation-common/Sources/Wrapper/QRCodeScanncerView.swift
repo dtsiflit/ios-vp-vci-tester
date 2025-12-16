@@ -15,6 +15,7 @@
  */
 import SwiftUI
 import CodeScanner
+import presentation_ui
 
 public struct QRCodeScanncerView: View {
 

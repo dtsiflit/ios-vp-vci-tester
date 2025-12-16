@@ -29,10 +29,6 @@ let package = Package(
     .package(
       name: "api",
       path: "../api"
-    ),
-    .package(
-      url: "https://github.com/twostraws/CodeScanner",
-      from: "2.4.1"
     )
   ],
   targets: [
@@ -42,11 +38,7 @@ let package = Package(
         "domain-business",
         "api",
         "service-vci",
-        "service-vp",
-        .product(
-          name: "CodeScanner",
-          package: "CodeScanner"
-        )
+        "service-vp"
       ]
     ),
     .testTarget(

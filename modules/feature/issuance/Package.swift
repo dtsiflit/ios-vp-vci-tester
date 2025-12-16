@@ -23,6 +23,10 @@ let package = Package(
       path: "../core/presentation-ui"
     ),
     .package(
+      name: "presentation-common",
+      path: "../core/presentation-common"
+    ),
+    .package(
       name: "service-vci",
       path: "../services/service-vci"
     ),
@@ -45,6 +49,7 @@ let package = Package(
       dependencies: [
         "domain-business",
         "presentation-ui",
+        "presentation-common",
         "api",
         "service-vci",
         "service-vp",

@@ -15,6 +15,7 @@
  */
 import SwiftUI
 import presentation_ui
+import presentation_common
 
 public struct CredentialOfferView<Router: RouterGraphType>: View {
   

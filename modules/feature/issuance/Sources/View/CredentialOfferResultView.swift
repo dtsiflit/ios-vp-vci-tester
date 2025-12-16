@@ -17,6 +17,7 @@ import SwiftUI
 import Foundation
 import OpenID4VCI
 import presentation_ui
+import presentation_common
 
 public struct CredentialOfferResultView<Router: RouterGraphType>: View {
 

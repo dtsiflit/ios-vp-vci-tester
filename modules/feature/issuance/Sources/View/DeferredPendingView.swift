@@ -17,6 +17,7 @@ import SwiftUI
 import OpenID4VCI
 import service_vci
 import presentation_ui
+import presentation_common
 
 public struct DeferredPendingView<Router: RouterGraphType>: View {
   @Environment(\.dismiss) var dismiss
