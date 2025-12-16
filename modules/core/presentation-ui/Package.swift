@@ -3,28 +3,20 @@
 import PackageDescription
 
 let package = Package(
-  name: "assembly",
+  name: "presentation-ui",
   platforms: [
     .iOS(.v16)
   ],
   products: [
     .library(
-      name: "assembly",
-      targets: ["assembly"]
+      name: "presentation-ui",
+      targets: ["presentation-ui"]
     )
   ],
   dependencies: [
     .package(
       name: "domain-business",
-      path: "../core/domain-business"
-    ),
-    .package(
-      name: "api",
-      path: "../core/api"
-    ),
-    .package(
-      name: "presentation-ui",
-      path: "../core/presentation-ui"
+      path: "../domain-business"
     ),
     .package(
       name: "service-vci",
@@ -35,26 +27,31 @@ let package = Package(
       path: "../services/service-vp"
     ),
     .package(
-      name: "issuance",
-      path: "../features/issuance"
+      name: "api",
+      path: "../api"
     ),
     .package(
-      name: "presentation-router",
-      path: "../core/presentation-router"
+      url: "https://github.com/twostraws/CodeScanner",
+      from: "2.4.1"
     )
   ],
   targets: [
     .target(
-      name: "assembly",
+      name: "presentation-ui",
       dependencies: [
-        "api",
         "domain-business",
-        "presentation-ui",
+        "api",
         "service-vci",
         "service-vp",
-        "issuance",
-        "presentation-router"
+        .product(
+          name: "CodeScanner",
+          package: "CodeScanner"
+        )
       ]
+    ),
+    .testTarget(
+      name: "presentation-uiTests",
+      dependencies: ["presentation-ui"]
     )
   ]
 )

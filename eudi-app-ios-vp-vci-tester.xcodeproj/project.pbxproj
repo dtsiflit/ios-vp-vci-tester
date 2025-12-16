@@ -40,9 +40,23 @@
 		97B41B372E533EF500276AA8 /* eudi-app-ios-vp-vci-testerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "eudi-app-ios-vp-vci-testerUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		69734F022EF16866002D013F /* Exceptions for "modules" folder in "eudi-app-ios-vp-vci-tester" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"core/presentation-router",
+				features/issuance,
+			);
+			target = 97B41B1C2E533EF300276AA8 /* eudi-app-ios-vp-vci-tester */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		97B41B4A2E53405600276AA8 /* modules */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				69734F022EF16866002D013F /* Exceptions for "modules" folder in "eudi-app-ios-vp-vci-tester" target */,
+			);
 			path = modules;
 			sourceTree = "<group>";
 		};

@@ -1,17 +1,18 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 6.2
 // The swift-tools-version declares the minimum version of Swift required to build this package.
+
 import PackageDescription
 
 let package = Package(
-  name: "assembly",
+  name: "presentation-router",
   platforms: [
     .iOS(.v16)
   ],
   products: [
     .library(
-      name: "assembly",
-      targets: ["assembly"]
-    )
+      name: "presentation-router",
+      targets: ["presentation-router"]
+    ),
   ],
   dependencies: [
     .package(
@@ -37,24 +38,23 @@ let package = Package(
     .package(
       name: "issuance",
       path: "../features/issuance"
-    ),
-    .package(
-      name: "presentation-router",
-      path: "../core/presentation-router"
     )
   ],
   targets: [
     .target(
-      name: "assembly",
+      name: "presentation-router",
       dependencies: [
         "api",
         "domain-business",
         "presentation-ui",
         "service-vci",
         "service-vp",
-        "issuance",
-        "presentation-router"
+        "issuance"
       ]
-    )
+    ),
+    .testTarget(
+      name: "presentation-routerTests",
+      dependencies: ["presentation-router"]
+    ),
   ]
 )

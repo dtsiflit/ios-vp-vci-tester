@@ -13,23 +13,26 @@
  * ANY KIND, either express or implied. See the Licence for the specific language
  * governing permissions and limitations under the Licence.
  */
+import Combine
+import domain_business
 
-public extension DIGraph {
-  @MainActor static func assembleDependenciesGraph() {
-    DIGraph.lazyLoad(
-      with: [
-        ///Core
-        DomainBusinessAssembly(),
-        PresentationUIAssembly(),
-        ApiModuleAssembly(),
-        /// Features
-        IssuanceAssembly(),
-        ///Services
-        ServiceVCIAssembly(),
-        ServiceVPAssembly(),
-        /// Assembly
-        AssemblyModule(),
-      ]
-    )
+public protocol ViewState {}
+
+@MainActor
+open class ViewModel<Router: RouterGraphType, UiState: ViewState>: ObservableObject {
+
+  lazy var cancellables = Set<AnyCancellable>()
+
+  @Published public var viewState: UiState
+
+  public let router: Router
+
+  public init(router: Router, initialState: UiState) {
+    self.router = router
+    self.viewState = initialState
+  }
+
+  public func setState(_ reducer: (UiState) -> UiState) {
+    self.viewState = reducer(viewState)
   }
 }

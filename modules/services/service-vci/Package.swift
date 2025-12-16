@@ -4,7 +4,9 @@ import PackageDescription
 
 let package = Package(
   name: "service-vci",
-  platforms: [.iOS(.v16)],
+  platforms: [
+    .iOS(.v16)
+  ],
   products: [
     .library(
       name: "service-vci",

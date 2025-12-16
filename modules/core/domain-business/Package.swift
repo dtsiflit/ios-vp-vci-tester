@@ -3,66 +3,61 @@
 import PackageDescription
 
 let package = Package(
-  name: "service-vp",
+  name: "domain-business",
   platforms: [
     .iOS(.v16)
   ],
   products: [
     .library(
-      name: "service-vp",
-      targets: ["service-vp"]
+      name: "domain-business",
+      targets: ["domain-business"]
     )
   ],
   dependencies: [
-    .package(
-      name: "domain-business",
-      path: "../logic/domain-business"
-    ),
-    .package(
-      name: "api",
-      path: "../logic/api"
-    ),
     .package(
       url: "https://github.com/Swinject/Swinject.git",
       from: "2.9.1"
     ),
     .package(
-      url: "https://github.com/eu-digital-identity-wallet/eudi-lib-ios-openid4vp-swift",
-      from: "0.19.0"
+      url: "https://github.com/eu-digital-identity-wallet/eudi-lib-ios-openid4vci-swift.git",
+      from: "0.17.0"
     ),
     .package(
       url: "https://github.com/eu-digital-identity-wallet/SwiftCopyableMacro.git",
       from: "0.0.4"
     ),
     .package(
-      url: "https://github.com/krzyzanowskim/CryptoSwift.git",
-      from: "1.8.4"
+      url: "https://github.com/eu-digital-identity-wallet/eudi-lib-ios-openid4vp-swift",
+      from: "0.19.0"
+    ),
+    .package(
+      url: "https://github.com/airsidemobile/JOSESwift.git",
+      from: "3.0.0"
     )
   ],
   targets: [
     .target(
-      name: "service-vp",
+      name: "domain-business",
       dependencies: [
-        "domain-business",
-        "api",
         "Swinject",
         .product(
-          name: "OpenID4VP",
-          package: "eudi-lib-ios-openid4vp-swift"
+          name: "OpenID4VCI",
+          package: "eudi-lib-ios-openid4vci-swift"
         ),
         .product(
           name: "Copyable",
           package: "SwiftCopyableMacro"
         ),
         .product(
-          name: "CryptoSwift",
-          package: "CryptoSwift"
-        )
+          name: "OpenID4VP",
+          package: "eudi-lib-ios-openid4vp-swift"
+        ),
+        .product(name: "JOSESwift", package: "JOSESwift")
       ]
     ),
     .testTarget(
-      name: "service-vpTests",
-      dependencies: ["service-vp"]
+      name: "domain-businessTests",
+      dependencies: ["domain-business"]
     )
   ]
 )
