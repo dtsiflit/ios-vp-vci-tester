@@ -44,9 +44,9 @@
 		69734F022EF16866002D013F /* Exceptions for "modules" folder in "eudi-app-ios-vp-vci-tester" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				"core/presentation-common",
-				"core/presentation-router",
 				feature/issuance,
+				"presentation/presentation-common",
+				"presentation/presentation-router",
 			);
 			target = 97B41B1C2E533EF300276AA8 /* eudi-app-ios-vp-vci-tester */;
 		};
