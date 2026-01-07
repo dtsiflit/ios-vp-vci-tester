@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 European Commission
+ * Copyright (c) 2025 European Commission
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the European
  * Commission - subsequent versions of the EUPL (the "Licence"); You may not use this work
@@ -13,23 +13,10 @@
  * ANY KIND, either express or implied. See the Licence for the specific language
  * governing permissions and limitations under the Licence.
  */
+import Foundation
 
-public extension DIGraph {
-  @MainActor static func assembleDependenciesGraph() {
-    DIGraph.lazyLoad(
-      with: [
-        ///Core
-        DomainBusinessAssembly(),
-        PresentationUIAssembly(),
-        ApiModuleAssembly(),
-        /// Features
-        IssuanceAssembly(),
-        ///Services
-        ServiceVCIAssembly(),
-        ServiceVPAssembly(),
-        /// Assembly
-        AssemblyModule(),
-      ]
-    )
-  }
+enum NetworkError: Error {
+  case invalidResponse
+  case httpStatus(code: Int, data: Data?)
+  case decoding(Error)
 }

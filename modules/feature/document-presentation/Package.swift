@@ -3,14 +3,14 @@
 import PackageDescription
 
 let package = Package(
-  name: "assembly",
+  name: "document-presentation",
   platforms: [
     .iOS(.v16)
   ],
   products: [
     .library(
-      name: "assembly",
-      targets: ["assembly"]
+      name: "document-presentation",
+      targets: ["document-presentation"]
     )
   ],
   dependencies: [
@@ -19,12 +19,12 @@ let package = Package(
       path: "../domain/domain-business"
     ),
     .package(
-      name: "api-client",
-      path: "../domain/api-client"
-    ),
-    .package(
       name: "presentation-ui",
       path: "../presentation/presentation-ui"
+    ),
+    .package(
+      name: "presentation-common",
+      path: "../presentation/presentation-common"
     ),
     .package(
       name: "service-vci",
@@ -35,26 +35,34 @@ let package = Package(
       path: "../services/service-vp"
     ),
     .package(
-      name: "document-presentation",
-      path: "../features/document-presentation"
+      name: "api-client",
+      path: "../domain/api-client"
     ),
     .package(
-      name: "presentation-router",
-      path: "../presentation/presentation-router"
+      url: "https://github.com/twostraws/CodeScanner",
+      from: "2.4.1"
     )
   ],
   targets: [
     .target(
-      name: "assembly",
+      name: "document-presentation",
       dependencies: [
-        "api-client",
         "domain-business",
         "presentation-ui",
+        "presentation-common",
+        "api-client",
         "service-vci",
         "service-vp",
-        "document-presentation",
-        "presentation-router"
+        .product(
+          name: "CodeScanner",
+          package: "CodeScanner"
+        )
       ]
+    ),
+    .testTarget(
+      name: "document-presentationTests",
+      dependencies: ["document-presentation"]
     )
   ]
 )
+

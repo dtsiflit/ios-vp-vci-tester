@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 European Commission
+ * Copyright (c) 2025 European Commission
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the European
  * Commission - subsequent versions of the EUPL (the "Licence"); You may not use this work
@@ -13,23 +13,18 @@
  * ANY KIND, either express or implied. See the Licence for the specific language
  * governing permissions and limitations under the Licence.
  */
+import Foundation
 
-public extension DIGraph {
-  @MainActor static func assembleDependenciesGraph() {
-    DIGraph.lazyLoad(
-      with: [
-        ///Core
-        DomainBusinessAssembly(),
-        PresentationUIAssembly(),
-        ApiModuleAssembly(),
-        /// Features
-        IssuanceAssembly(),
-        ///Services
-        ServiceVCIAssembly(),
-        ServiceVPAssembly(),
-        /// Assembly
-        AssemblyModule(),
-      ]
-    )
+struct IssueAttestationJWKRequest: NetworkRequest {
+  typealias Response = WalletUnitAttestation
+  
+  var method: NetworkMethod { .POST }
+  var additionalHeaders: [String: String] {[:]}
+  var path: String { "wallet-instance-attestation/jwk" }
+  
+  var body: Data? {
+    return request
   }
+  let request: Data
+  let host: String
 }

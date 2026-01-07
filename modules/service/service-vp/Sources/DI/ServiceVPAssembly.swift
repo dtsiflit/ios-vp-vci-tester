@@ -13,23 +13,19 @@
  * ANY KIND, either express or implied. See the Licence for the specific language
  * governing permissions and limitations under the Licence.
  */
+import Swinject
+import domain_business
 
-public extension DIGraph {
-  @MainActor static func assembleDependenciesGraph() {
-    DIGraph.lazyLoad(
-      with: [
-        ///Core
-        DomainBusinessAssembly(),
-        PresentationUIAssembly(),
-        ApiModuleAssembly(),
-        /// Features
-        IssuanceAssembly(),
-        ///Services
-        ServiceVCIAssembly(),
-        ServiceVPAssembly(),
-        /// Assembly
-        AssemblyModule(),
-      ]
-    )
+public final class ServiceVPAssembly: Assembly {
+
+  public init() {}
+
+  public func assemble(container: Container) {
+    container.register(CredentialPresentationControllerType.self) { r in
+      return CredentialPresentationController(
+        keyProvider: r.force(KeyProvider.self)
+      )
+    }
+    .inObjectScope(.container)
   }
 }

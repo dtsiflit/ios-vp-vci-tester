@@ -14,7 +14,15 @@
  * governing permissions and limitations under the Licence.
  */
 
-@_exported import domain_business_logic
-@_exported import service_vci
-@_exported import service_vp
+/// Core
+@_exported import api_client
+@_exported import domain_business
 @_exported import presentation_ui
+@_exported import presentation_router
+
+/// Features
+@_exported import document_presentation
+
+/// Services
+@_exported import service_vp
+@_exported import service_vci

@@ -13,23 +13,16 @@
  * ANY KIND, either express or implied. See the Licence for the specific language
  * governing permissions and limitations under the Licence.
  */
+import SwiftUI
+import domain_business
 
-public extension DIGraph {
-  @MainActor static func assembleDependenciesGraph() {
-    DIGraph.lazyLoad(
-      with: [
-        ///Core
-        DomainBusinessAssembly(),
-        PresentationUIAssembly(),
-        ApiModuleAssembly(),
-        /// Features
-        IssuanceAssembly(),
-        ///Services
-        ServiceVCIAssembly(),
-        ServiceVPAssembly(),
-        /// Assembly
-        AssemblyModule(),
-      ]
-    )
-  }
+public protocol RouterGraphType: ObservableObject, Sendable {
+  var path: NavigationPath { get set }
+
+  @MainActor func navigateTo(_ appRoute: Route)
+  @MainActor func pop()
+  @MainActor func navigateToRoot()
+  @MainActor func view(for route: Route) -> AnyView
+  @MainActor func nextView(for state: OpenID4VCIUi.State) throws -> UIViewController
+  @MainActor func clear()
 }

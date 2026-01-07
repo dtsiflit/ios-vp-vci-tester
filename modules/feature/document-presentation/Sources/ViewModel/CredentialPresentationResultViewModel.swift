@@ -13,23 +13,34 @@
  * ANY KIND, either express or implied. See the Licence for the specific language
  * governing permissions and limitations under the Licence.
  */
+import Copyable
+import Foundation
+import presentation_ui
 
-public extension DIGraph {
-  @MainActor static func assembleDependenciesGraph() {
-    DIGraph.lazyLoad(
-      with: [
-        ///Core
-        DomainBusinessAssembly(),
-        PresentationUIAssembly(),
-        ApiModuleAssembly(),
-        /// Features
-        IssuanceAssembly(),
-        ///Services
-        ServiceVCIAssembly(),
-        ServiceVPAssembly(),
-        /// Assembly
-        AssemblyModule(),
-      ]
+@Copyable
+public struct CredentialPresentationResultViewState: ViewState {
+  let config: CredentialResultConfiguration
+}
+
+public class CredentialPresentationResultViewModel<Router: RouterGraphType>: ViewModel<Router, CredentialPresentationResultViewState> {
+
+  private let config: CredentialOfferResultType
+
+  public init(
+    router: Router,
+    config: CredentialOfferResultType
+  ) {
+    self.config = config
+
+    super.init(
+      router: router,
+      initialState: .init(
+        config: config.configuration
+      )
     )
+  }
+
+  func navigateToRoot() {
+    router.navigateToRoot()
   }
 }

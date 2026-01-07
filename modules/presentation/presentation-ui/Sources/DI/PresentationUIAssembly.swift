@@ -13,23 +13,24 @@
  * ANY KIND, either express or implied. See the Licence for the specific language
  * governing permissions and limitations under the Licence.
  */
+import Swinject
+import Foundation
+import service_vci
+import service_vp
+import domain_business
+import api_client
 
-public extension DIGraph {
-  @MainActor static func assembleDependenciesGraph() {
-    DIGraph.lazyLoad(
-      with: [
-        ///Core
-        DomainBusinessAssembly(),
-        PresentationUIAssembly(),
-        ApiModuleAssembly(),
-        /// Features
-        IssuanceAssembly(),
-        ///Services
-        ServiceVCIAssembly(),
-        ServiceVPAssembly(),
-        /// Assembly
-        AssemblyModule(),
-      ]
-    )
+public final class PresentationUIAssembly: Assembly {
+
+  public init() {}
+
+  public func assemble(container: Container) {
+    container.register(LocalizationControllerType.self) { _ in
+      return LocalizationController(
+        config: OpenID4VCIConfig(),
+        locale: Locale.current
+      )
+    }
+    .inObjectScope(.container)
   }
 }
