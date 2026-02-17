@@ -19,8 +19,9 @@ import presentation_common
 
 public struct CredentialOfferView<Router: RouterGraphType>: View {
   
-  @ObservedObject var viewModel: CredentialOfferViewModel<Router>
   @Environment(\.localizationController) var localization
+  
+  @ObservedObject var viewModel: CredentialOfferViewModel<Router>
   
   @State private var showDeviceWarning = false
   @State private var isScannerPresented = false
@@ -31,6 +32,7 @@ public struct CredentialOfferView<Router: RouterGraphType>: View {
   @State private var transactionCodeInput: String = ""
   
   @State private var attestationSchemeSegment = 0
+  @State private var selectedCredentialFormat = 0
   
   public init(with viewModel: CredentialOfferViewModel<Router>) {
     self.viewModel = viewModel
@@ -46,42 +48,40 @@ public struct CredentialOfferView<Router: RouterGraphType>: View {
         List {
           if showDeviceWarning {
             Section {
-              HStack(alignment: .top,spacing: 12){
-                Image(systemName: "viewfinder.trianglebadge.exclamationmark")
-                  .font(.largeTitle)
-                  .foregroundStyle(.yellow)
-                  .symbolRenderingMode(.hierarchical)
-                VStack(alignment: .leading){
-                  Text("Attestation Unavailable")
-                    .font(.headline)
-                  Text("Device attestation cannot be performed in the Simulator.")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                }
-              }
+              attestationWanring()
             }
           }
           
           Section(
-            header: Text("Configuration"),
-            footer: Text(viewModel.viewState.supportingText)
+            header: Text("Configuration")
           ){
+            
             HStack {
-              Picker("Attestation Type", selection: $attestationSchemeSegment) {
-                ForEach(AttestationType.allCases) { type in
+              Picker("Credential Format", selection: $selectedCredentialFormat) {
+                ForEach(CredentialFormatType.allCases) { type in
                   Text(type.displayName).tag(type.rawValue)
                 }
               }
-              .onChange(of: attestationSchemeSegment) { newValue in
-                withAnimation(.easeOut) {
-                  if AttestationType(rawValue: newValue) == .device {
-                    #if targetEnvironment(simulator)
-                    showDeviceWarning = true
-                    #else
-                    showDeviceWarning = false
-                    #endif
-                  } else {
-                    showDeviceWarning = false
+            }
+            
+            if selectedCredentialFormat == CredentialFormatType.sdJwt.rawValue {
+              HStack {
+                Picker("Attestation Type", selection: $attestationSchemeSegment) {
+                  ForEach(AttestationType.allCases) { type in
+                    Text(type.displayName).tag(type.rawValue)
+                  }
+                }
+                .onChange(of: attestationSchemeSegment) { newValue in
+                  withAnimation(.easeOut) {
+                    if AttestationType(rawValue: newValue) == .device {
+                      #if targetEnvironment(simulator)
+                      showDeviceWarning = true
+                      #else
+                      showDeviceWarning = false
+                      #endif
+                    } else {
+                      showDeviceWarning = false
+                    }
                   }
                 }
               }
@@ -97,11 +97,16 @@ public struct CredentialOfferView<Router: RouterGraphType>: View {
           onSuccess: { scannedString in
             isScannerPresented = false
             lastOfferUri = scannedString
+
+            if selectedCredentialFormat == CredentialFormatType.mdoc.rawValue {
+              return
+            }
+            
             await viewModel.scanAndIssueCredential(
               offerUri: scannedString,
               scope: "myScope",
               transactionCode: "",
-              attestationType: attestationSchemeSegment
+              attestationType: attestationSchemeSegment,
             )
           },
           onCancel: {
@@ -118,9 +123,19 @@ public struct CredentialOfferView<Router: RouterGraphType>: View {
       .toolbar {
         ToolbarItem(placement: .topBarTrailing) {
           Button {
-            isScannerPresented = true
+            if selectedCredentialFormat == CredentialFormatType.mdoc.rawValue {
+              Task {
+                await viewModel.issueMdocDocument()
+              }
+            } else {
+              isScannerPresented = true
+            }
           } label: {
-            Image(systemName: "qrcode.viewfinder")
+            Image(systemName: selectedCredentialFormat == CredentialFormatType.mdoc.rawValue
+                  ?  SymbolManager.value(for: .issueDocument)
+                  :  SymbolManager.value(for: .qrcode)
+            )
+            .animation(.easeInOut,value: selectedCredentialFormat)
           }
           .disabled(showDeviceWarning)
         }
@@ -170,5 +185,22 @@ public struct CredentialOfferView<Router: RouterGraphType>: View {
     }
     .presentationDetents([.height(190)])
     .keyboardType(.numberPad)
+  }
+  
+  @ViewBuilder
+  private func attestationWanring() -> some View {
+    HStack(alignment: .top,spacing: 12){
+      Image(systemName: SymbolManager.value(for: .warning))
+        .font(.largeTitle)
+        .foregroundStyle(.yellow)
+        .symbolRenderingMode(.hierarchical)
+      VStack(alignment: .leading){
+        Text("Attestation Unavailable")
+          .font(.headline)
+        Text("Device attestation cannot be performed in the Simulator.")
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
+      }
+    }
   }
 }

@@ -124,6 +124,29 @@ public class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router
       navigateToIssuanceResultView()
     }
   }
+  
+  func issueMdocDocument() async {
+    do {
+      let vpToken = try await interactor.issueMdocDocument()
+      
+      setState {
+        $0.copy(
+          credential: IssuedCredentialOutcome(
+            credential: .string(vpToken),
+            privateKey: nil,
+            isSDJWT: false
+          )
+        )
+      }
+
+      navigateToIssuanceResultView()
+    } catch {
+      setState {
+        $0.copy(errorMessage: error.localizedDescription)
+      }
+      navigateToIssuanceResultView()
+    }
+  }
 
   private func navigateToIssuanceResultView() {
     let result: CredentialOfferResultType

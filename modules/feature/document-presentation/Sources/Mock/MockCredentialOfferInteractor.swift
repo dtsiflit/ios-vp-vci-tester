@@ -98,6 +98,10 @@ public final class MockCredentialOfferInteractor: CredentialOfferInteractorType 
   ) async throws -> Credential {
     throw ValidationError.todo(reason: "Implement soon")
   }
+  
+  public func issueMdocDocument() async throws -> String {
+    throw ValidationError.todo(reason: "Implement soon")
+  }
 
   public func requestDeferredCredential(
     deferredCredential: DeferredCredentialOutcome

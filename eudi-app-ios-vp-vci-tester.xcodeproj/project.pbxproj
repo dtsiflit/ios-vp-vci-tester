@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		693F5D862F447A1C00935C7F /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 693F5D852F447A1C00935C7F /* AppIcon.icon */; };
 		971ECD402E6716E600AA5E52 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 971ECD3A2E6716E600AA5E52 /* Preview Assets.xcassets */; };
 		971ECD412E6716E600AA5E52 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 971ECD3D2E6716E600AA5E52 /* Assets.xcassets */; };
 		971ECD432E6716E600AA5E52 /* Application.swift in Sources */ = {isa = PBXBuildFile; fileRef = 971ECD3C2E6716E600AA5E52 /* Application.swift */; };
@@ -31,6 +32,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		693F5D852F447A1C00935C7F /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 		971ECD3A2E6716E600AA5E52 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		971ECD3C2E6716E600AA5E52 /* Application.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Application.swift; sourceTree = "<group>"; };
 		971ECD3D2E6716E600AA5E52 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -44,7 +46,6 @@
 		69734F022EF16866002D013F /* Exceptions for "modules" folder in "eudi-app-ios-vp-vci-tester" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				feature/issuance,
 				"presentation/presentation-common",
 				"presentation/presentation-router",
 			);
@@ -104,6 +105,7 @@
 				971ECD3C2E6716E600AA5E52 /* Application.swift */,
 				971ECD3D2E6716E600AA5E52 /* Assets.xcassets */,
 				971ECD3E2E6716E600AA5E52 /* Info.plist */,
+				693F5D852F447A1C00935C7F /* AppIcon.icon */,
 			);
 			path = "eudi-app-ios-vp-vci-tester";
 			sourceTree = "<group>";
@@ -252,6 +254,7 @@
 			files = (
 				971ECD402E6716E600AA5E52 /* Preview Assets.xcassets in Resources */,
 				971ECD412E6716E600AA5E52 /* Assets.xcassets in Resources */,
+				693F5D862F447A1C00935C7F /* AppIcon.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -434,6 +437,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"eudi-app-ios-vp-vci-tester/Preview Content\"";
@@ -467,6 +471,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"eudi-app-ios-vp-vci-tester/Preview Content\"";

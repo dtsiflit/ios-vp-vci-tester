@@ -13,11 +13,15 @@
  * ANY KIND, either express or implied. See the Licence for the specific language
  * governing permissions and limitations under the Licence.
  */
+import SwiftCBOR
 import OpenID4VCI
+import api_client
 import service_vci
 import domain_business
+import MdocSecurity18013
+import MdocDataModel18013
+import MdocDataTransfer18013
 import AuthenticationServices
-import api_client
 
 public protocol CredentialOfferInteractorType: Sendable {
 
@@ -39,6 +43,7 @@ public protocol CredentialOfferInteractorType: Sendable {
   
   func platformAttest() async throws -> String
   func jwkAttest() async throws -> String
+  func issueMdocDocument() async throws -> String
 }
 
 final class CredentialOfferInteractor: CredentialOfferInteractorType {
@@ -181,6 +186,70 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
       isSDJWT: deferredCredential.isSDJWT,
       privateKey: deferredCredential.privateKey
     )
+  }
+  
+  func issueMdocDocument() async throws -> String {
+    
+    guard let issuerSignedData = Data(
+      base64URLEncoded: IssuanceConstants.cborIssuerSigned
+    ) else {
+      throw CredentialError.genericError
+    }
+    
+    guard let privateKey = CoseKeyPrivate(
+      p256: IssuanceConstants.privateKeyx963,
+      privateKeyId: IssuanceConstants.docId
+    ) else {
+      throw CredentialError.genericError
+    }
+    
+    let issuerSignedMap = [
+      IssuanceConstants.docId: try IssuerSigned(
+        data: issuerSignedData.byteArray
+      )
+    ]
+    
+    let privateKeysMap = [
+      IssuanceConstants.docId: privateKey
+    ]
+    
+    let requestItems = [
+      IssuanceConstants.docId: [
+        IssuanceConstants.docType: EuPidModel.pidMandatoryElementKeys.map(RequestItem.init)
+      ]
+    ]
+    
+    let sessionTranscript = SessionTranscript(
+      handOver: generateOpenId4VpHandover(
+        clientId: IssuanceConstants.clientId,
+        responseUri: IssuanceConstants.responseUri,
+        nonce: UUID().uuidString,
+        jwkThumbprint: nil
+      )
+    )
+    
+    guard let result = try await MdocHelpers.getDeviceResponseToSend(
+      deviceRequest: nil,
+      issuerSigned: issuerSignedMap,
+      docMetadata: [:],
+      selectedItems: requestItems,
+      eReaderKey: nil,
+      privateKeyObjects: privateKeysMap,
+      sessionTranscript: sessionTranscript,
+      dauthMethod: .deviceSignature,
+      unlockData: [:]
+    ) else {
+      throw CredentialError.genericError
+    }
+    
+    let vpTokenData = Data(
+      result.deviceResponse.toCBOR(
+        options: CBOROptions()
+      )
+      .encode()
+    )
+    
+    return vpTokenData.base64URLEncodedString()
   }
 
   private func authorizeRequestWithAuthCodeUseCase(

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 European Commission
+ * Copyright (c) 2025 European Commission
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the European
  * Commission - subsequent versions of the EUPL (the "Licence"); You may not use this work
@@ -13,17 +13,20 @@
  * ANY KIND, either express or implied. See the Licence for the specific language
  * governing permissions and limitations under the Licence.
  */
+import Foundation
 
-public enum SymbolManager: String {
-  case issuance = "checkmark.seal.text.page.fill"
-  case close = "xmark"
-  case success = "checkmark.seal.fill"
-  case failure = "xmark.octagon.fill"
-  case warning = "viewfinder.trianglebadge.exclamationmark"
-  case qrcode = "qrcode.viewfinder"
-  case issueDocument = "document.viewfinder"
-
-  public static func value(for symbol: SymbolManager) -> String {
-    return symbol.rawValue
+public enum CredentialFormatType: Int, CaseIterable, Identifiable {
+  case sdJwt = 0
+  case mdoc = 1
+  
+  public var id: Int { rawValue }
+  
+  public var displayName: String {
+    switch self {
+    case .sdJwt:
+      return "SD-JWT"
+    case .mdoc:
+      return "mDoc"
+    }
   }
 }

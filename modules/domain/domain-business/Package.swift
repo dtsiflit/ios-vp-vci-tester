@@ -33,6 +33,10 @@ let package = Package(
     .package(
       url: "https://github.com/airsidemobile/JOSESwift.git",
       from: "3.0.0"
+    ),
+    .package(
+      url: "https://github.com/eu-digital-identity-wallet/eudi-lib-ios-iso18013-data-transfer.git",
+      exact: "0.8.5"
     )
   ],
   targets: [
@@ -52,7 +56,14 @@ let package = Package(
           name: "OpenID4VP",
           package: "eudi-lib-ios-openid4vp-swift"
         ),
-        .product(name: "JOSESwift", package: "JOSESwift")
+        .product(
+          name: "JOSESwift",
+          package: "JOSESwift"
+        ),
+        .product(
+          name: "MdocDataTransfer18013",
+          package: "eudi-lib-ios-iso18013-data-transfer"
+        ),
       ]
     ),
     .testTarget(
