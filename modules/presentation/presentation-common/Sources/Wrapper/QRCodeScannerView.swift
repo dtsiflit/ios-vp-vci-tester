@@ -17,7 +17,7 @@ import SwiftUI
 import CodeScanner
 import presentation_ui
 
-public struct QRCodeScanncerView: View {
+public struct QRCodeScannerView: View {
 
   private let onSuccess: (String) async -> Void
   private let onCancel: (() -> Void)?
@@ -63,11 +63,5 @@ public struct QRCodeScanncerView: View {
           onCancel?()
         }
     }
-  }
-}
-
-#Preview {
-  QRCodeScanncerView { _ in
-    print("Action")
   }
 }

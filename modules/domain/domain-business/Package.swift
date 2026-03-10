@@ -70,5 +70,6 @@ let package = Package(
       name: "domain-businessTests",
       dependencies: ["domain-business"]
     )
-  ]
+  ],
+  swiftLanguageModes: [.v6]
 )

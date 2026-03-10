@@ -60,7 +60,7 @@ public enum LocalizableKey: Sendable, Equatable, Hashable {
     case .presentation:
       "Presentation"
     case .submit:
-      "Submi"
+      "Submit"
     case .issuanceRequest:
       "Issuance Request"
     case .transactionCode:

@@ -63,6 +63,7 @@ let package = Package(
       name: "document-presentationTests",
       dependencies: ["document-presentation"]
     )
-  ]
+  ],
+  swiftLanguageModes: [.v6]
 )
 

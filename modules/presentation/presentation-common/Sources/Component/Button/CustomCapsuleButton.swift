@@ -56,14 +56,3 @@ public struct CustomCapsuleButton: View {
       }
   }
 }
-
-#Preview {
-  CustomCapsuleButton(
-    label: .close,
-    color: .green,
-    style: .primary,
-    action: {
-      print("Action")
-    }
-  )
-}

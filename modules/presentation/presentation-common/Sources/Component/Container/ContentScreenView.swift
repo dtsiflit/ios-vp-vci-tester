@@ -52,9 +52,3 @@ public struct ContentScreenView<Content: View>: View {
     .background(colorScheme == .dark ? Color(UIColor.systemBackground) : Color(UIColor.secondarySystemBackground))
   }
 }
-
-#Preview {
-  ContentScreenView {
-    EmptyView()
-  }
-}

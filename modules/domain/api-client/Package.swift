@@ -31,5 +31,6 @@ let package = Package(
       name: "api-clientTests",
       dependencies: ["api-client"]
     ),
-  ]
+  ],
+  swiftLanguageModes: [.v6]
 )

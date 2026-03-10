@@ -43,7 +43,7 @@ public protocol CredentialOfferInteractorType: Sendable {
   
   func platformAttest() async throws -> String
   func jwkAttest() async throws -> String
-  func issueMdocDocument() async throws -> String
+  func obtainMsoMdocVpToken() async throws -> String
 }
 
 final class CredentialOfferInteractor: CredentialOfferInteractorType {
@@ -177,7 +177,7 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
   func requestDeferredCredential(deferredCredential: DeferredCredentialOutcome) async throws -> CredentialOutcome {
     return try await controller.requestDeferredCredential(
       deferredCredential.issuer,
-      deferredCredential.trasnactionId,
+      deferredCredential.transactionId,
       deferredCredential,
       deferredCredential.isSDJWT,
       deferredCredential.privateKey
@@ -188,7 +188,7 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
     )
   }
   
-  func issueMdocDocument() async throws -> String {
+  func obtainMsoMdocVpToken() async throws -> String {
     
     guard let issuerSignedData = Data(
       base64URLEncoded: IssuanceConstants.cborIssuerSigned
@@ -270,11 +270,14 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
       throw CredentialError.issuerDoesNotSupportDeferredIssuance
     }
 
-    // Issue credential
+    guard let credentialConfigId = credentialOffer.credentialConfigurationIdentifiers.first else {
+      throw CredentialIssuanceError.missingCredentialConfigurationIdentifier
+    }
+
     let credential = try await controller.issueCredential(
       issuer,
       authorized,
-      credentialOffer.credentialConfigurationIdentifiers.first!,
+      credentialConfigId,
       [bindingKey],
       credentialOffer.isSDJWT,
       privateKey
@@ -312,11 +315,14 @@ final class CredentialOfferInteractor: CredentialOfferInteractorType {
       throw CredentialError.issuerDoesNotSupportDeferredIssuance
     }
 
-    // Issue credential
+    guard let credentialConfigId = credentialOffer.credentialConfigurationIdentifiers.first else {
+      throw CredentialIssuanceError.missingCredentialConfigurationIdentifier
+    }
+
     let credential = try await controller.issueCredential(
       issuer,
       auth,
-      credentialOffer.credentialConfigurationIdentifiers.first!,
+      credentialConfigId,
       [bindingKey],
       credentialOffer.isSDJWT,
       privateKey

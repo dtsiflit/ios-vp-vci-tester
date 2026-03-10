@@ -36,8 +36,7 @@ xcshareddata/
 .build/
 .swiftpm/
 Packages/
-# Keep resolved version
-!Package.resolved
+Package.resolved
 
 # CocoaPods
 Pods/

@@ -40,5 +40,6 @@ let package = Package(
       name: "service-vciTests",
       dependencies: ["service-vci"]
     )
-  ]
+  ],
+  swiftLanguageModes: [.v6]
 )

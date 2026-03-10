@@ -56,5 +56,6 @@ let package = Package(
         "presentation-router"
       ]
     )
-  ]
+  ],
+  swiftLanguageModes: [.v6]
 )

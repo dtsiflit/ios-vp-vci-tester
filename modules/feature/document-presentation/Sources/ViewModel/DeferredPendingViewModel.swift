@@ -45,7 +45,7 @@ public class DeferredPendingViewModel<Router: RouterGraphType>: ViewModel<Router
       initialState: .init(
         credential: credentialOutcome,
         title: "Issuance Pending",
-        supportingText: "Try to reissuance",
+        supportingText: "Tap to retry issuance",
         errorMessage: nil
       )
     )

@@ -21,8 +21,6 @@ public protocol ViewState {}
 @MainActor
 open class ViewModel<Router: RouterGraphType, UiState: ViewState>: ObservableObject {
 
-  lazy var cancellables = Set<AnyCancellable>()
-
   @Published public var viewState: UiState
 
   public let router: Router

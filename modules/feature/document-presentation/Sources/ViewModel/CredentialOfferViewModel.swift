@@ -47,7 +47,7 @@ public class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router
         errorMessage: "",
         isPreAuthorized: false,
         needsTransactionCode: false,
-        supportingText: "Only SD-JWT credentials are supported",
+        supportingText: "Scan a QR code to issue a credential",
         attestation: nil
       )
     )
@@ -125,9 +125,9 @@ public class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router
     }
   }
   
-  func issueMdocDocument() async {
+  func obtainMsoMdocVpToken() async {
     do {
-      let vpToken = try await interactor.issueMdocDocument()
+      let vpToken = try await interactor.obtainMsoMdocVpToken()
       
       setState {
         $0.copy(
@@ -180,13 +180,15 @@ public class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router
 
   private func handleCredentialResult(_ result: CredentialOutcome) {
     if let credential = result.issuedCredential {
+
       setState {
         $0.copy(credential: credential)
       }
+      
       navigateToIssuanceResultView()
     }
 
-    if let _ = result.deferredCredential {
+    if result.deferredCredential != nil {
       setState {
         $0.copy(supportingText: "Pending credential issuance...")
       }
@@ -194,15 +196,14 @@ public class CredentialOfferViewModel<Router: RouterGraphType>: ViewModel<Router
     }
   }
   
-  nonisolated
   func platformAttest() async throws -> String {
     if DCAppAttestService.shared.isSupported {
       return try await interactor.platformAttest()
     }
+
     return try await interactor.jwkAttest()
   }
-  
-  nonisolated
+
   func jwkAttest() async throws -> String {
     return try await interactor.jwkAttest()
   }

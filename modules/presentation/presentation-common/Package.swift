@@ -39,5 +39,6 @@ let package = Package(
       name: "presentation-commonTests",
       dependencies: ["presentation-common"]
     ),
-  ]
+  ],
+  swiftLanguageModes: [.v6]
 )
