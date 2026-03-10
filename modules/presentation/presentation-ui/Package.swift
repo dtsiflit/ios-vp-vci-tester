@@ -45,5 +45,6 @@ let package = Package(
       name: "presentation-uiTests",
       dependencies: ["presentation-ui"]
     )
-  ]
+  ],
+  swiftLanguageModes: [.v6]
 )

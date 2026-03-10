@@ -48,7 +48,7 @@ public struct CredentialOfferView<Router: RouterGraphType>: View {
         List {
           if showDeviceWarning {
             Section {
-              attestationWanring()
+              attestationWarning()
             }
           }
           
@@ -93,7 +93,7 @@ public struct CredentialOfferView<Router: RouterGraphType>: View {
       .scrollDisabled(true)
       .navigationTitle(localization.get(with: .scanner))
       .fullScreenCover(isPresented: $isScannerPresented) {
-        QRCodeScanncerView(
+        QRCodeScannerView(
           onSuccess: { scannedString in
             isScannerPresented = false
             lastOfferUri = scannedString
@@ -125,7 +125,7 @@ public struct CredentialOfferView<Router: RouterGraphType>: View {
           Button {
             if selectedCredentialFormat == CredentialFormatType.mdoc.rawValue {
               Task {
-                await viewModel.issueMdocDocument()
+                await viewModel.obtainMsoMdocVpToken()
               }
             } else {
               isScannerPresented = true
@@ -188,7 +188,7 @@ public struct CredentialOfferView<Router: RouterGraphType>: View {
   }
   
   @ViewBuilder
-  private func attestationWanring() -> some View {
+  private func attestationWarning() -> some View {
     HStack(alignment: .top,spacing: 12){
       Image(systemName: SymbolManager.value(for: .warning))
         .font(.largeTitle)

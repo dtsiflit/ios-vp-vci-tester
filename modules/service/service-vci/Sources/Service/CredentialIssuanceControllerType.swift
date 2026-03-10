@@ -258,14 +258,6 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
       Issuer.createResponseEncryptionSpec($0)
     }
     
-//    switch attestationType {
-//    case .jwk:
-//      let authorizationServerMetadata = await issuer.authorizationServerMetadata
-//      print(authorizationServerMetadata)
-//    case .device, .none:
-//      break
-//    }
-
     switch requestOutcome {
     case .success(let request):
       switch request {
@@ -275,7 +267,7 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
           case .deferred(let transaction, _):
             return .deferred(
               DeferredCredentialOutcome(
-                trasnactionId: transaction,
+                transactionId: transaction,
                 authorizedRequest: authorized,
                 issuer: issuer,
                 isSDJWT: isSDJWT,
@@ -306,7 +298,7 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
   ) async throws -> IssuanceOutcome {
     let requestOutcome = try await issuer.requestDeferredCredential(
       request: deferredCredential.authorizedRequest,
-      transactionId: deferredCredential.trasnactionId,
+      transactionId: deferredCredential.transactionId,
       dPopNonce: nil
     )
 
@@ -318,7 +310,7 @@ final class CredentialIssuanceController: CredentialIssuanceControllerType {
       case .issuancePending(let transaction, _):
         return .deferred(
           DeferredCredentialOutcome(
-            trasnactionId: transaction,
+            transactionId: transaction,
             authorizedRequest: deferredCredential.authorizedRequest,
             issuer: issuer,
             isSDJWT: isSDJWT,

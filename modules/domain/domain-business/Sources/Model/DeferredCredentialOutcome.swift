@@ -17,20 +17,20 @@ import OpenID4VCI
 @preconcurrency import Security
 
 public struct DeferredCredentialOutcome: Sendable {
-  public let trasnactionId: TransactionId
+  public let transactionId: TransactionId
   public let authorizedRequest: AuthorizedRequest
   public let issuer: Issuer
   public let isSDJWT: Bool
   public let privateKey: SecKey
 
   public init(
-    trasnactionId: TransactionId,
+    transactionId: TransactionId,
     authorizedRequest: AuthorizedRequest,
     issuer: Issuer,
     isSDJWT: Bool,
     privateKey: SecKey
   ) {
-    self.trasnactionId = trasnactionId
+    self.transactionId = transactionId
     self.authorizedRequest = authorizedRequest
     self.issuer = issuer
     self.isSDJWT = isSDJWT

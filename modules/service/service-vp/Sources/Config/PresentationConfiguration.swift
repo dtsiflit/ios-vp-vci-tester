@@ -26,7 +26,7 @@ public struct CredentialPresentationConfiguration {
   static let publicKeys = "https://dev.verifier-backend.eudiw.dev/wallet/public-keys.json"
 
   static func sdJwtPresentations(
-    transactiondata: [TransactionData]?,
+    transactionData: [TransactionData]?,
     clientID: String,
     nonce: String,
     useSha3: Bool = true,
@@ -49,7 +49,7 @@ public struct CredentialPresentationConfiguration {
       audience: clientID,
       nonce: nonce,
       sdHash: sdHash,
-      transactionData: transactiondata,
+      transactionData: transactionData,
       privateKey: privateKey,
       credential: credential
     )

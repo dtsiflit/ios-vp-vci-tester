@@ -64,5 +64,6 @@ let package = Package(
       name: "service-vpTests",
       dependencies: ["service-vp"]
     )
-  ]
+  ],
+  swiftLanguageModes: [.v6]
 )

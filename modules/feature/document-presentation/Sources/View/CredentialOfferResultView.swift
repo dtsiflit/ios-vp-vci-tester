@@ -56,7 +56,7 @@ public struct CredentialOfferResultView<Router: RouterGraphType>: View {
           .frame(maxHeight: .infinity)
 
           VStack {
-            if let isSDJWT = viewModel.viewState.config.credential?.isSDJWT, isSDJWT {
+            if viewModel.viewState.config.credential != nil {
               CustomCapsuleButton(
                 label: .presentation,
                 color: viewModel.viewState.config.symbolColor) {
@@ -75,11 +75,16 @@ public struct CredentialOfferResultView<Router: RouterGraphType>: View {
         }
       }
       .fullScreenCover(isPresented: $isScannerPresented) {
-        QRCodeScanncerView(
+        QRCodeScannerView(
           onSuccess: { scannedString in
             isScannerPresented = false
             lastPresentationURL = scannedString
-            await viewModel.loadAndPresentCredential(using: lastPresentationURL)
+            
+            if viewModel.viewState.config.credential?.isSDJWT == true {
+              await viewModel.loadAndPresentCredential(using: lastPresentationURL)
+            } else {
+              await viewModel.loadAndPresentMdocCredential(using: lastPresentationURL)
+            }
           },
           onCancel: {
             isScannerPresented = false

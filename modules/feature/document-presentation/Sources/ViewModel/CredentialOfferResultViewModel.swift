@@ -22,7 +22,7 @@ import presentation_ui
 @Copyable
 public struct CredentialOfferResultState: ViewState {
   let config: CredentialResultConfiguration
-  let presentationSucces: Bool
+  let presentationSuccess: Bool
 }
 
 public class CredentialOfferResultViewModel<Router: RouterGraphType>: ViewModel<Router, CredentialOfferResultState> {
@@ -41,7 +41,7 @@ public class CredentialOfferResultViewModel<Router: RouterGraphType>: ViewModel<
       router: router,
       initialState: .init(
         config: config.configuration,
-        presentationSucces: false
+        presentationSuccess: false
       )
     )
   }
@@ -64,7 +64,7 @@ public class CredentialOfferResultViewModel<Router: RouterGraphType>: ViewModel<
       }
 
       guard let privateKey = outcome?.privateKey else {
-        return
+        throw CredentialIssuanceError.invalidIssuanceRequest("No private key available")
       }
 
       let presentationSuccess = try await interactor.loadAndPresentCredential(
@@ -74,14 +74,40 @@ public class CredentialOfferResultViewModel<Router: RouterGraphType>: ViewModel<
       )
 
       setState {
-        $0.copy(presentationSucces: presentationSuccess)
+        $0.copy(presentationSuccess: presentationSuccess)
       }
 
       handleResult(presentationSuccess)
 
     } catch {
-      print("Error: \(error)")
+      handlePresentationError(error)
     }
+  }
+
+  func loadAndPresentMdocCredential(using url: String) async {
+    do {
+      let presentationSuccess = try await interactor.loadAndPresentMdocCredential(url: url)
+      
+      setState {
+        $0.copy(presentationSuccess: presentationSuccess)
+      }
+
+      handleResult(presentationSuccess)
+    } catch {
+      handlePresentationError(error)
+    }
+  }
+
+  private func handlePresentationError(_ error: Error) {
+    router.navigateTo(
+      .credentialPresentationResult(
+        config: .failure(
+          error: error.localizedDescription,
+          dismiss: false,
+          stage: .presentation
+        )
+      )
+    )
   }
 
   private func handleResult(_ presentationSuccess: Bool) {

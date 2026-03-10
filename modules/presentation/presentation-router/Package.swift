@@ -56,5 +56,6 @@ let package = Package(
       name: "presentation-routerTests",
       dependencies: ["presentation-router"]
     ),
-  ]
+  ],
+  swiftLanguageModes: [.v6]
 )

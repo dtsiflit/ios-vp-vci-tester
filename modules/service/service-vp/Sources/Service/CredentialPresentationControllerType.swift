@@ -24,6 +24,11 @@ public protocol CredentialPresentationControllerType: Sendable {
     and credential: Credential,
     and privateKey: SecKey
   ) async throws -> Bool
+
+  func loadAndPresentMdocCredential(
+    using url: String,
+    vpTokenBuilder: @Sendable (String, String, String) async throws -> String
+  ) async throws -> Bool
 }
 
 final class CredentialPresentationController: CredentialPresentationControllerType {
@@ -34,12 +39,83 @@ final class CredentialPresentationController: CredentialPresentationControllerTy
     self.keyProvider = keyProvider
   }
   
+  func loadAndPresentMdocCredential(
+    using url: String,
+    vpTokenBuilder: @Sendable (String, String, String) async throws -> String
+  ) async throws -> Bool {
+
+    let rsaJWK = try await keyProvider.generateRsaJWKKey()
+
+    guard let keySet = try? WebKeySet(jwk: rsaJWK) else {
+      throw CredentialPresentationError.invalidWebKeySet
+    }
+
+    guard let publicKeysURL = URL(string: CredentialPresentationConfiguration.publicKeys) else {
+      throw CredentialPresentationError.invalidPublicKey
+    }
+
+    let walletConfig: OpenId4VPConfiguration = vpConfiguration(
+      privateKey: keyProvider.privateKey,
+      keySet: keySet,
+      publicKeysURL: publicKeysURL
+    )
+
+    let sdk = OpenID4VP(walletConfiguration: walletConfig)
+
+    guard let vpUrl = URL(string: url) else {
+      throw CredentialPresentationError.unknown(reason: "Invalid URL")
+    }
+
+    let authResult = await sdk.authorize(url: vpUrl)
+
+    switch authResult {
+    case .jwt(let request):
+      let requestData = request.request
+      let nonce = requestData.nonce
+      let clientId = requestData.client.id.originalClientId
+
+      var responseUri = ""
+      if case .directPost(let responseURL) = requestData.responseMode {
+        responseUri = responseURL.absoluteString
+      } else if case .directPostJWT(let responseURL) = requestData.responseMode {
+        responseUri = responseURL.absoluteString
+      }
+
+      let vpToken = try await vpTokenBuilder(nonce, clientId, responseUri)
+
+      let consent: ClientConsent = .vpToken(
+        vpContent: .dcql(verifiablePresentations: [
+          try QueryId(value: "query_0"): [.generic(vpToken)]
+        ])
+      )
+
+      guard let response = try? AuthorizationResponse(
+        resolvedRequest: request,
+        consent: consent,
+        walletOpenId4VPConfig: walletConfig
+      ) else {
+        throw CredentialPresentationError.rejected
+      }
+
+      let dispatchResult = try await sdk.dispatch(response: response)
+      switch dispatchResult {
+      case .accepted:
+        return true
+      default:
+        throw CredentialPresentationError.rejected
+      }
+
+    default:
+      throw CredentialPresentationError.notJwt
+    }
+  }
+
   func loadAndPresentCredential(
     using url: String,
     and credential: Credential,
     and privateKey: SecKey
   ) async throws -> Bool {
-    
+
     let rsaJWK = try await keyProvider.generateRsaJWKKey()
     
     guard let keySet = try? WebKeySet(jwk: rsaJWK) else {
@@ -59,7 +135,7 @@ final class CredentialPresentationController: CredentialPresentationControllerTy
     let sdk = OpenID4VP(walletConfiguration: walletConfig)
     
     guard let url = URL(string: url) else {
-      throw CredentialPresentationError.unknown(reason: "Invalid url")
+      throw CredentialPresentationError.unknown(reason: "Invalid URL")
     }
     
     let result = await sdk.authorize(url: url)
@@ -69,7 +145,7 @@ final class CredentialPresentationController: CredentialPresentationControllerTy
       let vpTokenData = request.request
       
       let presentation = CredentialPresentationConfiguration.sdJwtPresentations(
-        transactiondata: vpTokenData.transactionData,
+        transactionData: vpTokenData.transactionData,
         clientID: vpTokenData.client.id.originalClientId,
         nonce: vpTokenData.nonce,
         useSha3: false,
@@ -87,13 +163,15 @@ final class CredentialPresentationController: CredentialPresentationControllerTy
         ])
       )
       
-      let response = try? AuthorizationResponse(
+      guard let response = try? AuthorizationResponse(
         resolvedRequest: request,
         consent: consent,
         walletOpenId4VPConfig: walletConfig
-      )
-      
-      let dispatchResult: DispatchOutcome = try await sdk.dispatch(response: response!)
+      ) else {
+        throw CredentialPresentationError.rejected
+      }
+
+      let dispatchResult: DispatchOutcome = try await sdk.dispatch(response: response)
       switch dispatchResult {
       case .accepted:
         return true
